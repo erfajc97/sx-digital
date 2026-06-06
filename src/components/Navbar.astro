@@ -1,0 +1,127 @@
+---
+import { brand, nav } from '@/data/site';
+import Button from './ui/Button.astro';
+---
+
+<header
+  id="site-header"
+  class="fixed inset-x-0 top-0 z-50 transition-all duration-300 ease-[var(--ease-snappy)]"
+  data-scrolled="false"
+>
+  <nav
+    class="mx-auto flex max-w-[1240px] items-center justify-between gap-6 px-4 py-3 sm:px-6"
+  >
+    <a href="#top" class="press flex items-center gap-2.5" aria-label={`${brand.name} — inicio`}>
+      <img src={brand.logo} alt={brand.name} class="h-7 w-auto sm:h-8" width="120" height="32" />
+    </a>
+
+    <ul class="hidden items-center gap-1 lg:flex">
+      {
+        nav.map((link) => (
+          <li>
+            <a
+              href={link.href}
+              class="rounded-full px-3.5 py-2 text-sm text-ink-soft transition-colors duration-200 hover:bg-surface-2 hover:text-ink"
+            >
+              {link.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="hidden items-center gap-2 lg:flex">
+      <Button href={brand.bookingUrl} external size="md" icon="arrow">Agendar llamada</Button>
+    </div>
+
+    <button
+      id="menu-toggle"
+      class="press flex size-10 items-center justify-center rounded-full border border-border bg-canvas/70 lg:hidden"
+      aria-label="Abrir menú"
+      aria-expanded="false"
+      aria-controls="mobile-menu"
+    >
+      <span class="relative block h-3 w-5">
+        <span
+          class="menu-line absolute left-0 top-0 h-0.5 w-5 rounded-full bg-ink transition-all duration-300 ease-[var(--ease-snappy)]"
+        ></span>
+        <span
+          class="menu-line absolute bottom-0 left-0 h-0.5 w-5 rounded-full bg-ink transition-all duration-300 ease-[var(--ease-snappy)]"
+        ></span>
+      </span>
+    </button>
+  </nav>
+
+  <!-- Mobile menu -->
+  <div
+    id="mobile-menu"
+    class="disclosure-menu invisible max-h-0 overflow-hidden bg-canvas/95 opacity-0 backdrop-blur-md transition-all duration-300 ease-[var(--ease-snappy)] lg:hidden"
+  >
+    <ul class="flex flex-col gap-1 border-t border-border px-4 py-4">
+      {
+        nav.map((link) => (
+          <li>
+            <a
+              href={link.href}
+              class="mobile-link block rounded-xl px-4 py-3 text-lg text-ink transition-colors hover:bg-surface-2"
+            >
+              {link.label}
+            </a>
+          </li>
+        ))
+      }
+      <li class="pt-2">
+        <Button href={brand.bookingUrl} external size="lg" icon="arrow" class="w-full">
+          Agendar llamada
+        </Button>
+      </li>
+    </ul>
+  </div>
+</header>
+
+<script>
+  const header = document.getElementById('site-header');
+  const toggle = document.getElementById('menu-toggle');
+  const menu = document.getElementById('mobile-menu');
+  const lines = document.querySelectorAll<HTMLElement>('.menu-line');
+
+  // Scroll state — solidify the bar after a small scroll
+  const onScroll = () => {
+    if (!header) return;
+    const scrolled = window.scrollY > 12;
+    header.dataset.scrolled = String(scrolled);
+    header.classList.toggle('is-scrolled', scrolled);
+  };
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  // Mobile menu open/close
+  let open = false;
+  const setMenu = (next: boolean) => {
+    open = next;
+    if (!menu || !toggle) return;
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
+    menu.classList.toggle('invisible', !open);
+    menu.classList.toggle('opacity-0', !open);
+    menu.classList.toggle('opacity-100', open);
+    menu.style.maxHeight = open ? `${menu.scrollHeight}px` : '0px';
+    lines[0]?.classList.toggle('translate-y-[5px]', open);
+    lines[0]?.classList.toggle('rotate-45', open);
+    lines[1]?.classList.toggle('-translate-y-[7px]', open);
+    lines[1]?.classList.toggle('-rotate-45', open);
+  };
+
+  toggle?.addEventListener('click', () => setMenu(!open));
+  menu?.querySelectorAll('.mobile-link').forEach((link) =>
+    link.addEventListener('click', () => setMenu(false))
+  );
+</script>
+
+<style>
+  #site-header.is-scrolled {
+    background-color: oklch(0.99 0.004 264 / 0.8);
+    backdrop-filter: saturate(1.4) blur(12px);
+    border-bottom: 1px solid var(--color-border);
+  }
+</style>

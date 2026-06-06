@@ -1,0 +1,62 @@
+---
+interface Props {
+  eyebrow: string;
+  title: string;
+  description?: string;
+  align?: 'left' | 'center';
+  tone?: 'ink' | 'night';
+  class?: string;
+}
+
+const {
+  eyebrow,
+  title,
+  description,
+  align = 'left',
+  tone = 'ink',
+  class: className = '',
+} = Astro.props;
+
+const isNight = tone === 'night';
+---
+
+<div
+  data-reveal
+  class:list={[
+    'flex flex-col gap-4',
+    align === 'center' ? 'items-center text-center mx-auto max-w-2xl' : 'items-start max-w-2xl',
+    className,
+  ]}
+>
+  <span
+    class:list={[
+      'inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.18em]',
+      isNight ? 'text-on-night-muted' : 'text-brand',
+    ]}
+  >
+    <span class:list={['h-px w-6', isNight ? 'bg-on-night-muted' : 'bg-brand']}></span>
+    {eyebrow}
+  </span>
+  <h2
+    class:list={[
+      'text-[clamp(2rem,4.5vw,3.25rem)] leading-[1.05]',
+      isNight ? 'text-on-night' : 'text-ink',
+    ]}
+  >
+    {title}
+  </h2>
+  {
+    description && (
+      <p
+        class:list={[
+          'text-lg leading-relaxed',
+          isNight ? 'text-on-night-muted' : 'text-muted',
+          align === 'center' ? 'mx-auto' : '',
+        ]}
+        style="max-width: 60ch;"
+      >
+        {description}
+      </p>
+    )
+  }
+</div>

@@ -1,0 +1,157 @@
+---
+import { hero, brand } from '@/data/site';
+import Button from '../ui/Button.astro';
+import Icon from '../ui/Icon.astro';
+---
+
+<section class="relative overflow-hidden pt-28 sm:pt-32 lg:pt-40">
+  <!-- Grid backdrop -->
+  <div class="pointer-events-none absolute inset-0 -z-10 bg-grid opacity-70"></div>
+  <!-- Soft brand wash, top-right, low chroma (no neon glow) -->
+  <div
+    class="pointer-events-none absolute -right-32 -top-24 -z-10 size-[34rem] rounded-full opacity-50 blur-3xl"
+    style="background: radial-gradient(circle, var(--color-brand-soft), transparent 70%);"
+  >
+  </div>
+
+  <div class="mx-auto grid max-w-[1240px] items-center gap-14 px-4 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:gap-10">
+    <!-- Copy -->
+    <div class="flex flex-col items-start gap-7">
+      <span
+        data-reveal
+        class="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3.5 py-1.5 text-xs font-medium text-ink-soft"
+      >
+        <span class="relative flex size-2">
+          <span class="absolute inline-flex size-2 animate-ping rounded-full bg-brand opacity-60"></span>
+          <span class="relative inline-flex size-2 rounded-full bg-brand"></span>
+        </span>
+        {hero.eyebrow}
+      </span>
+
+      <h1
+        data-reveal
+        style="--reveal-delay: 60ms; font-size: clamp(2.1rem, 7vw, 4.6rem); line-height: 1.04;"
+        class="font-display font-semibold tracking-[-0.03em] text-ink"
+      >
+        {hero.titleLead}{' '}
+        <span class="relative inline text-brand">
+          {hero.titleAccent}
+          <svg
+            class="absolute -bottom-1.5 left-0 w-full text-brand/35"
+            viewBox="0 0 300 12"
+            fill="none"
+            preserveAspectRatio="none"
+            aria-hidden="true"
+          >
+            <path
+              d="M2 9C60 3 130 2 298 6"
+              stroke="currentColor"
+              stroke-width="4"
+              stroke-linecap="round"
+            ></path>
+          </svg>
+        </span>{' '}
+        {hero.titleTail}
+      </h1>
+
+      <p data-reveal style="--reveal-delay: 120ms; max-width: 56ch;" class="text-lg leading-relaxed text-muted">
+        {hero.subtitle}
+      </p>
+
+      <div data-reveal style="--reveal-delay: 180ms;" class="flex flex-wrap items-center gap-3">
+        <Button href={hero.primaryCta.href} external size="lg" icon="arrow">
+          {hero.primaryCta.label}
+        </Button>
+        <Button href={hero.secondaryCta.href} variant="ghost" size="lg">
+          {hero.secondaryCta.label}
+        </Button>
+      </div>
+
+      <!-- Trust strip -->
+      <dl data-reveal style="--reveal-delay: 240ms;" class="mt-3 flex flex-wrap gap-x-9 gap-y-4">
+        {
+          hero.trust.map((t) => (
+            <div class="flex flex-col">
+              <dt class="font-display text-2xl font-semibold text-ink">{t.value}</dt>
+              <dd class="text-sm text-muted">{t.label}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+
+    <!-- Product mock (built in CSS, no asset required) -->
+    <div data-reveal="scale" style="--reveal-delay: 160ms;" class="relative">
+      <div
+        class="relative rounded-[var(--radius-xl2)] border border-border-strong bg-canvas p-3 shadow-[var(--shadow-lift)]"
+      >
+        <!-- window chrome -->
+        <div class="flex items-center gap-1.5 px-2 pb-3 pt-1">
+          <span class="size-2.5 rounded-full bg-border-strong"></span>
+          <span class="size-2.5 rounded-full bg-border-strong"></span>
+          <span class="size-2.5 rounded-full bg-border-strong"></span>
+          <span class="ml-3 text-xs text-muted">app.solvyx.com</span>
+        </div>
+
+        <div class="overflow-hidden rounded-2xl bg-night p-5">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+              <span class="grid size-9 place-items-center rounded-xl bg-brand font-display text-sm font-bold text-white">
+                {brand.monogram}
+              </span>
+              <div>
+                <p class="text-sm font-medium text-on-night">Panel de control</p>
+                <p class="text-[11px] text-on-night-muted">Tiempo real</p>
+              </div>
+            </div>
+            <span class="inline-flex items-center gap-1.5 rounded-full bg-night-2 px-2.5 py-1 text-[11px] text-on-night-muted">
+              <span class="size-1.5 rounded-full bg-brand"></span> En vivo
+            </span>
+          </div>
+
+          <!-- mock chart -->
+          <div class="mt-6 flex h-32 items-end gap-2">
+            {
+              [42, 58, 35, 71, 49, 84, 63, 92, 76].map((h, i) => (
+                <span
+                  class="flex-1 rounded-t-md"
+                  style={`height:${h}%; background: ${i === 7 ? 'var(--color-brand)' : 'var(--color-night-2)'};`}
+                />
+              ))
+            }
+          </div>
+
+          <!-- mock rows -->
+          <div class="mt-5 space-y-2.5">
+            {
+              [
+                { l: 'Automatización IA', v: '+213%' },
+                { l: 'Tiempo de cierre', v: '−71%' },
+              ].map((r) => (
+                <div class="flex items-center justify-between rounded-xl bg-night-2/60 px-3.5 py-2.5">
+                  <span class="text-xs text-on-night-muted">{r.l}</span>
+                  <span class="font-display text-sm font-semibold text-on-night">{r.v}</span>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- floating chip -->
+      <div
+        class="animate-float absolute -left-5 bottom-10 hidden rounded-2xl border border-border bg-canvas px-4 py-3 shadow-[var(--shadow-lift)] sm:flex"
+      >
+        <div class="flex items-center gap-3">
+          <span class="grid size-9 place-items-center rounded-xl bg-brand-soft text-brand">
+            <Icon name="spark" class="size-5" />
+          </span>
+          <div>
+            <p class="font-display text-sm font-semibold text-ink">8.4× ROI</p>
+            <p class="text-[11px] text-muted">promedio reportado</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

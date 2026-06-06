@@ -1,0 +1,98 @@
+---
+import { services } from '@/data/site';
+import SectionHeading from '../ui/SectionHeading.astro';
+import Icon from '../ui/Icon.astro';
+
+// Bento spans (lg, 6-col grid). 'ai' is the dark featured tile.
+const span: Record<string, string> = {
+  web: 'lg:col-span-3',
+  ai: 'lg:col-span-3',
+  mobile: 'lg:col-span-2',
+  software: 'lg:col-span-2',
+  dashboards: 'lg:col-span-2',
+  care: 'lg:col-span-6',
+};
+---
+
+<section id="servicios" class="scroll-mt-24 py-[var(--spacing-section)]">
+  <div class="mx-auto max-w-[1240px] px-4 sm:px-6">
+    <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+      <SectionHeading
+        eyebrow="Lo que construimos"
+        title="Todo tu producto digital, bajo un mismo techo"
+        description="No vendemos servicios sueltos. Diseñamos, programamos y operamos el producto completo — desde la idea hasta producción."
+      />
+    </div>
+
+    <div class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
+      {
+        services.map((s, i) => {
+          const featured = s.id === 'ai';
+          return (
+            <article
+              data-reveal
+              style={`--reveal-delay: ${i * 70}ms;`}
+              class:list={[
+                'group relative flex flex-col gap-5 rounded-[var(--radius-card)] p-7 transition-transform duration-300 ease-[var(--ease-snappy)] hover:-translate-y-1',
+                span[s.id] ?? 'lg:col-span-2',
+                featured
+                  ? 'bg-night text-on-night'
+                  : 'border border-border bg-surface hover:border-border-strong',
+              ]}
+            >
+              {featured && (
+                <div class="bg-grid-night pointer-events-none absolute inset-0 rounded-[var(--radius-card)] opacity-40" />
+              )}
+              <div class="relative flex items-center justify-between">
+                <span
+                  class:list={[
+                    'grid size-12 place-items-center rounded-2xl',
+                    featured ? 'bg-brand text-white' : 'bg-brand-soft text-brand',
+                  ]}
+                >
+                  <Icon name={s.icon} class="size-6" />
+                </span>
+                {featured && (
+                  <span class="rounded-full border border-white/15 px-3 py-1 text-[11px] uppercase tracking-wider text-on-night-muted">
+                    Lo más pedido
+                  </span>
+                )}
+              </div>
+
+              <div class="relative flex flex-col gap-2">
+                <h3 class:list={['text-xl', featured ? 'text-on-night' : 'text-ink']}>
+                  {s.title}
+                </h3>
+                <p
+                  class:list={[
+                    'leading-relaxed',
+                    featured ? 'text-on-night-muted' : 'text-muted',
+                  ]}
+                  style="max-width: 46ch;"
+                >
+                  {s.description}
+                </p>
+              </div>
+
+              <ul class="relative mt-auto flex flex-wrap gap-2 pt-1">
+                {s.bullets.map((b) => (
+                  <li
+                    class:list={[
+                      'inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs',
+                      featured
+                        ? 'bg-white/8 text-on-night-muted'
+                        : 'bg-canvas text-ink-soft ring-1 ring-border',
+                    ]}
+                  >
+                    <Icon name="check" class={featured ? 'size-3.5 text-brand' : 'size-3.5 text-brand'} />
+                    {b}
+                  </li>
+                ))}
+              </ul>
+            </article>
+          );
+        })
+      }
+    </div>
+  </div>
+</section>

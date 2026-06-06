@@ -1,0 +1,56 @@
+---
+import { differentiators, stats } from '@/data/site';
+import SectionHeading from '../ui/SectionHeading.astro';
+import Icon from '../ui/Icon.astro';
+---
+
+<section class="py-[var(--spacing-section)]">
+  <div class="mx-auto max-w-[1240px] px-4 sm:px-6">
+    <div class="grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
+      <SectionHeading
+        eyebrow="Por qué SolvyX"
+        title="La diferencia entre contratar a un proveedor y a un socio"
+        description="Trabajamos como una extensión de tu equipo. Pocos clientes a la vez, foco total en cada uno."
+      />
+
+      <div class="flex flex-col divide-y divide-border">
+        {
+          differentiators.map((d, i) => (
+            <div
+              data-reveal
+              style={`--reveal-delay: ${i * 80}ms;`}
+              class="flex items-start gap-5 py-6 first:pt-0"
+            >
+              <span class="grid size-11 shrink-0 place-items-center rounded-2xl bg-brand-soft text-brand">
+                <Icon name={d.icon} class="size-5" />
+              </span>
+              <div class="flex flex-col gap-1.5">
+                <h3 class="text-lg text-ink">{d.title}</h3>
+                <p class="leading-relaxed text-muted" style="max-width: 54ch;">
+                  {d.description}
+                </p>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+
+    <!-- Stats band -->
+    <dl
+      data-reveal
+      class="mt-16 grid grid-cols-2 gap-px overflow-hidden rounded-[var(--radius-xl2)] border border-border bg-border lg:grid-cols-4"
+    >
+      {
+        stats.map((s) => (
+          <div class="flex flex-col gap-1.5 bg-canvas p-7">
+            <dt class="font-display text-[clamp(2.2rem,4vw,3rem)] font-semibold leading-none text-brand">
+              {s.value}
+            </dt>
+            <dd class="text-sm leading-snug text-muted">{s.label}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </div>
+</section>

@@ -1,0 +1,57 @@
+---
+import Icon from './Icon.astro';
+import type { IconName } from '@/data/site';
+
+interface Props {
+  href: string;
+  variant?: 'primary' | 'secondary' | 'ghost' | 'on-night';
+  icon?: IconName;
+  size?: 'md' | 'lg';
+  class?: string;
+  external?: boolean;
+}
+
+const {
+  href,
+  variant = 'primary',
+  icon,
+  size = 'md',
+  class: className = '',
+  external = false,
+} = Astro.props;
+
+const base =
+  'press group inline-flex items-center justify-center gap-2 rounded-full font-medium transition-colors duration-200 ease-[var(--ease-snappy)] focus-visible:outline-2';
+
+const sizes = {
+  md: 'px-5 py-2.5 text-sm',
+  lg: 'px-7 py-3.5 text-base',
+};
+
+const variants = {
+  primary: 'bg-brand text-white hover:bg-brand-strong shadow-[var(--shadow-soft)]',
+  secondary: 'bg-ink text-canvas hover:bg-ink-soft',
+  ghost: 'text-ink hover:bg-surface-2 border border-border',
+  'on-night': 'bg-canvas text-ink hover:bg-on-night-muted',
+};
+
+const rel = external ? 'noopener noreferrer' : undefined;
+const target = external ? '_blank' : undefined;
+---
+
+<a
+  href={href}
+  rel={rel}
+  target={target}
+  class:list={[base, sizes[size], variants[variant], className]}
+>
+  <slot />
+  {
+    icon && (
+      <Icon
+        name={icon}
+        class="size-4 transition-transform duration-200 ease-[var(--ease-snappy)] group-hover:translate-x-0.5"
+      />
+    )
+  }
+</a>

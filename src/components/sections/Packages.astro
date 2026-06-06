@@ -1,0 +1,83 @@
+---
+import { packages, brand } from '@/data/site';
+import SectionHeading from '../ui/SectionHeading.astro';
+import Button from '../ui/Button.astro';
+import Icon from '../ui/Icon.astro';
+---
+
+<section id="planes" class="scroll-mt-24 py-[var(--spacing-section)]">
+  <div class="mx-auto max-w-[1240px] px-4 sm:px-6">
+    <SectionHeading
+      align="center"
+      eyebrow="Formas de trabajar juntos"
+      title="Elige el ritmo que tu proyecto necesita"
+      description="Desde una pieza puntual hasta un equipo dedicado. Precios honestos desde la primera llamada."
+    />
+
+    <div class="mt-12 grid items-stretch gap-5 lg:grid-cols-3">
+      {
+        packages.map((p, i) => {
+          const featured = p.featured;
+          return (
+            <article
+              data-reveal
+              style={`--reveal-delay: ${i * 90}ms;`}
+              class:list={[
+                'flex flex-col gap-6 rounded-[var(--radius-xl2)] p-8',
+                featured
+                  ? 'bg-night text-on-night shadow-[var(--shadow-lift)] lg:-translate-y-4'
+                  : 'border border-border bg-surface',
+              ]}
+            >
+              <div class="flex items-center justify-between">
+                <h3 class:list={['font-display text-xl', featured ? 'text-on-night' : 'text-ink']}>
+                  {p.name}
+                </h3>
+                {featured && (
+                  <span class="rounded-full bg-brand px-3 py-1 text-[11px] font-medium uppercase tracking-wider text-white">
+                    Recomendado
+                  </span>
+                )}
+              </div>
+
+              <div class="flex flex-col gap-1">
+                <span class:list={['font-display text-3xl font-semibold', featured ? 'text-on-night' : 'text-ink']}>
+                  {p.price}
+                </span>
+                <span class:list={['text-sm', featured ? 'text-on-night-muted' : 'text-muted']}>
+                  {p.cadence}
+                </span>
+              </div>
+
+              <p class:list={['leading-relaxed', featured ? 'text-on-night-muted' : 'text-muted']}>
+                {p.description}
+              </p>
+
+              <ul class="flex flex-col gap-3 border-t pt-5"
+                  class:list={featured ? 'border-white/10' : 'border-border'}>
+                {p.features.map((f) => (
+                  <li class="flex items-start gap-2.5 text-sm">
+                    <Icon name="check" class="mt-0.5 size-4 shrink-0 text-brand" />
+                    <span class={featured ? 'text-on-night-muted' : 'text-ink-soft'}>{f}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <div class="mt-auto pt-2">
+                <Button
+                  href={brand.bookingUrl}
+                  external
+                  size="lg"
+                  variant={featured ? 'on-night' : 'ghost'}
+                  class="w-full"
+                >
+                  {p.cta}
+                </Button>
+              </div>
+            </article>
+          );
+        })
+      }
+    </div>
+  </div>
+</section>

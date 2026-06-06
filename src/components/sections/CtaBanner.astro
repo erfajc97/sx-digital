@@ -1,0 +1,43 @@
+---
+import { finalCta, brand } from '@/data/site';
+import Button from '../ui/Button.astro';
+---
+
+<section class="pb-[var(--spacing-section)] pt-4">
+  <div class="mx-auto max-w-[1240px] px-4 sm:px-6">
+    <div
+      data-reveal="scale"
+      class="relative overflow-hidden rounded-[var(--radius-xl2)] bg-brand px-6 py-16 sm:px-12 sm:py-20"
+    >
+      <!-- decorative concentric arcs, low-contrast, no glow -->
+      <div
+        class="pointer-events-none absolute -right-24 -top-24 size-[28rem] rounded-full border border-white/10"
+      >
+      </div>
+      <div
+        class="pointer-events-none absolute -bottom-32 -left-16 size-[24rem] rounded-full border border-white/10"
+      >
+      </div>
+
+      <div class="relative mx-auto flex max-w-2xl flex-col items-center gap-7 text-center">
+        <span class="grid size-14 place-items-center rounded-2xl bg-white/15 font-display text-lg font-bold text-white">
+          {brand.monogram}
+        </span>
+        <h2 class="text-[clamp(2rem,4.5vw,3.25rem)] leading-[1.06] text-white">
+          {finalCta.title}
+        </h2>
+        <p class="text-lg leading-relaxed text-white/85" style="max-width: 52ch;">
+          {finalCta.subtitle}
+        </p>
+        <div class="flex flex-wrap items-center justify-center gap-3">
+          <Button href={finalCta.primary.href} external size="lg" variant="on-night" icon="arrow">
+            {finalCta.primary.label}
+          </Button>
+          <Button href={finalCta.secondary.href} size="lg" variant="ghost" class="border-white/30 bg-transparent text-white hover:bg-white/10">
+            {finalCta.secondary.label}
+          </Button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,50 @@
+---
+import { testimonials } from '@/data/site';
+import SectionHeading from '../ui/SectionHeading.astro';
+---
+
+<section class="bg-surface py-[var(--spacing-section)]">
+  <div class="mx-auto max-w-[1240px] px-4 sm:px-6">
+    <SectionHeading
+      align="center"
+      eyebrow="En palabras de clientes"
+      title="Lo que dicen quienes ya nos contrataron"
+    />
+
+    <div class="mt-12 grid gap-5 md:grid-cols-3">
+      {
+        testimonials.map((t, i) => (
+          <figure
+            data-reveal
+            style={`--reveal-delay: ${i * 90}ms;`}
+            class:list={[
+              'flex flex-col gap-6 rounded-[var(--radius-card)] border border-border bg-canvas p-7',
+              i === 1 ? 'md:-translate-y-5' : '',
+            ]}
+          >
+            <svg class="size-8 text-brand/30" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M9.5 6C6.5 7.5 5 10 5 13v5h6v-6H8c0-2 .8-3.4 2.5-4.3L9.5 6Zm9 0C15.5 7.5 14 10 14 13v5h6v-6h-3c0-2 .8-3.4 2.5-4.3L18.5 6Z" />
+            </svg>
+            <blockquote class="text-lg leading-relaxed text-ink">
+              {t.quote}
+            </blockquote>
+            <figcaption class="mt-auto flex items-center gap-3.5 border-t border-border pt-5">
+              <img
+                src={t.avatar}
+                alt={t.name}
+                loading="lazy"
+                width="48"
+                height="48"
+                class="size-11 rounded-full object-cover"
+              />
+              <div>
+                <p class="font-display font-semibold text-ink">{t.name}</p>
+                <p class="text-sm text-muted">{t.role}</p>
+              </div>
+            </figcaption>
+          </figure>
+        ))
+      }
+    </div>
+  </div>
+</section>
