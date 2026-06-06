@@ -1,31 +1,81 @@
 ---
 import { work } from '@/data/site';
 import SectionHeading from '../ui/SectionHeading.astro';
-import Icon from '../ui/Icon.astro';
 
-// Asymmetric 12-col rhythm: 7/5 then 5/7.
 const span = ['lg:col-span-7', 'lg:col-span-5', 'lg:col-span-5', 'lg:col-span-7'];
+const trackVh = 100 + (work.length - 1) * 58; // scroll length for the pinned fan
 ---
 
-<section id="trabajo" class="scroll-mt-24 bg-surface py-[var(--spacing-section)]">
-  <div class="mx-auto max-w-[1240px] px-4 sm:px-6">
+<section id="trabajo" class="scroll-mt-24 bg-surface">
+  <div class="mx-auto max-w-[1240px] px-4 pt-[var(--spacing-section)] sm:px-6">
     <SectionHeading
       eyebrow="Trabajo seleccionado"
       title="Productos en producción, no maquetas"
-      description="Una muestra de lo que hemos construido para equipos que necesitaban resultados, no promesas."
+      description="Una muestra de lo que hemos construido. Desliza para recorrer los proyectos."
     />
+  </div>
 
-    <div class="mt-12 grid gap-5 lg:grid-cols-12">
+  <!-- Desktop: scroll-driven 3D fan (shown by JS on lg + motion) -->
+  <div id="work-track" class="hidden" style={`height: ${trackVh}vh;`}>
+    <div class="sticky top-0 flex h-screen items-center justify-center">
+      <div id="work-fan" class="relative w-full max-w-[1180px] [perspective:1300px]">
+        {
+          work.map((item, i) => (
+            <article
+              class="work-card absolute left-1/2 top-1/2 overflow-hidden rounded-[var(--radius-card)] border border-border bg-canvas shadow-[var(--shadow-lift)]"
+              data-i={i}
+              style="opacity: 0;"
+            >
+              <img
+                src={item.image}
+                alt={item.title}
+                draggable="false"
+                class="absolute inset-0 size-full object-cover"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-transparent"></div>
+              <span class="absolute right-4 top-4 rounded-full bg-canvas/90 px-3 py-1.5 font-display text-sm font-semibold text-ink backdrop-blur">
+                {item.result}
+              </span>
+              <div class="absolute inset-x-0 bottom-0 flex flex-col gap-1.5 p-6">
+                <span class="text-xs font-medium uppercase tracking-[0.14em] text-white/70">
+                  {item.category}
+                </span>
+                <h3 class="font-display text-2xl font-semibold text-white">{item.title}</h3>
+                <p class="line-clamp-2 max-w-md text-sm text-white/85">{item.blurb}</p>
+              </div>
+            </article>
+          ))
+        }
+
+        <div
+          id="work-dots"
+          class="absolute -bottom-1 left-1/2 z-[120] flex -translate-x-1/2 items-center gap-2.5"
+        >
+          {
+            work.map((_, i) => (
+              <button
+                type="button"
+                class="work-dot size-2 rounded-full bg-ink/25 transition-colors"
+                aria-current={i === 0 ? 'true' : 'false'}
+                aria-label={`Proyecto ${i + 1}`}
+              />
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile / no-JS / reduced-motion: static grid -->
+  <div id="work-grid" class="mx-auto max-w-[1240px] px-4 pb-[var(--spacing-section)] pt-10 sm:px-6">
+    <div class="grid gap-5 lg:grid-cols-12">
       {
         work.map((item, i) => (
-          <a
-            href={item.href}
-            target="_blank"
-            rel="noopener noreferrer"
-            data-reveal
+          <article
+            data-reveal={i % 2 ? 'right' : 'left'}
             style={`--reveal-delay: ${i * 90}ms;`}
             class:list={[
-              'group press relative flex flex-col overflow-hidden rounded-[var(--radius-xl2)] border border-border bg-canvas transition-all duration-300 ease-[var(--ease-snappy)] hover:border-border-strong hover:shadow-[var(--shadow-lift)]',
+              'group relative flex flex-col overflow-hidden rounded-[var(--radius-xl2)] border border-border bg-canvas transition-shadow duration-300 hover:shadow-[var(--shadow-soft)]',
               span[i] ?? 'lg:col-span-6',
             ]}
           >
@@ -36,40 +86,41 @@ const span = ['lg:col-span-7', 'lg:col-span-5', 'lg:col-span-5', 'lg:col-span-7'
                 loading="lazy"
                 width="1200"
                 height="750"
-                class="size-full object-cover transition-transform duration-[600ms] ease-[var(--ease-snappy)] group-hover:scale-[1.04]"
+                class="size-full object-cover transition-transform duration-[600ms] ease-[var(--ease-snappy)] group-hover:scale-[1.03]"
               />
               <span class="absolute right-4 top-4 rounded-full bg-canvas/90 px-3 py-1.5 font-display text-sm font-semibold text-ink backdrop-blur">
                 {item.result}
               </span>
             </div>
-
-            <div class="flex flex-1 flex-col gap-4 p-7">
-              <div class="flex flex-col gap-2">
-                <span class="text-xs font-medium uppercase tracking-[0.14em] text-brand">
-                  {item.category}
-                </span>
-                <h3 class="text-2xl text-ink">{item.title}</h3>
-                <p class="leading-relaxed text-muted" style="max-width: 52ch;">
-                  {item.blurb}
-                </p>
-              </div>
-
-              <div class="mt-auto flex items-center justify-between pt-2">
-                <ul class="flex flex-wrap gap-2">
-                  {item.tags.map((t) => (
-                    <li class="rounded-full bg-surface-2 px-2.5 py-1 text-xs text-ink-soft">
-                      {t}
-                    </li>
-                  ))}
-                </ul>
-                <span class="grid size-9 shrink-0 place-items-center rounded-full bg-ink text-canvas transition-transform duration-200 ease-[var(--ease-snappy)] group-hover:rotate-[-45deg]">
-                  <Icon name="arrow" class="size-4" />
-                </span>
-              </div>
+            <div class="flex flex-col gap-3 p-5 sm:p-6">
+              <span class="text-xs font-medium uppercase tracking-[0.14em] text-brand">{item.category}</span>
+              <h3 class="font-display text-xl font-semibold text-ink">{item.title}</h3>
+              <p class="line-clamp-2 text-sm leading-relaxed text-muted">{item.blurb}</p>
+              <ul class="flex flex-wrap gap-2 pt-1">
+                {item.tags.map((t) => (
+                  <li class="rounded-full bg-surface-2 px-2.5 py-1 text-xs text-ink-soft">{t}</li>
+                ))}
+              </ul>
             </div>
-          </a>
+          </article>
         ))
       }
     </div>
   </div>
 </section>
+
+<style>
+  .work-card {
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+  }
+  .work-dot[aria-current='true'] {
+    background-color: var(--color-brand);
+    width: 1.25rem;
+    border-radius: 9999px;
+  }
+</style>
+
+<script>
+  import '@/scripts/work-fan';
+</script>

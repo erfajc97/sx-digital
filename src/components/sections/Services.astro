@@ -3,14 +3,14 @@ import { services } from '@/data/site';
 import SectionHeading from '../ui/SectionHeading.astro';
 import Icon from '../ui/Icon.astro';
 
-// Bento spans (lg, 6-col grid). 'ai' is the dark featured tile.
+// Bento spans (lg, 6-col grid). 'ai-automation' is the dark featured tile.
 const span: Record<string, string> = {
-  web: 'lg:col-span-3',
-  ai: 'lg:col-span-3',
+  'ai-automation': 'lg:col-span-3',
+  growth: 'lg:col-span-3',
+  media: 'lg:col-span-2',
+  fintech: 'lg:col-span-2',
   mobile: 'lg:col-span-2',
-  software: 'lg:col-span-2',
-  dashboards: 'lg:col-span-2',
-  care: 'lg:col-span-6',
+  software: 'lg:col-span-6',
 };
 ---
 
@@ -18,16 +18,16 @@ const span: Record<string, string> = {
   <div class="mx-auto max-w-[1240px] px-4 sm:px-6">
     <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
       <SectionHeading
-        eyebrow="Lo que construimos"
-        title="Todo tu producto digital, bajo un mismo techo"
-        description="No vendemos servicios sueltos. Diseñamos, programamos y operamos el producto completo — desde la idea hasta producción."
+        eyebrow="Lo que hacemos por ti"
+        title="IA que hace crecer tu negocio, y software que lo sostiene"
+        description="Automatizamos, conseguimos clientes y producimos contenido con IA — y construimos el software, las apps y la fintech que lo respaldan. Todo bajo un mismo techo."
       />
     </div>
 
     <div class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
       {
         services.map((s, i) => {
-          const featured = s.id === 'ai';
+          const featured = s.id === 'ai-automation';
           return (
             <article
               data-reveal

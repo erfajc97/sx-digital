@@ -1,0 +1,237 @@
+---
+import { brand, contact } from '@/data/site';
+import Icon from './ui/Icon.astro';
+
+const m = contact.modal;
+---
+
+<dialog id="contact-modal" class="contact-dialog" aria-labelledby="contact-title">
+  <div class="relative w-full overflow-hidden rounded-[var(--radius-xl2)] border border-border bg-canvas">
+    <!-- header -->
+    <div class="flex items-start justify-between gap-4 border-b border-border px-6 py-5">
+      <div>
+        <h2 id="contact-title" class="font-display text-xl font-semibold tracking-tight text-ink">
+          {m.title}
+        </h2>
+        <p class="mt-1 text-sm text-muted">{m.subtitle}</p>
+      </div>
+      <button
+        type="button"
+        data-close-contact
+        class="press grid size-9 shrink-0 place-items-center rounded-full border border-border text-ink-soft transition-colors hover:bg-surface-2"
+        aria-label="Cerrar"
+      >
+        <svg viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+          <path d="M6 6l12 12M18 6 6 18"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- form -->
+    <form id="contact-form" class="flex flex-col gap-4 px-6 py-6">
+      <div class="grid gap-4 sm:grid-cols-2">
+        <label class="flex flex-col gap-1.5">
+          <span class="text-sm font-medium text-ink">Nombre</span>
+          <input
+            name="nombre"
+            type="text"
+            required
+            autocomplete="name"
+            placeholder="Tu nombre"
+            class="field"
+          />
+        </label>
+        <label class="flex flex-col gap-1.5">
+          <span class="text-sm font-medium text-ink">Correo</span>
+          <input
+            name="correo"
+            type="email"
+            required
+            autocomplete="email"
+            placeholder="tucorreo@empresa.com"
+            class="field"
+          />
+        </label>
+      </div>
+
+      <label class="flex flex-col gap-1.5">
+        <span class="text-sm font-medium text-ink">Empresa</span>
+        <input name="empresa" type="text" autocomplete="organization" placeholder="Nombre de tu empresa" class="field" />
+      </label>
+
+      <label class="flex flex-col gap-1.5">
+        <span class="text-sm font-medium text-ink">Tipo de proyecto</span>
+        <select name="proyecto" class="field" required>
+          <option value="" disabled selected>Elige una opción…</option>
+          {contact.projectTypes.map((t) => <option value={t}>{t}</option>)}
+        </select>
+      </label>
+
+      <label class="flex flex-col gap-1.5">
+        <span class="text-sm font-medium text-ink">Cuéntanos más <span class="text-muted">(opcional)</span></span>
+        <textarea name="mensaje" rows="3" placeholder="Una frase sobre tu idea o reto" class="field resize-none"></textarea>
+      </label>
+
+      <button
+        type="submit"
+        class="press mt-1 inline-flex items-center justify-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-strong"
+      >
+        {m.cta}
+        <Icon name="arrow" class="size-4" />
+      </button>
+      <p class="text-center text-xs text-muted">
+        O escríbenos a <a href={`mailto:${brand.email}`} class="text-brand hover:underline">{brand.email}</a>
+      </p>
+    </form>
+
+    <!-- success -->
+    <div id="contact-success" class="hidden flex-col items-center gap-3 px-6 py-12 text-center">
+      <span class="grid size-14 place-items-center rounded-full bg-brand-soft text-brand">
+        <Icon name="check" class="size-7" />
+      </span>
+      <p class="max-w-xs text-pretty text-ink">{m.success}</p>
+      <button
+        type="button"
+        data-close-contact
+        class="press mt-2 rounded-full border border-border px-5 py-2 text-sm font-medium text-ink-soft hover:bg-surface-2"
+      >
+        Cerrar
+      </button>
+    </div>
+  </div>
+</dialog>
+
+<style>
+  .contact-dialog {
+    margin: auto;
+    width: min(92vw, 34rem);
+    max-height: 90vh;
+    padding: 0;
+    border: none;
+    background: transparent;
+    overflow: visible;
+  }
+  .contact-dialog::backdrop {
+    background: oklch(0.16 0.02 265 / 0.55);
+    backdrop-filter: blur(4px);
+  }
+  /* enter animation */
+  .contact-dialog[open] {
+    animation: contact-in 0.32s var(--ease-snappy);
+  }
+  .contact-dialog[open]::backdrop {
+    animation: contact-fade 0.32s ease;
+  }
+  @keyframes contact-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px) scale(0.97);
+    }
+  }
+  @keyframes contact-fade {
+    from {
+      opacity: 0;
+    }
+  }
+
+  .field {
+    width: 100%;
+    border-radius: 0.75rem;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    padding: 0.625rem 0.875rem;
+    font-size: 0.95rem;
+    color: var(--color-ink);
+    transition:
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+  .field::placeholder {
+    color: var(--color-muted);
+  }
+  .field:focus {
+    outline: none;
+    border-color: var(--color-brand);
+    box-shadow: 0 0 0 3px var(--color-brand-ring);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .contact-dialog[open],
+    .contact-dialog[open]::backdrop {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  import { contact } from '@/data/site';
+
+  const modal = document.getElementById('contact-modal') as HTMLDialogElement | null;
+  const form = document.getElementById('contact-form') as HTMLFormElement | null;
+  const success = document.getElementById('contact-success');
+
+  const open = (projectType?: string) => {
+    if (!modal) return;
+    // reset to form view
+    form?.classList.remove('hidden');
+    success?.classList.add('hidden');
+    success?.classList.remove('flex');
+    form?.reset();
+    if (projectType && form) {
+      const sel = form.querySelector<HTMLSelectElement>('select[name="proyecto"]');
+      if (sel && [...sel.options].some((o) => o.value === projectType)) sel.value = projectType;
+    }
+    if (typeof modal.showModal === 'function') modal.showModal();
+    else modal.setAttribute('open', '');
+  };
+
+  const close = () => modal?.close?.();
+
+  // Open from any CTA. data-project optionally prefills the select.
+  document.querySelectorAll('[data-open-contact]').forEach((el) => {
+    el.addEventListener('click', (e) => {
+      e.preventDefault();
+      open((el as HTMLElement).dataset.project || undefined);
+    });
+  });
+
+  // Close on the close buttons and on backdrop click
+  modal?.querySelectorAll('[data-close-contact]').forEach((b) => b.addEventListener('click', close));
+  modal?.addEventListener('click', (e) => {
+    if (e.target === modal) close(); // clicked the backdrop area
+  });
+
+  // Submit → POST to endpoint if set, else mailto. Then show success.
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const data = new FormData(form);
+    const showSuccess = () => {
+      form.classList.add('hidden');
+      success?.classList.remove('hidden');
+      success?.classList.add('flex');
+    };
+
+    if (contact.formEndpoint) {
+      fetch(contact.formEndpoint, {
+        method: 'POST',
+        headers: { Accept: 'application/json' },
+        body: data,
+      })
+        .then(showSuccess)
+        .catch(showSuccess);
+    } else {
+      const subject = `Nuevo proyecto: ${data.get('proyecto') || ''}`;
+      const body = [
+        `Nombre: ${data.get('nombre') || ''}`,
+        `Correo: ${data.get('correo') || ''}`,
+        `Empresa: ${data.get('empresa') || ''}`,
+        `Tipo de proyecto: ${data.get('proyecto') || ''}`,
+        '',
+        `${data.get('mensaje') || ''}`,
+      ].join('\n');
+      const mail = `mailto:hola@solvyxdigital.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      window.location.href = mail;
+      showSuccess();
+    }
+  });
+</script>

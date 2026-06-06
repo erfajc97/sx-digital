@@ -3,6 +3,11 @@ import { brand, nav } from '@/data/site';
 import Button from './ui/Button.astro';
 ---
 
+<!-- Scroll progress (CSS scroll() timeline, off main thread; hidden where unsupported) -->
+<div class="scroll-progress" aria-hidden="true">
+  <span class="scroll-progress__fill"></span>
+</div>
+
 <header
   id="site-header"
   class="fixed inset-x-0 top-0 z-50 transition-all duration-300 ease-[var(--ease-snappy)]"
@@ -12,7 +17,7 @@ import Button from './ui/Button.astro';
     class="mx-auto flex max-w-[1240px] items-center justify-between gap-6 px-4 py-3 sm:px-6"
   >
     <a href="#top" class="press flex items-center gap-2.5" aria-label={`${brand.name} — inicio`}>
-      <img src={brand.logo} alt={brand.name} class="h-7 w-auto sm:h-8" width="120" height="32" />
+      <img src={brand.logo} alt={brand.name} class="nav-logo h-7 w-auto shrink-0 sm:h-8" width="441" height="137" />
     </a>
 
     <ul class="hidden items-center gap-1 lg:flex">
@@ -21,7 +26,7 @@ import Button from './ui/Button.astro';
           <li>
             <a
               href={link.href}
-              class="rounded-full px-3.5 py-2 text-sm text-ink-soft transition-colors duration-200 hover:bg-surface-2 hover:text-ink"
+              class="nav-link rounded-full px-3.5 py-2 text-sm text-ink-soft transition-colors duration-200 hover:bg-surface-2 hover:text-ink"
             >
               {link.label}
             </a>
@@ -31,7 +36,7 @@ import Button from './ui/Button.astro';
     </ul>
 
     <div class="hidden items-center gap-2 lg:flex">
-      <Button href={brand.bookingUrl} external size="md" icon="arrow">Agendar llamada</Button>
+      <Button href="#agenda" openContact size="md" icon="arrow">Agendar llamada</Button>
     </div>
 
     <button
@@ -71,7 +76,7 @@ import Button from './ui/Button.astro';
         ))
       }
       <li class="pt-2">
-        <Button href={brand.bookingUrl} external size="lg" icon="arrow" class="w-full">
+        <Button href="#agenda" openContact size="lg" icon="arrow" class="w-full">
           Agendar llamada
         </Button>
       </li>
@@ -85,14 +90,22 @@ import Button from './ui/Button.astro';
   const menu = document.getElementById('mobile-menu');
   const lines = document.querySelectorAll<HTMLElement>('.menu-line');
 
-  // Scroll state — solidify the bar after a small scroll
-  const onScroll = () => {
+  // Scroll state — solidify the bar after a small scroll.
+  // rAF-latched so the listener never does layout work on every raw tick (INP).
+  let ticking = false;
+  const apply = () => {
+    ticking = false;
     if (!header) return;
     const scrolled = window.scrollY > 12;
     header.dataset.scrolled = String(scrolled);
     header.classList.toggle('is-scrolled', scrolled);
   };
-  onScroll();
+  const onScroll = () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(apply);
+  };
+  apply();
   window.addEventListener('scroll', onScroll, { passive: true });
 
   // Mobile menu open/close
@@ -123,5 +136,25 @@ import Button from './ui/Button.astro';
     background-color: oklch(0.99 0.004 264 / 0.8);
     backdrop-filter: saturate(1.4) blur(12px);
     border-bottom: 1px solid var(--color-border);
+  }
+
+  /* At the top, the nav sits over the dark hero → switch to a light treatment.
+     When scrolled (.is-scrolled, over white) it reverts to the dark default. */
+  #site-header:not(.is-scrolled) .nav-logo {
+    filter: brightness(0) invert(1);
+  }
+  #site-header:not(.is-scrolled) .nav-link {
+    color: oklch(0.97 0.005 264 / 0.82);
+  }
+  #site-header:not(.is-scrolled) .nav-link:hover {
+    color: #fff;
+    background-color: oklch(1 0 0 / 0.1);
+  }
+  #site-header:not(.is-scrolled) #menu-toggle {
+    border-color: oklch(1 0 0 / 0.25);
+    background-color: oklch(1 0 0 / 0.08);
+  }
+  #site-header:not(.is-scrolled) .menu-line {
+    background-color: #fff;
   }
 </style>

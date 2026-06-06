@@ -1,0 +1,63 @@
+---
+import { contact, brand } from '@/data/site';
+import Icon from '../ui/Icon.astro';
+
+const a = contact.agenda;
+---
+
+<section id="agenda" class="scroll-mt-24 px-4 pb-[var(--spacing-section)] pt-4 sm:px-6">
+  <div class="mx-auto max-w-[1240px]">
+    <div
+      data-reveal="scale"
+      class="relative overflow-hidden rounded-[var(--radius-xl2)] bg-brand px-6 py-12 sm:px-12 sm:py-14"
+    >
+      <!-- decorative arcs (low-contrast, no glow) -->
+      <div
+        class="pointer-events-none absolute -right-24 -top-28 size-[26rem] rounded-full border border-white/10"
+      >
+      </div>
+      <div
+        class="pointer-events-none absolute -bottom-32 -left-20 size-[24rem] rounded-full border border-white/10"
+      >
+      </div>
+
+      <div class="relative grid gap-8 lg:grid-cols-[1.35fr_1fr] lg:items-center lg:gap-12">
+        <div class="flex flex-col gap-5">
+          <span class="inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.18em] text-white/80">
+            <span class="h-px w-6 bg-white/60"></span>
+            {a.eyebrow}
+          </span>
+          <h2 class="text-[clamp(1.9rem,4vw,3rem)] leading-[1.06] text-white">{a.title}</h2>
+          <p class="text-lg leading-relaxed text-white/85" style="max-width: 48ch;">{a.text}</p>
+          <ul class="flex flex-wrap gap-x-6 gap-y-2.5 pt-1">
+            {
+              a.bullets.map((b) => (
+                <li class="inline-flex items-center gap-2 text-sm text-white/90">
+                  <Icon name="check" class="size-4 text-white" />
+                  {b}
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+
+        <div class="flex flex-col items-start gap-3 lg:items-end">
+          <button
+            type="button"
+            data-open-contact
+            class="press inline-flex items-center gap-2 rounded-full bg-white px-7 py-3.5 text-base font-semibold text-brand transition-colors hover:bg-white/90"
+          >
+            {a.cta}
+            <Icon name="arrow" class="size-4" />
+          </button>
+          <a
+            href={`mailto:${brand.email}`}
+            class="text-sm text-white/80 underline-offset-2 hover:text-white hover:underline"
+          >
+            {brand.email}
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

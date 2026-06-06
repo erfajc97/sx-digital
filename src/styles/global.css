@@ -40,8 +40,8 @@
   --ease-smooth: cubic-bezier(0.77, 0, 0.175, 1);
   --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
 
-  /* Spacing rhythm (4pt scale, semantic) */
-  --spacing-section: clamp(5rem, 10vw, 9rem);
+  /* Spacing rhythm (4pt scale, semantic) — tightened to reduce dead space */
+  --spacing-section: clamp(3.25rem, 6vw, 5.5rem);
 
   /* Radii */
   --radius-card: 1.25rem;
@@ -64,7 +64,9 @@
   body {
     background-color: var(--color-canvas);
     color: var(--color-ink);
-    overflow-x: hidden;
+    /* `clip` (not `hidden`) prevents horizontal overflow WITHOUT creating a
+       scroll container, so position:sticky (Work fan) keeps working. */
+    overflow-x: clip;
     font-family: var(--font-sans);
     font-feature-settings: 'ss01', 'cv01';
     -webkit-font-smoothing: antialiased;
@@ -106,18 +108,121 @@
     transform: translateY(18px);
     transition:
       opacity 0.7s var(--ease-snappy),
-      transform 0.7s var(--ease-snappy);
+      transform 0.7s var(--ease-snappy),
+      filter 0.7s var(--ease-snappy);
     transition-delay: var(--reveal-delay, 0ms);
+  }
+
+  /* Request a compositor layer only WHILE pending; release after reveal
+     so we don't keep ~40 permanent layers alive (perf). */
+  [data-reveal]:not(.is-visible) {
     will-change: transform, opacity;
   }
 
   [data-reveal].is-visible {
     opacity: 1;
     transform: none;
+    filter: none;
   }
 
+  /* Directional + blur reveal vocabulary (same IO toggles .is-visible) */
   [data-reveal='scale'] {
     transform: translateY(18px) scale(0.97);
+  }
+  [data-reveal='left'] {
+    transform: translateX(-24px);
+  }
+  [data-reveal='right'] {
+    transform: translateX(24px);
+  }
+  [data-reveal='blur'] {
+    transform: translateY(14px);
+    filter: blur(8px);
+  }
+  [data-reveal='blur']:not(.is-visible) {
+    will-change: transform, opacity, filter;
+  }
+
+  /* Headline mask-rise: the mask is the (un-transformed) IO trigger so it
+     can't clip itself out of intersection; the inner .h1-rise wipes up. */
+  .headline-mask {
+    overflow: hidden;
+  }
+  [data-reveal='mask'] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+    will-change: auto;
+  }
+  .h1-rise {
+    transform: translateY(105%);
+    transition: transform 0.75s var(--ease-snappy);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+  [data-reveal='mask'].is-visible .h1-rise {
+    transform: none;
+  }
+
+  /* SVG line-draw (sparkline / underline) fired by an ancestor reveal */
+  .draw-line {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+  }
+  [data-reveal].is-visible .draw-line {
+    animation: draw-line 1.1s var(--ease-smooth) 0.15s forwards;
+  }
+  @keyframes draw-line {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  /* Pointer 3D tilt (attached by JS only on hover+fine; idle cost zero) */
+  .tilt {
+    transform: perspective(1000px) rotateX(var(--ty, 0deg)) rotateY(var(--tx, 0deg));
+    transition: transform 0.4s var(--ease-snappy);
+  }
+
+  /* Scroll progress bar — off-thread CSS scroll() timeline, supported only */
+  .scroll-progress {
+    position: fixed;
+    inset: 0 0 auto 0;
+    top: 0;
+    height: 2px;
+    z-index: 60;
+    pointer-events: none;
+  }
+  .scroll-progress__fill {
+    display: block;
+    height: 100%;
+    background: var(--color-brand);
+    transform-origin: left center;
+    transform: scaleX(0);
+  }
+  @supports (animation-timeline: scroll()) {
+    .scroll-progress__fill {
+      animation: scroll-progress linear both;
+      animation-timeline: scroll(root);
+    }
+    @keyframes scroll-progress {
+      to {
+        transform: scaleX(1);
+      }
+    }
+  }
+  @supports not (animation-timeline: scroll()) {
+    .scroll-progress {
+      display: none;
+    }
+  }
+
+  /* Typewriter cursor */
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+  .animate-blink {
+    animation: blink 1s step-end infinite;
   }
 
   /* Kinetic marquee */
@@ -194,15 +299,43 @@ details[open] .faq-plus {
   html {
     scroll-behavior: auto;
   }
-  [data-reveal] {
+  [data-reveal],
+  [data-reveal='scale'],
+  [data-reveal='left'],
+  [data-reveal='right'],
+  [data-reveal='blur'] {
     transition: opacity 0.4s ease;
     transform: none;
+    filter: none;
   }
-  [data-reveal='scale'] {
+  .h1-rise {
     transform: none;
+    transition: none;
+  }
+  /* match the active selector's specificity so the draw never executes */
+  .draw-line,
+  [data-reveal].is-visible .draw-line {
+    animation: none;
+    stroke-dasharray: none;
+    stroke-dashoffset: 0;
+  }
+  .tilt {
+    transform: none;
+    transition: none;
+  }
+  .scroll-progress {
+    display: none;
+  }
+  /* neutralize remaining transitions/loops */
+  .press,
+  .disclosure,
+  #site-header,
+  #mobile-menu {
+    transition: none;
   }
   .marquee-track,
-  .animate-float {
+  .animate-float,
+  .animate-blink {
     animation: none;
   }
 }

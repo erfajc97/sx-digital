@@ -1,157 +1,280 @@
 ---
-import { hero, brand } from '@/data/site';
-import Button from '../ui/Button.astro';
+import { hero, heroMedia } from '@/data/site';
+import type { IconName } from '@/data/site';
 import Icon from '../ui/Icon.astro';
+
+const sp = hero.servicePrompt;
+const pillIcons: Record<string, IconName> = {
+  'Automatización IA': 'ai',
+  'Marketing & Ads': 'megaphone',
+  'Web / App': 'web',
+  Fintech: 'wallet',
+  Otro: 'spark',
+};
 ---
 
-<section class="relative overflow-hidden pt-28 sm:pt-32 lg:pt-40">
-  <!-- Grid backdrop -->
-  <div class="pointer-events-none absolute inset-0 -z-10 bg-grid opacity-70"></div>
-  <!-- Soft brand wash, top-right, low chroma (no neon glow) -->
+<section id="hero" class="relative min-h-[100svh] overflow-hidden bg-night lg:min-h-[100dvh]">
+  <!-- Background video — full-bleed; autoplay + loop -->
+  <div class="pointer-events-none absolute inset-0 z-0 overflow-hidden">
+    <video
+      id="hero-video"
+      class="size-full object-cover object-center md:object-right"
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="auto"
+      poster={heroMedia.poster}
+      data-poster-mobile={heroMedia.posterMobile}
+      data-src-mobile={heroMedia.videoMobile}
+      width="1600"
+      height="896"
+      aria-hidden="true"
+    >
+      {/* Desktop / web (16:9). On small screens the JS swaps to the vertical clip
+          (the <source media> attribute is ignored inside <video>, so we do it in JS). */}
+      {heroMedia.videoWebm && <source src={heroMedia.videoWebm} type="video/webm" />}
+      <source src={heroMedia.video} type="video/mp4" />
+    </video>
+  </div>
+
+  <!-- Dark scrim for text contrast (darker where the text is) -->
+  <div class="hero-scrim pointer-events-none absolute inset-0 z-[1]"></div>
+  <!-- Top band so the navbar always reads over the video -->
   <div
-    class="pointer-events-none absolute -right-32 -top-24 -z-10 size-[34rem] rounded-full opacity-50 blur-3xl"
-    style="background: radial-gradient(circle, var(--color-brand-soft), transparent 70%);"
+    class="pointer-events-none absolute inset-x-0 top-0 z-[2] h-28 sm:h-32"
+    style="background: linear-gradient(to bottom, oklch(0.13 0.02 265 / 0.7), transparent);"
   >
   </div>
 
-  <div class="mx-auto grid max-w-[1240px] items-center gap-14 px-4 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:gap-10">
-    <!-- Copy -->
-    <div class="flex flex-col items-start gap-7">
-      <span
-        data-reveal
-        class="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3.5 py-1.5 text-xs font-medium text-ink-soft"
-      >
-        <span class="relative flex size-2">
-          <span class="absolute inline-flex size-2 animate-ping rounded-full bg-brand opacity-60"></span>
-          <span class="relative inline-flex size-2 rounded-full bg-brand"></span>
-        </span>
-        {hero.eyebrow}
-      </span>
-
+  <!-- Content -->
+  <div
+    class="relative z-10 mx-auto flex min-h-[100svh] w-full max-w-7xl flex-col justify-center px-6 pb-16 pt-28 sm:px-8 lg:min-h-[100dvh] lg:py-0"
+  >
+    <div class="max-w-xl lg:max-w-2xl">
+      <!-- Headline: static h1 (SEO + reduced-motion + no-JS), swapped to the
+           particle canvas when motion is allowed. -->
       <h1
+        id="hero-fallback"
         data-reveal
-        style="--reveal-delay: 60ms; font-size: clamp(2.1rem, 7vw, 4.6rem); line-height: 1.04;"
-        class="font-display font-semibold tracking-[-0.03em] text-ink"
+        class="mb-6 max-w-[16ch] font-display text-[clamp(2.4rem,6vw,4.5rem)] font-semibold leading-[1.04] tracking-[-0.03em] text-on-night"
       >
-        {hero.titleLead}{' '}
-        <span class="relative inline text-brand">
-          {hero.titleAccent}
-          <svg
-            class="absolute -bottom-1.5 left-0 w-full text-brand/35"
-            viewBox="0 0 300 12"
-            fill="none"
-            preserveAspectRatio="none"
-            aria-hidden="true"
-          >
-            <path
-              d="M2 9C60 3 130 2 298 6"
-              stroke="currentColor"
-              stroke-width="4"
-              stroke-linecap="round"
-            ></path>
-          </svg>
-        </span>{' '}
-        {hero.titleTail}
+        {hero.fallbackHeadline}
       </h1>
+      <canvas
+        id="hero-particles"
+        class="mb-4 hidden h-auto w-full max-w-[40rem]"
+        data-words={JSON.stringify(hero.particleWords)}
+        aria-hidden="true"></canvas>
 
-      <p data-reveal style="--reveal-delay: 120ms; max-width: 56ch;" class="text-lg leading-relaxed text-muted">
-        {hero.subtitle}
+      <!-- secondary -->
+      <p
+        data-reveal
+        style="--reveal-delay: 120ms; max-width: 46ch;"
+        class="mb-8 text-lg leading-relaxed text-on-night-muted"
+      >
+        {hero.lead}
       </p>
 
-      <div data-reveal style="--reveal-delay: 180ms;" class="flex flex-wrap items-center gap-3">
-        <Button href={hero.primaryCta.href} external size="lg" icon="arrow">
-          {hero.primaryCta.label}
-        </Button>
-        <Button href={hero.secondaryCta.href} variant="ghost" size="lg">
-          {hero.secondaryCta.label}
-        </Button>
-      </div>
-
-      <!-- Trust strip -->
-      <dl data-reveal style="--reveal-delay: 240ms;" class="mt-3 flex flex-wrap gap-x-9 gap-y-4">
-        {
-          hero.trust.map((t) => (
-            <div class="flex flex-col">
-              <dt class="font-display text-2xl font-semibold text-ink">{t.value}</dt>
-              <dd class="text-sm text-muted">{t.label}</dd>
-            </div>
-          ))
-        }
-      </dl>
-    </div>
-
-    <!-- Product mock (built in CSS, no asset required) -->
-    <div data-reveal="scale" style="--reveal-delay: 160ms;" class="relative">
+      <!-- interactive service prompt — premium dark glass panel -->
       <div
-        class="relative rounded-[var(--radius-xl2)] border border-border-strong bg-canvas p-3 shadow-[var(--shadow-lift)]"
-      >
-        <!-- window chrome -->
-        <div class="flex items-center gap-1.5 px-2 pb-3 pt-1">
-          <span class="size-2.5 rounded-full bg-border-strong"></span>
-          <span class="size-2.5 rounded-full bg-border-strong"></span>
-          <span class="size-2.5 rounded-full bg-border-strong"></span>
-          <span class="ml-3 text-xs text-muted">app.solvyx.com</span>
-        </div>
-
-        <div class="overflow-hidden rounded-2xl bg-night p-5">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2.5">
-              <span class="grid size-9 place-items-center rounded-xl bg-brand font-display text-sm font-bold text-white">
-                {brand.monogram}
-              </span>
-              <div>
-                <p class="text-sm font-medium text-on-night">Panel de control</p>
-                <p class="text-[11px] text-on-night-muted">Tiempo real</p>
-              </div>
-            </div>
-            <span class="inline-flex items-center gap-1.5 rounded-full bg-night-2 px-2.5 py-1 text-[11px] text-on-night-muted">
-              <span class="size-1.5 rounded-full bg-brand"></span> En vivo
-            </span>
-          </div>
-
-          <!-- mock chart -->
-          <div class="mt-6 flex h-32 items-end gap-2">
-            {
-              [42, 58, 35, 71, 49, 84, 63, 92, 76].map((h, i) => (
-                <span
-                  class="flex-1 rounded-t-md"
-                  style={`height:${h}%; background: ${i === 7 ? 'var(--color-brand)' : 'var(--color-night-2)'};`}
-                />
-              ))
-            }
-          </div>
-
-          <!-- mock rows -->
-          <div class="mt-5 space-y-2.5">
-            {
-              [
-                { l: 'Automatización IA', v: '+213%' },
-                { l: 'Tiempo de cierre', v: '−71%' },
-              ].map((r) => (
-                <div class="flex items-center justify-between rounded-xl bg-night-2/60 px-3.5 py-2.5">
-                  <span class="text-xs text-on-night-muted">{r.l}</span>
-                  <span class="font-display text-sm font-semibold text-on-night">{r.v}</span>
-                </div>
-              ))
-            }
-          </div>
-        </div>
-      </div>
-
-      <!-- floating chip -->
-      <div
-        class="animate-float absolute -left-5 bottom-10 hidden rounded-2xl border border-border bg-canvas px-4 py-3 shadow-[var(--shadow-lift)] sm:flex"
+        data-reveal
+        style="--reveal-delay: 180ms;"
+        class="svc-card max-w-xl rounded-[var(--radius-xl2)] border border-white/12 bg-night/45 p-5 backdrop-blur-xl sm:p-6"
       >
         <div class="flex items-center gap-3">
-          <span class="grid size-9 place-items-center rounded-xl bg-brand-soft text-brand">
+          <span class="grid size-10 shrink-0 place-items-center rounded-xl bg-brand/15 text-brand ring-1 ring-brand/25">
             <Icon name="spark" class="size-5" />
           </span>
           <div>
-            <p class="font-display text-sm font-semibold text-ink">8.4× ROI</p>
-            <p class="text-[11px] text-muted">promedio reportado</p>
+            <h2 class="font-display text-lg font-semibold tracking-tight text-on-night">{sp.title}</h2>
+            <p class="text-sm text-on-night-muted">{sp.subtitle}</p>
           </div>
         </div>
+
+        <div class="mt-5 flex flex-wrap gap-2.5">
+          {
+            sp.options.map((opt) => (
+              <button
+                type="button"
+                class="svc-pill press inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3.5 py-2 text-sm font-medium text-on-night transition-colors duration-200 ease-[var(--ease-snappy)] hover:bg-white/12"
+                data-service={opt}
+                aria-pressed="false"
+              >
+                <Icon name={pillIcons[opt] ?? 'spark'} class="pill-ico size-4 shrink-0 text-brand" />
+                {opt}
+              </button>
+            ))
+          }
+        </div>
+
+        <p id="svc-placeholder" class="mt-4 text-xs italic text-on-night-muted/70">{sp.placeholder}</p>
+
+        <div id="svc-banner" class="svc-banner mt-2">
+          <div>
+            <div
+              class="flex flex-col gap-3 rounded-2xl border border-white/12 bg-white/8 px-4 py-3.5 sm:flex-row sm:items-center sm:justify-between"
+            >
+              <p class="text-sm text-on-night-muted">
+                {sp.bannerLead} <span id="svc-list" class="font-medium text-on-night"></span>
+              </p>
+              <a
+                href={sp.ctaHref}
+                data-open-contact
+                class="press inline-flex shrink-0 items-center gap-1.5 rounded-full bg-brand px-4 py-2 text-xs font-semibold uppercase tracking-wider text-white transition-colors hover:bg-brand-strong"
+              >
+                {sp.cta}
+                <Icon name="arrow" class="size-4" />
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- secondary link (light chip on dark) -->
+      <div data-reveal style="--reveal-delay: 240ms;" class="mt-6">
+        <a
+          href={hero.secondaryCta.href}
+          class="group inline-flex w-fit items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-medium text-on-night backdrop-blur-sm transition-colors hover:border-white/30 hover:text-white"
+        >
+          {hero.secondaryCta.label}
+          <Icon
+            name="arrow"
+            class="size-4 transition-transform duration-200 ease-[var(--ease-snappy)] group-hover:translate-x-0.5"
+          />
+        </a>
       </div>
     </div>
   </div>
 </section>
+
+<style>
+  /* Dark scrim — vertical on mobile (text top + pills bottom), horizontal on
+     desktop (dark left where the text sits, video visible on the right). */
+  .hero-scrim {
+    background: linear-gradient(
+      to bottom,
+      oklch(0.16 0.02 265 / 0.72) 0%,
+      oklch(0.16 0.02 265 / 0.38) 30%,
+      oklch(0.16 0.02 265 / 0.12) 62%,
+      oklch(0.16 0.02 265 / 0.3) 100%
+    );
+  }
+  @media (min-width: 1024px) {
+    .hero-scrim {
+      background: linear-gradient(
+        to right,
+        oklch(0.17 0.02 265 / 0.92) 0%,
+        oklch(0.17 0.02 265 / 0.55) 45%,
+        oklch(0.17 0.02 265 / 0.12) 78%,
+        transparent 100%
+      );
+    }
+  }
+
+  /* Glass card — subtle refraction edge */
+  .svc-card {
+    box-shadow:
+      0 24px 60px -18px oklch(0.1 0.02 265 / 0.7),
+      inset 0 1px 0 oklch(1 0 0 / 0.08);
+  }
+
+  /* Pills — active turns cobalt, icon goes white */
+  .svc-pill {
+    transition:
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      color 0.2s ease;
+  }
+  .svc-pill[aria-pressed='true'] {
+    background-color: var(--color-brand);
+    border-color: var(--color-brand);
+    color: #fff;
+    box-shadow: var(--shadow-soft);
+  }
+  .svc-pill[aria-pressed='true'] .pill-ico {
+    color: #fff;
+  }
+
+  /* Status banner springs its height open */
+  .svc-banner {
+    display: grid;
+    grid-template-rows: 0fr;
+    opacity: 0;
+    transition:
+      grid-template-rows 0.4s var(--ease-snappy),
+      opacity 0.3s ease;
+  }
+  .svc-banner > div {
+    overflow: hidden;
+  }
+  .svc-banner.is-active {
+    grid-template-rows: 1fr;
+    opacity: 1;
+  }
+  #svc-placeholder.is-hidden {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .svc-pill,
+    .svc-banner {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  import '@/scripts/particle-text';
+
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Hero background video: autoplay/loop, poster on reduced-motion
+  const video = document.getElementById('hero-video') as HTMLVideoElement | null;
+  if (video) {
+    // On small screens, swap to the vertical (9:16) clip + poster.
+    if (window.matchMedia('(max-width: 767px)').matches && video.dataset.srcMobile) {
+      if (video.dataset.posterMobile) video.poster = video.dataset.posterMobile;
+      video.innerHTML = '';
+      const s = document.createElement('source');
+      s.src = video.dataset.srcMobile;
+      s.type = 'video/mp4';
+      video.appendChild(s);
+      video.load();
+    }
+    if (reduce) {
+      video.removeAttribute('autoplay');
+      video.pause();
+    } else {
+      video.muted = true;
+      video.play().catch(() => {
+        /* poster fallback */
+      });
+    }
+  }
+
+  // Interactive service pills (multi-select)
+  const pills = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-service]'));
+  const banner = document.getElementById('svc-banner');
+  const placeholder = document.getElementById('svc-placeholder');
+  const list = document.getElementById('svc-list');
+  const selected = new Set<string>();
+
+  const sync = () => {
+    if (list) list.textContent = Array.from(selected).join(', ');
+    const active = selected.size > 0;
+    banner?.classList.toggle('is-active', active);
+    placeholder?.classList.toggle('is-hidden', active);
+  };
+
+  pills.forEach((p) => {
+    p.addEventListener('click', () => {
+      const v = p.getAttribute('data-service') || '';
+      const on = p.getAttribute('aria-pressed') === 'true';
+      p.setAttribute('aria-pressed', String(!on));
+      if (on) selected.delete(v);
+      else selected.add(v);
+      sync();
+    });
+  });
+</script>

@@ -1,0 +1,30 @@
+# SolvyX
+
+> Estudio de IA, automatización e ingeniería de software. Hacemos crecer negocios con automatización y marketing potenciados por IA, creamos multimedia con IA para redes, y desarrollamos software a medida, apps móviles, wallets fintech y blockchain — entregando en días, no meses.
+
+SolvyX trabaja como un equipo dedicado (no una agencia con capas de cuentas). Sede en Barcelona, España, atención remota en todo el mundo. Contacto: hola@solvyxdigital.com.
+
+## Enfoque principal (IA)
+- Automatización de negocio con IA: agentes, copilotos y flujos 24/7 que responden, venden y operan; integrados con tus herramientas.
+- Marketing y ads con IA: conexión con Meta y Google Ads, generación de leads y nurturing automático para convertir leads en clientes.
+- Multimedia con IA: videos e imágenes para redes sociales con calidad profesional, en tiempo récord.
+
+## Desarrollo
+- Fintech & Blockchain: wallets tipo fintech, pagos y productos web3 con smart contracts auditados.
+- Apps móviles a medida: iOS y Android (React Native / Expo).
+- Software y plataformas web: webs que convierten, SaaS, dashboards, APIs y backends escalables (Next.js / Astro, cloud, DevOps).
+
+## Formas de trabajar (precios en USD)
+- Express IA: desde $1,200 USD, entrega en días (una automatización, agente o pieza de contenido con IA).
+- Crecimiento: a medida, el más elegido — marketing con IA + automatización + producto.
+- Escala: a medida, partner continuo con equipo dedicado, fintech/blockchain, SLA y soporte 24/7.
+
+## Datos clave
+- Automatizaciones y contenido con IA en días; producto a medida en ~2 semanas.
+- +213% más leads reportados para clientes; ROI promedio 8.4×.
+- El código, las cuentas y los datos son del cliente. Sin amarres.
+
+## Enlaces
+- Sitio: https://solvyxdigital.com
+- Planes: https://solvyxdigital.com/#planes
+- Contacto: mailto:hola@solvyxdigital.com

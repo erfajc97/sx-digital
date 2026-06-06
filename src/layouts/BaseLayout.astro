@@ -1,6 +1,6 @@
 ---
 import '@/styles/global.css';
-import { brand } from '@/data/site';
+import { brand, services } from '@/data/site';
 
 interface Props {
   title?: string;
@@ -12,7 +12,61 @@ const {
   description = brand.tagline,
 } = Astro.props;
 
+const origin = Astro.site ? Astro.site.origin : `https://${brand.domain}`;
 const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : Astro.url.pathname;
+const ogImage = `${origin}/logo.png`;
+
+// Structured data (JSON-LD) — Organization + WebSite + Service catalog.
+// FAQPage schema intentionally omitted (Google restricts rich results to
+// gov/health sites). Organization signals power AI Overviews / GEO citations.
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': `${origin}/#organization`,
+      name: brand.name,
+      url: origin,
+      logo: ogImage,
+      email: brand.email,
+      description:
+        'Estudio de IA, automatización e ingeniería de software. Automatización de negocio y marketing con IA (conexión de ads, generación de leads), creación de multimedia con IA (videos e imágenes para redes), desarrollo de software a medida, apps móviles, wallets fintech y blockchain.',
+      sameAs: brand.social.map((s) => s.href),
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Barcelona',
+        addressRegion: 'Cataluña',
+        addressCountry: 'ES',
+      },
+    },
+    {
+      '@type': 'WebSite',
+      '@id': `${origin}/#website`,
+      url: origin,
+      name: brand.name,
+      inLanguage: 'es',
+      publisher: { '@id': `${origin}/#organization` },
+    },
+    {
+      '@type': 'ProfessionalService',
+      '@id': `${origin}/#service`,
+      name: brand.name,
+      url: origin,
+      image: ogImage,
+      priceRange: '$$$',
+      areaServed: 'Worldwide',
+      provider: { '@id': `${origin}/#organization` },
+      hasOfferCatalog: {
+        '@type': 'OfferCatalog',
+        name: 'Servicios',
+        itemListElement: services.map((s) => ({
+          '@type': 'Offer',
+          itemOffered: { '@type': 'Service', name: s.title, description: s.description },
+        })),
+      },
+    },
+  ],
+};
 ---
 
 <!doctype html>
@@ -23,17 +77,27 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : As
     <link rel="icon" type="image/png" href={brand.favicon} />
     <link rel="canonical" href={canonical} />
     <meta name="generator" content={Astro.generator} />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
 
     <title>{title}</title>
     <meta name="description" content={description} />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={brand.name} />
+    <meta property="og:locale" content="es_ES" />
+    <meta property="og:url" content={canonical} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={brand.logo} />
+    <meta property="og:image" content={ogImage} />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
     <meta name="theme-color" content="#3b5bdb" />
+
+    <!-- Structured data -->
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
     <!-- Fonts: Clash Display (display) + Satoshi (body) via Fontshare -->
     <link rel="preconnect" href="https://api.fontshare.com" crossorigin />

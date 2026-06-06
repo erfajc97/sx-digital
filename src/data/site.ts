@@ -6,9 +6,12 @@
    • Text / links / numbers: edit the values below. Nothing else to touch.
    • Images: every image points to a placeholder on picsum.photos so the
      site works out of the box. To use your own art, drop files into
-     /public (e.g. /public/work/fintech.jpg) and replace the URL with the
-     absolute path "/work/fintech.jpg". The folders public/work and
+     /public (e.g. /public/work/wallet.jpg) and replace the URL with the
+     absolute path "/work/wallet.jpg". The folders public/work and
      public/clients already exist for this.
+   • Booking: `brand.bookingUrl` should be your REAL scheduler link
+     (Cal.com / Calendly / Google Appointments). The CTAs open it in a new
+     tab — that is the "real calendar", no custom UI to maintain.
    • Logo + favicon already live in /public (logo.png, favicon.png).
    ===================================================================== */
 
@@ -25,7 +28,12 @@ export type IconName =
   | 'plus'
   | 'mail'
   | 'pin'
-  | 'phone';
+  | 'phone'
+  | 'megaphone'
+  | 'video'
+  | 'wallet'
+  | 'blocks'
+  | 'chart';
 
 export interface NavLink {
   label: string;
@@ -94,16 +102,21 @@ export const brand = {
   monogram: 'SX',
   logo: '/logo.png',
   favicon: '/favicon.png',
-  tagline: 'We build the software other teams say is impossible.',
-  email: 'hola@solvyx.com',
-  phone: '+52 55 4148 7720',
-  location: 'CDMX · Remote worldwide',
+  tagline: 'Automatización con IA, marketing y software a medida — en días, no meses.',
+  domain: 'solvyxdigital.com',
+  email: 'hola@solvyxdigital.com',
+  phone: '+34 930 38 47 19',
+  location: 'Barcelona, España · Remote worldwide',
+  // TODO: reemplaza por tu link real de Cal.com / Calendly.
   bookingUrl: 'https://cal.com/solvyx/discovery',
+  // Solo el "handle/evento" de Cal.com (lo que va después de cal.com/).
+  // Esto alimenta el calendario embebido en la sección "Agenda".
+  calLink: 'solvyx/discovery',
   social: [
-    { label: 'LinkedIn', href: 'https://www.linkedin.com/company/solvyx' },
-    { label: 'GitHub', href: 'https://github.com/solvyx' },
-    { label: 'X', href: 'https://x.com/solvyx' },
-    { label: 'Dribbble', href: 'https://dribbble.com/solvyx' },
+    { label: 'LinkedIn', href: 'https://www.linkedin.com/company/solvyxdigital' },
+    { label: 'GitHub', href: 'https://github.com/solvyxdigital' },
+    { label: 'X', href: 'https://x.com/solvyxdigital' },
+    { label: 'Instagram', href: 'https://instagram.com/solvyxdigital' },
   ],
 };
 
@@ -115,58 +128,124 @@ export const nav: NavLink[] = [
   { label: 'Preguntas', href: '#faq' },
 ];
 
+/* Hero background video (optional). Leave `video` empty to keep the animated
+   CSS console mock. When you have a clip, drop it in /public/hero/ and set:
+     video: '/hero/loop.mp4', videoWebm: '/hero/loop.webm', poster: '/hero/poster.jpg'
+   It autoplays muted/looped only on desktop with motion allowed (poster is the
+   fallback on mobile, reduced-motion, and data-saver). */
+export const heroMedia = {
+  // Desktop / web (16:9)
+  video: '/hero/loop.mp4',
+  videoWebm: '/hero/loop.webm',
+  poster: '/hero/poster.jpg',
+  // Mobile (9:16). Deja vacío para reusar el de desktop en mobile.
+  videoMobile: '/hero/loop-mobile.mp4',
+  videoMobileWebm: '',
+  posterMobile: '/hero/poster-mobile.jpg',
+};
+
 export const hero = {
-  eyebrow: 'Estudio de producto + ingeniería con IA',
-  titleLead: 'Convertimos ideas difíciles en',
-  titleAccent: 'software que vende',
-  titleTail: 'por ti.',
-  subtitle:
-    'Diseñamos y construimos aplicaciones web, apps móviles, dashboards y automatizaciones con IA — de extremo a extremo. Tú traes el problema; nosotros entregamos el producto en producción.',
-  primaryCta: { label: 'Agenda una llamada', href: 'https://cal.com/solvyx/discovery' },
-  secondaryCta: { label: 'Ver lo que hacemos', href: '#trabajo' },
-  trust: [
-    { value: '6 sem.', label: 'al primer release' },
-    { value: '47', label: 'productos lanzados' },
-    { value: '99.95%', label: 'uptime promedio' },
+  eyebrow: 'Estudio de IA · Automatización · Software · Fintech',
+  // Titular: las palabras se animan con el efecto de partículas (ciclan).
+  // Cortas y en MAYÚSCULA para que se lean bien formadas por partículas.
+  particleWords: [
+    'AUTOMATIZACIÓN',
+    'MARKETING IA',
+    'CONTENIDO IA',
+    'DESARROLLO WEB',
+    'APPS MÓVILES',
+    'FINTECH',
   ],
+  // Titular estático (SEO + fallback sin JS / reduced-motion).
+  fallbackHeadline: 'IA, software y marketing que hacen crecer tu negocio.',
+  lead: 'Automatización, contenido, software, apps y fintech — potenciado con IA y entregado en días, no en meses.',
+  secondaryCta: { label: 'Ver lo que hacemos', href: '#trabajo' },
+  // Selector interactivo de servicios (pills multi-select).
+  servicePrompt: {
+    title: '¿Qué necesitas?',
+    subtitle: 'Selecciona todo lo que aplique',
+    options: ['Automatización IA', 'Marketing & Ads', 'Web / App', 'Fintech', 'Otro'],
+    placeholder: 'Toca para elegir uno o más servicios.',
+    bannerLead: 'Listo para hablar de:',
+    cta: 'Vamos',
+    ctaHref: '#agenda',
+  },
+};
+
+/* Contact: the Agenda section copy + the modal form opened by every CTA.
+   formEndpoint: deja vacío para usar mailto (abre el correo). Para capturar
+   leads de verdad, pon aquí un endpoint de Formspree (https://formspree.io)
+   o tu propia API y el formulario hará POST ahí. */
+export const contact = {
+  formEndpoint: '',
+  projectTypes: ['Automatización con IA', 'Marketing & Ads', 'Web / App', 'Fintech / Blockchain', 'Multimedia con IA', 'Otro'],
+  modal: {
+    title: 'Hablemos de tu proyecto',
+    subtitle: 'Cuéntanos qué necesitas y te respondemos el mismo día.',
+    cta: 'Enviar',
+    success: '¡Gracias! Recibimos tu mensaje y te contactamos hoy mismo.',
+  },
+  agenda: {
+    eyebrow: 'Agenda',
+    title: 'Reserva una llamada de 30 minutos',
+    text: 'Sin formularios eternos ni compromisos. Cuéntanos tu idea y salimos de la llamada con una ruta clara y un estimado honesto.',
+    bullets: ['Respuesta el mismo día', 'Ruta y estimado claros', 'Sin compromiso'],
+    cta: 'Agendar llamada',
+  },
 };
 
 /* Marquee of "trusted by" names — replace with real client wordmarks or
    logos in /public/clients when available. */
 export const clients: string[] = [
-  'Verdant Logistics',
+  'Verdant Growth',
+  'NovaPay',
   'Lumio Health',
   'Northbeam Capital',
-  'Cobalt Retail',
+  'Cobalt Chain',
+  'Pulsar Studio',
   'Aria Mobility',
-  'Ledgerframe',
-  'Pulsar Foods',
-  'Habitat Studio',
+  'Habitat Labs',
 ];
 
-/* Order here = display order. The bento tiles as: row1 web + ai (featured),
-   row2 the three medium cards, row3 the wide "soporte" card. */
+/* Order here = display order. The bento tiles as: row1 IA + marketing
+   (featured), row2 the three medium cards, row3 the wide software card. */
 export const services: Service[] = [
   {
-    id: 'web',
-    icon: 'web',
-    title: 'Plataformas y páginas web',
+    id: 'ai-automation',
+    icon: 'ai',
+    title: 'Automatización de negocio con IA',
     description:
-      'Desde una landing que convierte hasta SaaS multi-tenant. Rápidas, medibles y listas para escalar.',
-    bullets: ['Next.js / Astro', 'SEO técnico', 'Pagos e integraciones'],
+      'Agentes y flujos que responden, venden y operan por ti. Conectamos tus herramientas y eliminamos el trabajo manual repetitivo.',
+    bullets: ['Agentes y copilotos', 'Flujos 24/7', 'Integración con tus apps'],
   },
   {
-    id: 'ai',
-    icon: 'ai',
-    title: 'Automatización con IA',
+    id: 'growth',
+    icon: 'megaphone',
+    title: 'Marketing y ads con IA',
     description:
-      'Agentes, copilotos y flujos que eliminan trabajo repetitivo y responden por ti.',
-    bullets: ['Agentes y RAG', 'Integración con tus datos', 'Flujos sin código humano'],
+      'Conectamos Meta y Google Ads, generamos leads y los convertimos en clientes con campañas optimizadas por IA.',
+    bullets: ['Conexión de ads', 'Generación de leads', 'Nurturing automático'],
+  },
+  {
+    id: 'media',
+    icon: 'video',
+    title: 'Multimedia con IA',
+    description:
+      'Videos e imágenes para redes con calidad profesional y en tiempo récord. Tu marca produciendo sin parar.',
+    bullets: ['Video con IA', 'Imágenes para redes', 'Listo en días'],
+  },
+  {
+    id: 'fintech',
+    icon: 'wallet',
+    title: 'Fintech & Blockchain',
+    description:
+      'Wallets tipo fintech, pagos y productos web3. Seguros, escalables y listos para producción.',
+    bullets: ['Wallets fintech', 'Web3 / smart contracts', 'Pagos e integraciones'],
   },
   {
     id: 'mobile',
     icon: 'mobile',
-    title: 'Apps móviles',
+    title: 'Apps móviles a medida',
     description:
       'iOS y Android desde una sola base de código, con la fluidez de una app nativa.',
     bullets: ['React Native / Expo', 'Push y offline', 'Publicación en stores'],
@@ -174,73 +253,57 @@ export const services: Service[] = [
   {
     id: 'software',
     icon: 'code',
-    title: 'Software a medida',
+    title: 'Software y plataformas web',
     description:
-      'Sistemas internos, APIs y backends que aguantan carga real y crecen contigo.',
-    bullets: ['Arquitectura escalable', 'APIs y microservicios', 'Cloud + DevOps'],
-  },
-  {
-    id: 'dashboards',
-    icon: 'dashboard',
-    title: 'Dashboards y analítica',
-    description:
-      'Paneles que la gente sí usa: datos en vivo, decisiones rápidas, cero ruido.',
-    bullets: ['Datos en tiempo real', 'Reportes automáticos', 'Roles y permisos'],
-  },
-  {
-    id: 'care',
-    icon: 'gear',
-    title: 'Soporte y evolución',
-    description:
-      'No desaparecemos en el launch. Monitoreo, mejoras y nuevas features cada sprint.',
-    bullets: ['Soporte continuo', 'Monitoreo 24/7', 'Roadmap compartido'],
+      'Webs que convierten, SaaS, dashboards y backends a medida que aguantan carga real y crecen contigo.',
+    bullets: ['Next.js / Astro', 'APIs escalables', 'Cloud + DevOps'],
   },
 ];
 
 export const work: WorkItem[] = [
   {
-    slug: 'fintech-ledger',
-    title: 'Ledgerframe',
-    category: 'Fintech · Web app',
+    slug: 'novapay-wallet',
+    title: 'NovaPay Wallet',
+    category: 'Fintech · App móvil',
     blurb:
-      'Conciliación contable que antes tomaba días, ahora en minutos. Panel en tiempo real para 40+ equipos.',
-    image: 'https://picsum.photos/seed/solvyx-ledger/1200/900',
-    tags: ['Dashboard', 'Web', 'Automatización'],
-    href: 'https://example.com/casos/ledgerframe',
-    result: '−71% tiempo de cierre',
+      'Wallet tipo fintech con envíos instantáneos, KYC y on/off-ramp cripto. De cero a stores en semanas.',
+    image: '/work/novapay.jpg',
+    tags: ['Fintech', 'Wallet', 'iOS + Android'],
+    href: 'https://example.com/casos/novapay',
+    result: '120k usuarios',
   },
   {
-    slug: 'health-mobile',
-    title: 'Lumio Health',
-    category: 'Salud · App móvil',
+    slug: 'verdant-growth',
+    title: 'Verdant Growth',
+    category: 'Marketing IA · Automatización',
     blurb:
-      'App de seguimiento de pacientes con recordatorios inteligentes y triage asistido por IA.',
-    image: 'https://picsum.photos/seed/solvyx-lumio/1200/900',
-    tags: ['Móvil', 'IA', 'iOS + Android'],
-    href: 'https://example.com/casos/lumio',
-    result: '4.8★ en stores',
+      'Conectamos Meta y Google Ads a un motor de IA que califica y nutre leads solo. Más ventas, menos gasto.',
+    image: '/work/verdant.jpg',
+    tags: ['Ads', 'IA', 'Leads'],
+    href: 'https://example.com/casos/verdant-growth',
+    result: '+213% leads',
   },
   {
-    slug: 'logistics-ops',
-    title: 'Verdant Ops',
-    category: 'Logística · Plataforma',
+    slug: 'pulsar-studio',
+    title: 'Pulsar Studio',
+    category: 'Multimedia IA · Redes',
     blurb:
-      'Centro de control de flotas con rutas optimizadas por IA y alertas predictivas de mantenimiento.',
-    image: 'https://picsum.photos/seed/solvyx-verdant/1200/900',
-    tags: ['Software', 'IA', 'Dashboard'],
-    href: 'https://example.com/casos/verdant',
-    result: '+213% pedidos/día',
+      'Producción de videos e imágenes para redes con IA: 300+ piezas al mes con el mismo branding.',
+    image: '/work/pulsar.jpg',
+    tags: ['Video IA', 'Contenido', 'Redes'],
+    href: 'https://example.com/casos/pulsar',
+    result: '318 piezas/mes',
   },
   {
-    slug: 'retail-commerce',
-    title: 'Cobalt Retail',
-    category: 'Retail · E-commerce',
+    slug: 'cobalt-chain',
+    title: 'Cobalt Chain',
+    category: 'Blockchain · Web3',
     blurb:
-      'Tienda headless con recomendador propio y checkout en un paso. Black Friday sin caídas.',
-    image: 'https://picsum.photos/seed/solvyx-cobalt/1200/900',
-    tags: ['Web', 'Pagos', 'Escala'],
+      'Plataforma de pagos web3 con smart contracts auditados y un panel de control en tiempo real.',
+    image: '/work/cobalt.jpg',
+    tags: ['Web3', 'Smart contracts', 'Dashboard'],
     href: 'https://example.com/casos/cobalt',
-    result: '+38% conversión',
+    result: '−71% costos',
   },
 ];
 
@@ -249,158 +312,162 @@ export const process: ProcessStep[] = [
     step: '01',
     title: 'Descubrimos',
     description:
-      'Una sesión para entender el problema real, no solo la feature. Salimos con alcance, riesgos y un plan claro.',
+      'Una llamada para entender tu negocio y dónde la IA mueve la aguja. Salimos con un plan claro y un estimado honesto.',
   },
   {
     step: '02',
     title: 'Diseñamos',
     description:
-      'Prototipos navegables y arquitectura técnica antes de escribir la primera línea de producción.',
+      'Definimos el flujo, el diseño y la arquitectura antes de construir. Tú apruebas la dirección.',
   },
   {
     step: '03',
-    title: 'Construimos',
+    title: 'Construimos rápido',
     description:
-      'Sprints semanales con demos en vivo. Ves el avance real, no reportes de PowerPoint.',
+      'Automatizaciones y contenido en días; producto en un par de semanas. Con avances que ves en vivo.',
   },
   {
     step: '04',
-    title: 'Lanzamos y evolucionamos',
+    title: 'Lanzamos y escalamos',
     description:
-      'Deploy, monitoreo y mejoras continuas. El launch es el inicio, no la meta.',
+      'Deploy, medición y mejora continua. El launch es el inicio: seguimos optimizando resultados.',
   },
 ];
 
 export const stats: Stat[] = [
-  { value: '8.4×', label: 'ROI promedio reportado por clientes' },
-  { value: '6 sem.', label: 'del kickoff al primer producto en vivo' },
-  { value: '132', label: 'integraciones y automatizaciones en producción' },
-  { value: '0', label: 'proyectos abandonados a mitad de camino' },
+  { value: 'En días', label: 'lanzamos automatizaciones e IA' },
+  { value: '2 sem.', label: 'al primer producto en vivo' },
+  { value: '+213%', label: 'más leads para nuestros clientes' },
+  { value: '8.4×', label: 'ROI promedio reportado' },
 ];
 
 export const differentiators = [
   {
-    icon: 'spark' as IconName,
-    title: 'Un equipo, no una agencia',
+    icon: 'ai' as IconName,
+    title: 'IA de punta a punta',
     description:
-      'Hablas con quienes construyen. Sin capas de cuentas ni teléfono descompuesto.',
+      'Automatización, marketing, contenido y producto — todo potenciado con IA, no como adorno.',
   },
   {
-    icon: 'ai' as IconName,
-    title: 'IA donde de verdad suma',
+    icon: 'spark' as IconName,
+    title: 'Rápido de verdad',
     description:
-      'No metemos IA por moda. La usamos cuando elimina trabajo o crea ventaja medible.',
+      'Automatizaciones en días y producto en un par de semanas. Sin meses de espera ni excusas.',
   },
   {
     icon: 'check' as IconName,
-    title: 'Código que se mantiene',
+    title: 'Código y datos tuyos',
     description:
-      'Entregamos producto documentado y tuyo. Sin amarres ni cajas negras.',
+      'Entregamos todo documentado y a tu nombre. Sin amarres ni cajas negras.',
   },
 ];
 
 export const testimonials: Testimonial[] = [
   {
     quote:
-      'Llevábamos un año atorados con dos agencias. SolvyX lanzó el MVP en seis semanas y ya estamos facturando con él.',
+      'Sus automatizaciones de marketing nos triplicaron los leads en dos meses. Y el contenido con IA salió mejor que con nuestra agencia anterior.',
     name: 'Mariana Vélez',
     role: 'CEO · Northbeam Capital',
     avatar: 'https://picsum.photos/seed/solvyx-mariana/200/200',
   },
   {
     quote:
-      'El dashboard que armaron lo abre todo el equipo cada mañana. Eso nunca había pasado con una herramienta interna.',
+      'Conectaron nuestros ads con un motor de IA que califica leads solo. Cerramos más vendiendo menos.',
     name: 'Tomás Rensch',
-    role: 'COO · Verdant Logistics',
+    role: 'COO · Verdant Growth',
     avatar: 'https://picsum.photos/seed/solvyx-tomas/200/200',
   },
   {
     quote:
-      'La automatización con IA nos quitó 30 horas a la semana de trabajo manual. Se pagó sola en el primer mes.',
+      'Lanzaron nuestra wallet fintech en dos semanas. Rápido, seguro y sin dramas. Justo lo que necesitábamos.',
     name: 'Priya Naidoo',
-    role: 'Head of Ops · Pulsar Foods',
+    role: 'Head of Product · NovaPay',
     avatar: 'https://picsum.photos/seed/solvyx-priya/200/200',
   },
 ];
 
 export const packages: Package[] = [
   {
-    name: 'Sprint',
-    price: 'desde $4.9k',
-    cadence: 'proyecto puntual',
-    description: 'Una pieza bien definida: landing, automatización o feature crítica.',
-    features: ['Alcance fijo en 2–4 semanas', 'Diseño + desarrollo', 'Deploy incluido'],
-    cta: 'Empezar un sprint',
+    name: 'Express IA',
+    price: 'desde $1,200 USD',
+    cadence: 'en días',
+    description: 'Una automatización, agente o pieza de contenido con IA, lista en días.',
+    features: ['Entrega en días', 'Automatización o contenido con IA', 'Conexión con tus herramientas'],
+    cta: 'Empezar ya',
     featured: false,
   },
   {
-    name: 'Producto',
-    price: 'desde $14k/mes',
-    cadence: 'equipo dedicado',
-    description: 'Construimos tu producto de cero a producción con un equipo enfocado.',
+    name: 'Crecimiento',
+    price: 'a medida',
+    cadence: 'el más elegido',
+    description: 'Marketing con IA + automatización + producto. Tu motor de crecimiento completo.',
     features: [
-      'Equipo full-stack dedicado',
-      'Demos y deploys semanales',
-      'Diseño, dev, IA y DevOps',
-      'Roadmap compartido',
+      'Marketing y ads con IA',
+      'Automatizaciones de negocio',
+      'Contenido para redes con IA',
+      'Web o app a medida',
     ],
-    cta: 'Hablemos de tu producto',
+    cta: 'Diseñar mi plan',
     featured: true,
   },
   {
     name: 'Escala',
     price: 'a medida',
     cadence: 'partner continuo',
-    description: 'Para empresas que necesitan capacidad de ingeniería seria y constante.',
-    features: ['Múltiples squads', 'SLA y soporte 24/7', 'Arquitectura y seguridad'],
-    cta: 'Diseñar un plan',
+    description: 'Equipo dedicado para empresas que necesitan ingeniería e IA constante.',
+    features: ['Equipo dedicado', 'Fintech / blockchain', 'SLA y soporte 24/7'],
+    cta: 'Hablemos',
     featured: false,
   },
 ];
 
 export const faqs: Faq[] = [
   {
-    q: '¿Cuánto cuesta un proyecto?',
-    a: 'Depende del alcance, pero somos transparentes desde la primera llamada. Un sprint puntual arranca alrededor de $4.9k y un producto completo se cotiza por equipo dedicado. Sin sorpresas a mitad de camino.',
+    q: '¿Cuánto cuesta?',
+    a: 'Los proyectos arrancan desde $1,200 USD. Las automatizaciones y piezas con IA salen en días; un producto a medida (web, app o wallet) suele tomar ~2 semanas. De ahí escalamos a medida según el alcance, siempre con un estimado claro desde la primera llamada.',
   },
   {
-    q: '¿Cuánto tardan en entregar?',
-    a: 'La mayoría de clientes ve un primer producto en vivo en 6 semanas. Trabajamos en sprints semanales con demos reales, así que siempre sabes exactamente en qué punto vas.',
+    q: '¿Qué tan rápido entregan?',
+    a: 'Automatizaciones, campañas y contenido con IA en días. Un producto en alrededor de 2 semanas. Trabajamos con entregas continuas para que veas avance real, no meses de silencio.',
   },
   {
-    q: 'No tengo specs técnicas, solo una idea. ¿Sirve?',
-    a: 'Es nuestro punto de partida favorito. La fase de descubrimiento convierte tu idea en alcance, diseño y plan técnico antes de construir nada.',
+    q: '¿Cómo me consiguen más clientes con IA?',
+    a: 'Conectamos tus anuncios de Meta y Google a flujos con IA que capturan, califican y nutren leads automáticamente, y generamos contenido para redes que alimenta esas campañas. Menos trabajo manual, más conversiones.',
   },
   {
-    q: '¿El código es mío?',
-    a: 'Siempre. Entregamos el repositorio, la documentación y los accesos. Nada de cajas negras ni amarres con licencias propias.',
+    q: '¿Hacen fintech y blockchain?',
+    a: 'Sí, es una de nuestras especialidades. Creamos wallets tipo fintech, integraciones de pago y productos web3 con smart contracts auditados.',
   },
   {
-    q: '¿Dan soporte después del lanzamiento?',
-    a: 'Sí. El launch es el inicio. Ofrecemos planes de monitoreo, soporte y evolución continua para que el producto siga mejorando.',
+    q: '¿El contenido con IA se ve profesional?',
+    a: 'Sí. Producimos videos e imágenes para redes con calidad de marca, consistentes y en tiempo récord — no plantillas genéricas.',
+  },
+  {
+    q: '¿El código y las cuentas son míos?',
+    a: 'Siempre. Entregamos el repositorio, la documentación y los accesos a tu nombre. Sin cajas negras ni amarres.',
   },
 ];
 
 export const finalCta = {
-  title: 'Tienes una idea. Nosotros la ponemos en producción.',
+  title: 'Menos trabajo manual. Más clientes. Empecemos.',
   subtitle:
     'Agenda 30 minutos. Salimos de la llamada con una ruta clara y un estimado honesto — sin compromiso.',
-  primary: { label: 'Agenda tu llamada', href: 'https://cal.com/solvyx/discovery' },
-  secondary: { label: 'hola@solvyx.com', href: 'mailto:hola@solvyx.com' },
+  primary: { label: 'Agenda tu llamada', href: '#agenda' },
+  secondary: { label: 'hola@solvyxdigital.com', href: 'mailto:hola@solvyxdigital.com' },
 };
 
 export const footer = {
   blurb:
-    'SolvyX es un estudio de producto e ingeniería. Diseñamos, construimos y escalamos software con IA para equipos que van en serio.',
+    'SolvyX es un estudio de IA, automatización e ingeniería. Hacemos crecer negocios con marketing y automatización con IA, y construimos software, apps móviles y fintech.',
   columns: [
     {
       title: 'Servicios',
       links: [
-        { label: 'Páginas y plataformas web', href: '#servicios' },
-        { label: 'Apps móviles', href: '#servicios' },
-        { label: 'Software a medida', href: '#servicios' },
-        { label: 'Dashboards', href: '#servicios' },
         { label: 'Automatización con IA', href: '#servicios' },
+        { label: 'Marketing y ads con IA', href: '#servicios' },
+        { label: 'Multimedia con IA', href: '#servicios' },
+        { label: 'Fintech & Blockchain', href: '#servicios' },
+        { label: 'Software y apps', href: '#servicios' },
       ],
     },
     {

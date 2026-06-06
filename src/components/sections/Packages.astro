@@ -1,5 +1,5 @@
 ---
-import { packages, brand } from '@/data/site';
+import { packages } from '@/data/site';
 import SectionHeading from '../ui/SectionHeading.astro';
 import Button from '../ui/Button.astro';
 import Icon from '../ui/Icon.astro';
@@ -65,8 +65,8 @@ import Icon from '../ui/Icon.astro';
 
               <div class="mt-auto pt-2">
                 <Button
-                  href={brand.bookingUrl}
-                  external
+                  href="#agenda"
+                  openContact
                   size="lg"
                   variant={featured ? 'on-night' : 'ghost'}
                   class="w-full"
