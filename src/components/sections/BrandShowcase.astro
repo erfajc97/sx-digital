@@ -1,0 +1,52 @@
+---
+import Button from '../ui/Button.astro';
+---
+
+<section class="py-[var(--spacing-section)]">
+  <div class="mx-auto max-w-[1240px] px-4 sm:px-6">
+    <div
+      data-reveal="scale"
+      class="relative grid overflow-hidden rounded-[var(--radius-xl2)] bg-[#0b1020] md:grid-cols-2"
+    >
+      <!-- 3D brand render -->
+      <div class="relative min-h-[18rem] md:min-h-[26rem]">
+        <picture>
+          <source srcset="/solvyxX-3D.webp" type="image/webp" />
+          <img
+            src="/solvyxX-3D.jpg"
+            alt="SolvyX — render 3D de la marca"
+            width="1200"
+            height="1200"
+            loading="lazy"
+            decoding="async"
+            class="absolute inset-0 size-full object-cover"
+          />
+        </picture>
+        <!-- soft seam so the square image blends into the panel on desktop -->
+        <div
+          class="pointer-events-none absolute inset-y-0 right-0 hidden w-24 bg-gradient-to-r from-transparent to-[#0b1020] md:block"
+        >
+        </div>
+      </div>
+
+      <!-- copy -->
+      <div class="flex flex-col items-start justify-center gap-5 px-6 py-12 sm:px-12 sm:py-16">
+        <span class="text-sm font-semibold uppercase tracking-[0.16em] text-brand-soft">
+          Ingeniería con IA
+        </span>
+        <h2 class="text-[clamp(1.9rem,3.6vw,2.85rem)] leading-[1.08] text-white text-balance">
+          Construido para producción, no para demos
+        </h2>
+        <p class="text-lg leading-relaxed text-white/80" style="max-width: 48ch;">
+          Diseñamos y construimos software, automatización y fintech con estándar
+          real de producción — seguro, escalable y listo para crecer contigo.
+        </p>
+        <div class="mt-1">
+          <Button href="#agenda" openContact size="lg" variant="on-night" icon="arrow">
+            Hablemos de tu proyecto
+          </Button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
