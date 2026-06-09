@@ -229,7 +229,7 @@ const m = contact.modal;
         '',
         `${data.get('mensaje') || ''}`,
       ].join('\n');
-      const mail = `mailto:hola@solvyxdigital.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      const mail = `mailto:contact@solvyxdigital.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
       window.location.href = mail;
       showSuccess();
     }

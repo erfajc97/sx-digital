@@ -2,7 +2,7 @@
 
 > Estudio de IA, automatización e ingeniería de software. Hacemos crecer negocios con automatización y marketing potenciados por IA, creamos multimedia con IA para redes, y desarrollamos software a medida, apps móviles, wallets fintech y blockchain — entregando en días, no meses.
 
-SolvyX trabaja como un equipo dedicado (no una agencia con capas de cuentas). Sede en Barcelona, España, atención remota en todo el mundo. Contacto: hola@solvyxdigital.com.
+SolvyX trabaja como un equipo dedicado (no una agencia con capas de cuentas). Sede en Barcelona, España, atención remota en todo el mundo. Contacto: contact@solvyxdigital.com.
 
 ## Enfoque principal (IA)
 - Automatización de negocio con IA: agentes, copilotos y flujos 24/7 que responden, venden y operan; integrados con tus herramientas.
@@ -27,4 +27,4 @@ SolvyX trabaja como un equipo dedicado (no una agencia con capas de cuentas). Se
 ## Enlaces
 - Sitio: https://solvyxdigital.com
 - Planes: https://solvyxdigital.com/#planes
-- Contacto: mailto:hola@solvyxdigital.com
+- Contacto: mailto:contact@solvyxdigital.com

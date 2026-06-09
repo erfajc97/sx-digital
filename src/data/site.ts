@@ -104,7 +104,7 @@ export const brand = {
   favicon: '/favicon.png',
   tagline: 'Automatización con IA, marketing y software a medida — en días, no meses.',
   domain: 'solvyxdigital.com',
-  email: 'hola@solvyxdigital.com',
+  email: 'contact@solvyxdigital.com',
   phone: '+34 930 38 47 19',
   location: 'Barcelona, España · Remote worldwide',
   // TODO: reemplaza por tu link real de Cal.com / Calendly.
@@ -113,10 +113,7 @@ export const brand = {
   // Esto alimenta el calendario embebido en la sección "Agenda".
   calLink: 'solvyx/discovery',
   social: [
-    { label: 'LinkedIn', href: 'https://www.linkedin.com/company/solvyxdigital' },
-    { label: 'GitHub', href: 'https://github.com/solvyxdigital' },
-    { label: 'X', href: 'https://x.com/solvyxdigital' },
-    { label: 'Instagram', href: 'https://instagram.com/solvyxdigital' },
+    { label: 'LinkedIn', href: 'https://www.linkedin.com/company/solvyx-digital/' },
   ],
 };
 
@@ -453,7 +450,7 @@ export const finalCta = {
   subtitle:
     'Agenda 30 minutos. Salimos de la llamada con una ruta clara y un estimado honesto — sin compromiso.',
   primary: { label: 'Agenda tu llamada', href: '#agenda' },
-  secondary: { label: 'hola@solvyxdigital.com', href: 'mailto:hola@solvyxdigital.com' },
+  secondary: { label: 'contact@solvyxdigital.com', href: 'mailto:contact@solvyxdigital.com' },
 };
 
 export const footer = {
