@@ -101,6 +101,7 @@ export const brand = {
   name: 'SolvyX',
   monogram: 'SX',
   logo: '/logo.png',
+  logo3d: '/logo-3d.png',
   favicon: '/favicon.png',
   tagline: 'Automatización con IA, marketing y software a medida — en días, no meses.',
   domain: 'solvyxdigital.com',

@@ -14,7 +14,7 @@ const {
 
 const origin = Astro.site ? Astro.site.origin : `https://${brand.domain}`;
 const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : Astro.url.pathname;
-const ogImage = `${origin}/logo.png`;
+const ogImage = `${origin}/solvyxX-3D.jpg`;
 
 // Structured data (JSON-LD) — Organization + WebSite + Service catalog.
 // FAQPage schema intentionally omitted (Google restricts rich results to
@@ -74,7 +74,9 @@ const jsonLd = {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
     <link rel="icon" type="image/png" href={brand.favicon} />
+    <link rel="apple-touch-icon" href={brand.favicon} />
     <link rel="canonical" href={canonical} />
     <meta name="generator" content={Astro.generator} />
     <meta name="robots" content="index, follow, max-image-preview:large" />

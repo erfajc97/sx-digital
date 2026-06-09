@@ -17,7 +17,7 @@ import Button from './ui/Button.astro';
     class="mx-auto flex max-w-[1240px] items-center justify-between gap-6 px-4 py-3 sm:px-6"
   >
     <a href="#top" class="press flex items-center gap-2.5" aria-label={`${brand.name} — inicio`}>
-      <img src={brand.logo} alt={brand.name} class="nav-logo h-7 w-auto shrink-0 sm:h-8" width="441" height="137" />
+      <img src={brand.logo3d} alt={brand.name} class="nav-logo h-9 w-auto shrink-0 sm:h-10" width="441" height="233" />
     </a>
 
     <ul class="hidden items-center gap-1 lg:flex">
@@ -140,8 +140,13 @@ import Button from './ui/Button.astro';
 
   /* At the top, the nav sits over the dark hero → switch to a light treatment.
      When scrolled (.is-scrolled, over white) it reverts to the dark default. */
+  /* 3D logo keeps its color in both states; a soft shadow lifts it off the
+     dark hero, and a hairline glow keeps the dark "X" legible. */
+  .nav-logo {
+    filter: drop-shadow(0 1px 2px oklch(0 0 0 / 0.25));
+  }
   #site-header:not(.is-scrolled) .nav-logo {
-    filter: brightness(0) invert(1);
+    filter: drop-shadow(0 1px 6px oklch(0 0 0 / 0.55));
   }
   #site-header:not(.is-scrolled) .nav-link {
     color: oklch(0.97 0.005 264 / 0.82);
