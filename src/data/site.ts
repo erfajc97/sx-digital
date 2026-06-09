@@ -106,7 +106,7 @@ export const brand = {
   tagline: 'Automatización con IA, marketing y software a medida — en días, no meses.',
   domain: 'solvyxdigital.com',
   email: 'contact@solvyxdigital.com',
-  phone: '+34 930 38 47 19',
+  phone: '+34 645 42 55 82',
   location: 'Barcelona, España · Remote worldwide',
   // TODO: reemplaza por tu link real de Cal.com / Calendly.
   bookingUrl: 'https://cal.com/solvyx/discovery',
