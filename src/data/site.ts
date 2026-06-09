@@ -177,7 +177,7 @@ export const hero = {
    leads de verdad, pon aquí un endpoint de Formspree (https://formspree.io)
    o tu propia API y el formulario hará POST ahí. */
 export const contact = {
-  formEndpoint: '',
+  formEndpoint: '/.netlify/functions/contact',
   projectTypes: ['Automatización con IA', 'Marketing & Ads', 'Web / App', 'Fintech / Blockchain', 'Multimedia con IA', 'Otro'],
   modal: {
     title: 'Hablemos de tu proyecto',
