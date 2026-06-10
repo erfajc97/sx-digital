@@ -150,8 +150,11 @@ const intro = {
     document.body.style.overflow = '';
   }
 
+  let active = false; // true while the intro is actually playing
+
   function dismiss() {
     if (!gate) return;
+    active = false;
     gate.classList.add('is-leaving');
     if (video) {
       video.pause();
@@ -198,6 +201,22 @@ const intro = {
     if (video.readyState >= 1) seekStart();
     else video.addEventListener('loadedmetadata', seekStart, { once: true });
 
+    active = true;
+
+    // Keep playing no matter what. If anything (a tap, an unmute attempt the
+    // OS rejects, a focus change) pauses the clip before it ends, resume it —
+    // muted if needed — so the screen never appears frozen.
+    const keepPlaying = () => {
+      if (!active || video.ended) return;
+      video.play().catch(() => {
+        if (!video.muted) {
+          video.muted = true;
+          video.play().catch(() => {});
+        }
+      });
+    };
+    video.addEventListener('pause', keepPlaying);
+
     // Try to autoplay WITH sound. Browsers usually block this, so on failure
     // fall back to muted autoplay and unmute on the first user gesture.
     video.volume = 1;
@@ -209,10 +228,17 @@ const intro = {
         dismiss();
       });
 
+      // Unmute on the first gesture — but if the OS refuses audio mid-play
+      // (common on iOS/Android), fall straight back to muted playback so the
+      // tap never leaves the video paused.
       const unmute = () => {
+        if (!active) return;
         video.muted = false;
         video.volume = 1;
-        video.play().catch(() => {});
+        video.play().catch(() => {
+          video.muted = true;
+          video.play().catch(() => {});
+        });
       };
       const opts = { once: true, passive: true } as AddEventListenerOptions;
       ['pointerdown', 'touchstart', 'keydown', 'wheel'].forEach((ev) =>
