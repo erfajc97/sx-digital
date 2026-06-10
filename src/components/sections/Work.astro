@@ -22,7 +22,7 @@ const trackVh = 100 + (work.length - 1) * 58; // scroll length for the pinned fa
         {
           work.map((item, i) => (
             <article
-              class="work-card absolute left-1/2 top-1/2 overflow-hidden rounded-[var(--radius-card)] border border-border bg-canvas shadow-[var(--shadow-lift)]"
+              class="work-card card-3d absolute left-1/2 top-1/2 overflow-hidden rounded-[var(--radius-card)] border border-border bg-canvas"
               data-i={i}
               style="opacity: 0;"
             >
@@ -75,7 +75,7 @@ const trackVh = 100 + (work.length - 1) * 58; // scroll length for the pinned fa
             data-reveal={i % 2 ? 'right' : 'left'}
             style={`--reveal-delay: ${i * 90}ms;`}
             class:list={[
-              'group relative flex flex-col overflow-hidden rounded-[var(--radius-xl2)] border border-border bg-canvas transition-shadow duration-300 hover:shadow-[var(--shadow-soft)]',
+              'card-3d card-3d-hover group relative flex flex-col overflow-hidden rounded-[var(--radius-xl2)] border border-border bg-canvas',
               span[i] ?? 'lg:col-span-6',
             ]}
           >

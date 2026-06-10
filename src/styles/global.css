@@ -50,6 +50,15 @@
   /* Tinted shadows (toward brand hue, never a glow) */
   --shadow-soft: 0 1px 2px oklch(0.21 0.022 264 / 0.04), 0 8px 24px oklch(0.21 0.022 264 / 0.06);
   --shadow-lift: 0 2px 4px oklch(0.21 0.022 264 / 0.05), 0 18px 40px oklch(0.21 0.022 264 / 0.1);
+  /* Layered "raised" depth for the 3D look on cards + buttons */
+  --shadow-3d:
+    0 1px 2px oklch(0.21 0.022 264 / 0.06),
+    0 4px 8px oklch(0.21 0.022 264 / 0.08),
+    0 14px 30px oklch(0.21 0.022 264 / 0.1);
+  --shadow-3d-hover:
+    0 2px 4px oklch(0.21 0.022 264 / 0.08),
+    0 10px 20px oklch(0.21 0.022 264 / 0.12),
+    0 26px 52px oklch(0.21 0.022 264 / 0.16);
 }
 
 /* ============================================================
@@ -273,6 +282,40 @@
   transform: scale(0.97);
 }
 
+/* 3D raised buttons — depth at rest, lift on hover, press down on click */
+.btn-3d {
+  box-shadow: var(--shadow-3d);
+  transition:
+    transform 0.18s var(--ease-snappy),
+    box-shadow 0.18s var(--ease-snappy),
+    background-color 0.2s var(--ease-snappy),
+    color 0.2s var(--ease-snappy);
+}
+.btn-3d:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-3d-hover);
+}
+.btn-3d:active {
+  transform: translateY(0) scale(0.97);
+  box-shadow: var(--shadow-soft);
+  transition-duration: 0.06s;
+}
+
+/* 3D depth for cards / containers */
+.card-3d {
+  box-shadow: var(--shadow-3d);
+}
+/* interactive cards also lift on hover */
+.card-3d-hover {
+  transition:
+    transform 0.25s var(--ease-snappy),
+    box-shadow 0.25s var(--ease-snappy);
+}
+.card-3d-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-3d-hover);
+}
+
 /* FAQ native disclosure animation (grid-rows, not height) */
 .disclosure {
   display: grid;
@@ -332,6 +375,12 @@ details[open] .faq-plus {
   #site-header,
   #mobile-menu {
     transition: none;
+  }
+  /* keep the depth shadow, drop the movement */
+  .btn-3d:hover,
+  .btn-3d:active,
+  .card-3d-hover:hover {
+    transform: none;
   }
   .marquee-track,
   .animate-float,
