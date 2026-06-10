@@ -1,77 +1,70 @@
-/* Services gallery — scroll-driven slideshow.
-   Desktop (+motion): the section pins and, as you scroll, the service cards
-   appear ONE BY ONE (each rises/fades in as the previous leaves) until the
-   last one is shown, then the pin releases and you continue to the next
-   section. Mobile / reduced-motion: native horizontal swipe (scroll-snap).
-   Gated by gsap.matchMedia(). */
+/* Services — "View-Master" reel. Desktop (+motion): the section pins and a
+   circular reel of media frames rotates as you scroll; the frame reaching the
+   viewer position (left, next to the text) grows into focus while the
+   informative text on the left cross-fades to match. Mobile / reduced-motion:
+   native swipe carousel. Gated by gsap.matchMedia(). */
 import gsap from 'gsap';
 import ScrollTrigger from 'gsap/ScrollTrigger';
 
-const gallery = document.getElementById('svc-gallery');
-const track = document.getElementById('svc-track');
+const reel = document.getElementById('svc-reel');
 
-if (gallery && track) {
+if (reel) {
   const mm = gsap.matchMedia();
 
   mm.add('(min-width: 1024px) and (prefers-reduced-motion: no-preference)', () => {
     gsap.registerPlugin(ScrollTrigger);
 
-    const cards = gsap.utils.toArray<HTMLElement>('.svc-card');
-    const dots = gsap.utils.toArray<HTMLElement>('.svc-dot');
-    const spacer = track.querySelector<HTMLElement>('.svc-spacer');
-    if (spacer) spacer.style.display = 'none';
+    const frames = gsap.utils.toArray<HTMLElement>('.reel-frame');
+    const texts = gsap.utils.toArray<HTMLElement>('.reel-text');
+    const N = frames.length;
+    const STEP = 360 / N;
+    const RADIUS = 210; // orbit radius (px)
+    const VIEWER = 180; // active angle — left of the wheel, toward the text
+    let active = -1;
 
-    // Pinned full-screen stage; stack every card dead-centre.
-    gallery.classList.add('svc-gallery--pinned');
-    track.classList.remove('overflow-x-auto', 'snap-x', 'snap-mandatory');
-    track.style.display = 'contents'; // let the cards position against the gallery
+    // Position every frame around the circle for a given rotation offset.
+    const layout = (offset: number) => {
+      frames.forEach((f, i) => {
+        const angle = VIEWER + i * STEP + offset;
+        // angular distance from the viewer slot (0..180)
+        const d = Math.abs((((angle - VIEWER) % 360) + 540) % 360 - 180);
+        const t = 1 - Math.min(d, 140) / 140; // 1 at viewer → 0 far away
+        const scale = 0.6 + t * 0.62; // 0.6 … 1.22
+        f.style.transform = `translate(-50%, -50%) rotate(${angle}deg) translateX(${RADIUS}px) rotate(${-angle}deg) scale(${scale})`;
+        f.style.opacity = (0.25 + t * 0.75).toFixed(3);
+        f.style.zIndex = String(Math.round(t * 100));
+      });
+    };
 
-    gsap.set(cards, {
-      position: 'absolute',
-      top: '50%',
-      left: '50%',
-      xPercent: -50,
-      yPercent: -50,
-      autoAlpha: 0,
-      y: 70,
-      scale: 0.94,
-    });
-    gsap.set(cards[0], { autoAlpha: 1, y: 0, scale: 1 });
+    const setText = (idx: number) => {
+      if (idx === active) return;
+      active = idx;
+      texts.forEach((tx, i) => gsap.to(tx, { autoAlpha: i === idx ? 1 : 0, duration: 0.4, ease: 'power2.out' }));
+    };
 
-    const setActiveDot = (idx: number) =>
-      dots.forEach((d, i) => d.classList.toggle('is-active', i === idx));
-    setActiveDot(0);
+    layout(0);
+    setText(0);
 
-    const tl = gsap.timeline({
-      defaults: { ease: 'power2.inOut' },
-      scrollTrigger: {
-        trigger: gallery,
-        pin: true,
-        start: 'top top',
-        end: () => '+=' + (cards.length - 1) * window.innerHeight * 0.85,
-        scrub: 1,
-        invalidateOnRefresh: true,
-        onUpdate: (self) => setActiveDot(Math.round(self.progress * (cards.length - 1))),
+    ScrollTrigger.create({
+      trigger: reel,
+      pin: true,
+      start: 'top top',
+      end: () => '+=' + (N - 1) * window.innerHeight * 0.7,
+      scrub: 1,
+      invalidateOnRefresh: true,
+      onUpdate: (self) => {
+        layout(-self.progress * (N - 1) * STEP);
+        setText(Math.round(self.progress * (N - 1)));
       },
     });
 
-    for (let i = 1; i < cards.length; i++) {
-      tl.to(cards[i - 1], { autoAlpha: 0, y: -60, scale: 0.92, duration: 1 });
-      tl.fromTo(
-        cards[i],
-        { autoAlpha: 0, y: 70, scale: 0.94 },
-        { autoAlpha: 1, y: 0, scale: 1, duration: 1 },
-        '<0.15'
-      );
-    }
-
     return () => {
-      gallery.classList.remove('svc-gallery--pinned');
-      track.classList.add('overflow-x-auto', 'snap-x', 'snap-mandatory');
-      track.style.removeProperty('display');
-      if (spacer) spacer.style.removeProperty('display');
-      gsap.set(cards, { clearProps: 'all' });
-      dots.forEach((d) => d.classList.remove('is-active'));
+      frames.forEach((f) => {
+        f.style.removeProperty('transform');
+        f.style.removeProperty('opacity');
+        f.style.removeProperty('z-index');
+      });
+      gsap.set(texts, { clearProps: 'all' });
     };
   });
 }
