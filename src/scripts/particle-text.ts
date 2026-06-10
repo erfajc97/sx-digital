@@ -103,14 +103,19 @@ export function initParticleText(canvas: HTMLCanvasElement, words: string[]) {
   off.height = H;
   const octx = off.getContext('2d')!;
 
+  // Sample the brand display face (Clash Display) so the formed words carry the
+  // brand identity instead of generic Arial. Arial stays as the fallback until
+  // the woff2 is ready (see the document.fonts guard below).
+  const FONT = (size: number) => `700 ${size}px "Clash Display", Arial, sans-serif`;
+
   const fitFont = (word: string) => {
     let size = 200;
-    octx.font = `bold ${size}px Arial`;
+    octx.font = FONT(size);
     const maxW = W * 0.92;
     const maxH = H * 0.74;
     while (size > 20 && (octx.measureText(word).width > maxW || size > maxH)) {
       size -= 4;
-      octx.font = `bold ${size}px Arial`;
+      octx.font = FONT(size);
     }
     return size;
   };
@@ -119,7 +124,7 @@ export function initParticleText(canvas: HTMLCanvasElement, words: string[]) {
     octx.clearRect(0, 0, W, H);
     const size = fitFont(word);
     octx.fillStyle = 'white';
-    octx.font = `bold ${size}px Arial`;
+    octx.font = FONT(size);
     octx.textAlign = 'left';
     octx.textBaseline = 'middle';
     octx.fillText(word, 8, H / 2);
@@ -197,6 +202,12 @@ export function initParticleText(canvas: HTMLCanvasElement, words: string[]) {
 
   setWord(words[0]);
   start();
+
+  // Re-sample the first word once Clash Display is actually loaded, so it
+  // doesn't get drawn in the Arial fallback on the very first paint.
+  if (document.fonts && 'load' in document.fonts) {
+    document.fonts.load('700 200px "Clash Display"').then(() => setWord(words[wordIndex]));
+  }
 
   // Pause when off-screen (perf)
   if ('IntersectionObserver' in window) {

@@ -132,6 +132,8 @@ export const founder = {
   ],
   linkedin: 'https://www.linkedin.com/in/erickjimenezcruz/',
   github: 'https://github.com/erfajc97',
+  // Foto del fundador (reemplázala cuando quieras en /public).
+  avatar: '/avatar-solvyx-ej.png',
 };
 
 export const nav: NavLink[] = [

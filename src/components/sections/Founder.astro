@@ -1,12 +1,6 @@
 ---
 import { founder } from '@/data/site';
 import Icon from '../ui/Icon.astro';
-
-const initials = founder.name
-  .split(' ')
-  .map((w) => w[0])
-  .slice(0, 2)
-  .join('');
 ---
 
 <section id="fundador" class="scroll-mt-24 py-[var(--spacing-section)]">
@@ -17,12 +11,15 @@ const initials = founder.name
     >
       <!-- identity -->
       <div class="flex items-center gap-4 md:w-48 md:flex-col md:items-start md:gap-4">
-        <span
-          class="grid size-20 shrink-0 place-items-center rounded-2xl bg-brand font-display text-2xl font-bold tracking-tight text-white"
-          aria-hidden="true"
-        >
-          {initials}
-        </span>
+        <img
+          src={founder.avatar}
+          alt={founder.name}
+          width="160"
+          height="160"
+          loading="lazy"
+          decoding="async"
+          class="size-20 shrink-0 rounded-2xl object-cover shadow-[var(--shadow-soft)] ring-1 ring-border"
+        />
         <div class="md:mt-1">
           <p class="font-display text-lg font-semibold text-ink">{founder.name}</p>
           <p class="text-sm text-muted">{founder.role}</p>

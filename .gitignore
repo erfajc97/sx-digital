@@ -25,3 +25,6 @@ Thumbs.db
 .vscode/
 .idea/
 media-source/
+
+# heavy design/source originals (masters, 4K video, refs) — not for deploy
+_assets-src/
