@@ -98,13 +98,16 @@ const calNs = brand.calNamespace;
       hideEventTypeDetails: false,
       layout: 'month_view',
     });
-    // Open the booking modal IN PLACE (Cal's auto-binding navigates instead, so
-    // we drive it explicitly with the GLOBAL modal API — the namespaced one
-    // leaves an orphan "loading" box that lingers as a stuck loader). Sweep any
-    // leftover box first so nothing stale remains after closing/reopening.
+    // Booking trigger on any [data-cal-link] click.
+    //  · Desktop → open the modal IN PLACE (we drive Cal's GLOBAL modal API
+    //    explicitly; the namespaced one leaves an orphan "loading" box, and we
+    //    sweep any leftover box so no stale loader lingers).
+    //  · Mobile → let the href navigate to the full-screen Cal page; the cramped
+    //    modal (calendar + a long scroll to the time slots) is poor UX on phones.
     document.addEventListener('click', function (e) {
       const el = e.target.closest && e.target.closest('[data-cal-link]');
       if (!el) return;
+      if (window.matchMedia('(max-width: 767px)').matches) return; // full-page on mobile
       e.preventDefault();
       document.querySelectorAll('cal-modal-box').forEach(function (b) {
         b.remove();
