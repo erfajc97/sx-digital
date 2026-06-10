@@ -3,120 +3,109 @@ import { services } from '@/data/site';
 import SectionHeading from '../ui/SectionHeading.astro';
 import Icon from '../ui/Icon.astro';
 
-// Bento spans (lg, 6-col grid). 'ai-automation' is the dark featured tile.
-const span: Record<string, string> = {
-  'ai-automation': 'lg:col-span-3',
-  growth: 'lg:col-span-3',
-  media: 'lg:col-span-2',
-  fintech: 'lg:col-span-2',
-  mobile: 'lg:col-span-2',
-  software: 'lg:col-span-6',
+// Distinct (but cohesive, cool-family) gradient per service for the card visual.
+const visual: Record<string, string> = {
+  'ai-automation': 'from-[oklch(0.5_0.2_264)] to-[oklch(0.27_0.12_280)]',
+  growth: 'from-[oklch(0.52_0.16_210)] to-[oklch(0.29_0.12_235)]',
+  media: 'from-[oklch(0.52_0.17_300)] to-[oklch(0.3_0.13_285)]',
+  fintech: 'from-[oklch(0.52_0.14_175)] to-[oklch(0.29_0.11_200)]',
+  mobile: 'from-[oklch(0.54_0.16_250)] to-[oklch(0.3_0.13_262)]',
+  software: 'from-[oklch(0.48_0.19_264)] to-[oklch(0.27_0.13_255)]',
+};
+const category: Record<string, string> = {
+  'ai-automation': 'Automatización',
+  growth: 'Marketing IA',
+  media: 'Contenido IA',
+  fintech: 'Fintech',
+  mobile: 'Apps',
+  software: 'Software',
 };
 ---
 
-<section id="servicios" class="relative scroll-mt-24 overflow-hidden py-[var(--spacing-section)]">
-  <!-- Premium backdrop: faint top grid + soft brand aurora -->
-  <div class="pointer-events-none absolute inset-0" aria-hidden="true">
-    <div class="bg-grid absolute inset-x-0 top-0 h-[70%] opacity-50"></div>
-    <div
-      class="glow-spot"
-      style="width:46rem;height:32rem;left:50%;top:-4rem;transform:translateX(-50%);background:oklch(0.62 0.19 264 / 0.1);"
-    >
-    </div>
+<section id="servicios" class="relative scroll-mt-24 bg-surface">
+  <div class="mx-auto max-w-[1240px] px-4 pt-[var(--spacing-section)] sm:px-6">
+    <SectionHeading
+      eyebrow="Lo que hacemos por ti"
+      title="IA que hace crecer tu negocio, y software que lo sostiene"
+      description="Desliza para recorrer lo que construimos: automatización, marketing y contenido con IA — y el software, las apps y la fintech que lo respaldan."
+    />
   </div>
 
-  <div class="relative z-10 mx-auto max-w-[1240px] px-4 sm:px-6">
-    <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-      <SectionHeading
-        eyebrow="Lo que hacemos por ti"
-        title="IA que hace crecer tu negocio, y software que lo sostiene"
-        description="Automatizamos, conseguimos clientes y producimos contenido con IA — y construimos el software, las apps y la fintech que lo respaldan. Todo bajo un mismo techo."
-      />
-    </div>
-
-    <div class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
+  <!-- Gallery: desktop = pinned horizontal scroll; mobile = swipe carousel -->
+  <div id="svc-gallery" class="relative mt-10 pb-[var(--spacing-section)]">
+    <div
+      id="svc-track"
+      class="flex gap-5 overflow-x-auto px-4 pb-4 [scrollbar-width:none] snap-x snap-mandatory sm:px-6"
+    >
       {
-        services.map((s, i) => {
+        services.map((s) => {
           const featured = s.id === 'ai-automation';
           return (
-            <article
-              data-svc-card
-              data-spotlight
-              class:list={[
-                'svc-card-el card-3d edge-top group relative flex flex-col gap-5 overflow-hidden rounded-[var(--radius-card)] p-7 [transform-style:preserve-3d] will-change-transform',
-                span[s.id] ?? 'lg:col-span-2',
-                featured
-                  ? 'glow-brand bg-night text-on-night'
-                  : 'border border-border bg-gradient-to-b from-canvas to-surface hover:border-brand/30',
-              ]}
-            >
-              {featured && (
-                <>
-                  <div class="bg-grid-night pointer-events-none absolute inset-0 rounded-[var(--radius-card)] opacity-40" />
-                  {/* slow diagonal light sweep (animated by services-anim) */}
-                  <span
-                    data-svc-sheen
-                    class="pointer-events-none absolute inset-y-0 left-0 z-[1] w-1/2 -skew-x-12 bg-gradient-to-r from-transparent via-white/10 to-transparent"
-                  />
-                </>
-              )}
-              <div class="relative flex items-center justify-between">
-                <span
-                  data-svc-icon
-                  class:list={[
-                    'grid size-14 place-items-center rounded-2xl shadow-[var(--shadow-soft)] ring-1',
-                    featured
-                      ? 'bg-gradient-to-br from-brand to-brand-strong text-white ring-white/15'
-                      : 'bg-gradient-to-br from-brand-soft to-[oklch(0.9_0.05_264)] text-brand ring-brand/15',
-                  ]}
-                >
-                  <Icon name={s.icon} class="size-7" />
+            <article class="svc-card group relative flex h-[60vh] max-h-[520px] w-[80vw] max-w-[330px] shrink-0 snap-center flex-col overflow-hidden rounded-[var(--radius-xl2)] border border-border bg-canvas card-3d will-change-transform lg:w-[370px]">
+              {/* Visual header */}
+              <div class:list={['svc-visual relative h-[46%] overflow-hidden bg-gradient-to-br', visual[s.id] ?? visual.software]}>
+                <div class="bg-grid-night absolute inset-0 opacity-25" />
+                <Icon name={s.icon} class="svc-art pointer-events-none absolute -bottom-10 -right-7 size-48 text-white/10" />
+                <span class="absolute left-5 top-5 grid size-12 place-items-center rounded-2xl bg-white/15 text-white ring-1 ring-white/25 backdrop-blur">
+                  <Icon name={s.icon} class="size-6" />
+                </span>
+                <span class="absolute right-5 top-6 text-[11px] font-medium uppercase tracking-[0.16em] text-white/70">
+                  {category[s.id]}
                 </span>
                 {featured && (
-                  <span class="rounded-full border border-white/15 px-3 py-1 text-[11px] uppercase tracking-wider text-on-night-muted">
+                  <span class="absolute bottom-4 left-5 rounded-full bg-white/15 px-3 py-1 text-[11px] font-medium uppercase tracking-wider text-white backdrop-blur">
                     Lo más pedido
                   </span>
                 )}
               </div>
 
-              <div class="relative flex flex-col gap-2">
-                <h3 class:list={['text-xl', featured ? 'text-on-night' : 'text-ink']}>
-                  {s.title}
-                </h3>
-                <p
-                  class:list={[
-                    'leading-relaxed',
-                    featured ? 'text-on-night-muted' : 'text-muted',
-                  ]}
-                  style="max-width: 46ch;"
-                >
-                  {s.description}
-                </p>
+              {/* Content */}
+              <div class="flex flex-1 flex-col gap-3 p-6">
+                <h3 class="font-display text-xl font-semibold leading-snug text-ink">{s.title}</h3>
+                <p class="line-clamp-3 text-sm leading-relaxed text-muted">{s.description}</p>
+                <ul class="mt-auto flex flex-wrap gap-2 pt-2">
+                  {s.bullets.map((b) => (
+                    <li class="inline-flex items-center gap-1.5 rounded-full bg-surface px-3 py-1 text-xs text-ink-soft ring-1 ring-border">
+                      <Icon name="check" class="size-3.5 text-brand" />
+                      {b}
+                    </li>
+                  ))}
+                </ul>
               </div>
-
-              <ul class="relative mt-auto flex flex-wrap gap-2 pt-1">
-                {s.bullets.map((b) => (
-                  <li
-                    class:list={[
-                      'inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs',
-                      featured
-                        ? 'bg-white/8 text-on-night-muted'
-                        : 'bg-canvas text-ink-soft ring-1 ring-border',
-                    ]}
-                  >
-                    <Icon name="check" class={featured ? 'size-3.5 text-brand' : 'size-3.5 text-brand'} />
-                    {b}
-                  </li>
-                ))}
-              </ul>
             </article>
           );
         })
       }
+      <!-- trailing spacer so the last card can rest centred on desktop -->
+      <div class="shrink-0 lg:w-[24vw]" aria-hidden="true"></div>
+    </div>
+
+    <!-- desktop scroll-progress -->
+    <div class="mx-auto mt-2 hidden h-1 w-40 overflow-hidden rounded-full bg-border lg:block">
+      <span id="svc-progress" class="block h-full w-full origin-left scale-x-0 bg-brand"></span>
     </div>
   </div>
 </section>
 
+<style>
+  .svc-track::-webkit-scrollbar {
+    display: none;
+  }
+  /* Desktop pinned mode: gallery fills the viewport and centres the cards;
+     the moving track is clipped. Toggled by services-gallery.ts. */
+  .svc-gallery--pinned {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+    padding-bottom: 0;
+  }
+  .svc-track--static {
+    overflow: visible;
+  }
+</style>
+
 <script>
-  import '@/scripts/services-anim';
+  import '@/scripts/services-gallery';
 </script>
