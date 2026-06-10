@@ -66,16 +66,16 @@ const trackVh = 100 + (work.length - 1) * 58; // scroll length for the pinned fa
     </div>
   </div>
 
-  <!-- Mobile / no-JS / reduced-motion: static grid -->
-  <div id="work-grid" class="mx-auto max-w-[1240px] px-4 pb-[var(--spacing-section)] pt-10 sm:px-6">
-    <div class="grid gap-5 lg:grid-cols-12">
+  <!-- Mobile: swipe carousel · lg (no-JS) / reduced-motion: static grid -->
+  <div id="work-grid" class="mx-auto max-w-[1240px] pb-[var(--spacing-section)] pt-10">
+    <div
+      class="work-carousel flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:px-6 lg:grid lg:grid-cols-12 lg:gap-5 lg:overflow-visible lg:[scroll-snap-type:none]"
+    >
       {
         work.map((item, i) => (
           <article
-            data-reveal={i % 2 ? 'right' : 'left'}
-            style={`--reveal-delay: ${i * 90}ms;`}
             class:list={[
-              'card-3d card-3d-hover group relative flex flex-col overflow-hidden rounded-[var(--radius-xl2)] border border-border bg-canvas',
+              'card-3d card-3d-hover group relative flex shrink-0 w-[84%] snap-center flex-col overflow-hidden rounded-[var(--radius-xl2)] border border-border bg-canvas sm:w-[60%] lg:w-auto',
               span[i] ?? 'lg:col-span-6',
             ]}
           >
@@ -106,6 +106,20 @@ const trackVh = 100 + (work.length - 1) * 58; // scroll length for the pinned fa
         ))
       }
     </div>
+
+    <!-- Mobile carousel position dots -->
+    <div id="work-mobile-dots" class="mt-6 flex justify-center gap-2.5 lg:hidden">
+      {
+        work.map((_, i) => (
+          <button
+            type="button"
+            class="work-dot size-2 rounded-full bg-ink/25 transition-colors"
+            aria-current={i === 0 ? 'true' : 'false'}
+            aria-label={`Ir al proyecto ${i + 1}`}
+          />
+        ))
+      }
+    </div>
   </div>
 </section>
 
@@ -118,6 +132,10 @@ const trackVh = 100 + (work.length - 1) * 58; // scroll length for the pinned fa
     background-color: var(--color-brand);
     width: 1.25rem;
     border-radius: 9999px;
+  }
+  /* Hide the horizontal scrollbar on the mobile carousel (WebKit) */
+  .work-carousel::-webkit-scrollbar {
+    display: none;
   }
 </style>
 

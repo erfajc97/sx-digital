@@ -111,3 +111,51 @@ if (track && stage && !reduce) {
     });
   });
 }
+
+/* Mobile swipe carousel: sync the position dots with horizontal scroll and
+   let dots scroll to a card. Independent of the desktop fan above so it works
+   on every viewport that shows the carousel (lg just hides the dots). */
+const carousel = document.querySelector<HTMLElement>('.work-carousel');
+const mdotsWrap = document.getElementById('work-mobile-dots');
+if (carousel && mdotsWrap) {
+  const items = Array.from(carousel.children).filter(
+    (el): el is HTMLElement => el instanceof HTMLElement && el.tagName === 'ARTICLE'
+  );
+  const mdots = Array.from(mdotsWrap.querySelectorAll<HTMLButtonElement>('button'));
+  let raf = 0;
+
+  const update = () => {
+    raf = 0;
+    const center = carousel.scrollLeft + carousel.clientWidth / 2;
+    let best = 0;
+    let bestDist = Infinity;
+    items.forEach((el, i) => {
+      const c = el.offsetLeft + el.offsetWidth / 2;
+      const d = Math.abs(c - center);
+      if (d < bestDist) {
+        bestDist = d;
+        best = i;
+      }
+    });
+    mdots.forEach((d, i) => d.setAttribute('aria-current', i === best ? 'true' : 'false'));
+  };
+
+  carousel.addEventListener(
+    'scroll',
+    () => {
+      if (!raf) raf = requestAnimationFrame(update);
+    },
+    { passive: true }
+  );
+
+  mdots.forEach((d, i) => {
+    d.addEventListener('click', () => {
+      const el = items[i];
+      if (!el) return;
+      carousel.scrollTo({
+        left: el.offsetLeft - (carousel.clientWidth - el.offsetWidth) / 2,
+        behavior: 'smooth',
+      });
+    });
+  });
+}
