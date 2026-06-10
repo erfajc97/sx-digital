@@ -1,6 +1,7 @@
 ---
+import '@/styles/fonts.css';
 import '@/styles/global.css';
-import { brand, services } from '@/data/site';
+import { brand, services, founder } from '@/data/site';
 
 interface Props {
   title?: string;
@@ -8,13 +9,14 @@ interface Props {
 }
 
 const {
-  title = `${brand.name} — Software, apps y automatización con IA`,
+  title = `Automatización con IA y Desarrollo de Software a Medida | ${brand.name}`,
   description = brand.tagline,
 } = Astro.props;
 
 const origin = Astro.site ? Astro.site.origin : `https://${brand.domain}`;
 const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : Astro.url.pathname;
-const ogImage = `${origin}/solvyxX-3D.jpg`;
+const ogImage = `${origin}/og-cover.jpg`;
+const logoImage = `${origin}/solvyxX-3D.jpg`;
 
 // Structured data (JSON-LD) — Organization + WebSite + Service catalog.
 // FAQPage schema intentionally omitted (Google restricts rich results to
@@ -26,18 +28,62 @@ const jsonLd = {
       '@type': 'Organization',
       '@id': `${origin}/#organization`,
       name: brand.name,
+      alternateName: 'SolvyX Digital',
       url: origin,
-      logo: ogImage,
+      logo: logoImage,
+      image: ogImage,
       email: brand.email,
+      telephone: brand.phone,
+      slogan: 'Automatización con IA y software a medida — en días, no en meses.',
       description:
-        'Estudio de IA, automatización e ingeniería de software. Automatización de negocio y marketing con IA (conexión de ads, generación de leads), creación de multimedia con IA (videos e imágenes para redes), desarrollo de software a medida, apps móviles, wallets fintech y blockchain.',
+        'Especialistas en automatización con IA y desarrollo de software a medida. Automatizamos procesos de negocio y marketing con inteligencia artificial (conexión de ads, generación y nurturing de leads), creamos multimedia con IA, y construimos software a medida, apps móviles, wallets fintech y blockchain — entregado en días, no en meses.',
+      knowsAbout: [
+        'Automatización con IA',
+        'Desarrollo de software a medida',
+        'Inteligencia artificial para negocios',
+        'Agentes de IA',
+        'Marketing con IA',
+        'Generación de leads',
+        'Aplicaciones móviles',
+        'Fintech',
+        'Blockchain',
+        'Integración de APIs',
+      ],
       sameAs: brand.social.map((s) => s.href),
+      contactPoint: {
+        '@type': 'ContactPoint',
+        contactType: 'sales',
+        email: brand.email,
+        telephone: brand.phone,
+        areaServed: 'Worldwide',
+        availableLanguage: ['es', 'en'],
+      },
       address: {
         '@type': 'PostalAddress',
         addressLocality: 'Barcelona',
         addressRegion: 'Cataluña',
         addressCountry: 'ES',
       },
+      foundingLocation: { '@type': 'Place', name: 'Barcelona, España' },
+      founder: { '@id': `${origin}/#founder` },
+    },
+    {
+      '@type': 'Person',
+      '@id': `${origin}/#founder`,
+      name: founder.name,
+      jobTitle: founder.role,
+      description: founder.bio,
+      worksFor: { '@id': `${origin}/#organization` },
+      knowsAbout: [
+        'Automatización con IA',
+        'Desarrollo de software a medida',
+        'Fintech',
+        'Blockchain',
+        'React',
+        'Node.js',
+        'Rust',
+      ],
+      sameAs: [founder.linkedin, founder.github],
     },
     {
       '@type': 'WebSite',
@@ -53,6 +99,15 @@ const jsonLd = {
       name: brand.name,
       url: origin,
       image: ogImage,
+      description:
+        'Agencia y estudio especializado en automatización con IA y desarrollo de software a medida para empresas que quieren crecer rápido.',
+      serviceType: [
+        'Automatización con IA',
+        'Desarrollo de software a medida',
+        'Marketing con IA',
+        'Aplicaciones móviles',
+        'Fintech y blockchain',
+      ],
       priceRange: '$$$',
       areaServed: 'Worldwide',
       provider: { '@id': `${origin}/#organization` },
@@ -74,9 +129,9 @@ const jsonLd = {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=3" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=3" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=3" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=4" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=4" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=4" />
     <link rel="canonical" href={canonical} />
     <meta name="generator" content={Astro.generator} />
     <meta name="robots" content="index, follow, max-image-preview:large" />
@@ -92,21 +147,23 @@ const jsonLd = {
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:alt" content="SolvyX — automatización con IA y desarrollo de software a medida" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content="SolvyX — automatización con IA y desarrollo de software a medida" />
     <meta name="theme-color" content="#3b5bdb" />
 
     <!-- Structured data -->
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
-    <!-- Fonts: Clash Display (display) + Satoshi (body) via Fontshare -->
-    <link rel="preconnect" href="https://api.fontshare.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://api.fontshare.com/v2/css?f[]=clash-display@500,600,700&f[]=satoshi@400,500,700&display=swap"
-    />
+    <!-- Fonts: self-hosted Clash Display + Satoshi (same-origin, no render-blocking external request) -->
+    <link rel="preload" href="/fonts/satoshi-400.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin />
   </head>
   <body>
     <a

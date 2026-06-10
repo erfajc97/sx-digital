@@ -103,7 +103,8 @@ export const brand = {
   logo: '/logo.png',
   logo3d: '/logo-3d.png',
   favicon: '/favicon.png',
-  tagline: 'Automatización con IA, marketing y software a medida — en días, no meses.',
+  tagline:
+    'Especialistas en automatización con IA y desarrollo de software a medida. Más leads, menos trabajo manual y lanzamientos en días, no en meses. Adelántate a tu competencia.',
   domain: 'solvyxdigital.com',
   email: 'contact@solvyxdigital.com',
   phone: '+34 645 42 55 82',
@@ -116,6 +117,21 @@ export const brand = {
   social: [
     { label: 'LinkedIn', href: 'https://www.linkedin.com/company/solvyx-digital/' },
   ],
+};
+
+/* Founder — real person behind SolvyX (E-E-A-T: experience + authority). */
+export const founder = {
+  name: 'Erick Jiménez Cruz',
+  role: 'Fundador & Ingeniero principal',
+  bio: 'Ingeniero full-stack senior con más de 5 años construyendo plataformas fintech y sistemas de alto rendimiento. Creó Eranpay —una wallet fintech con core bancario, KYC y servicios en tiempo real— y lideró apps premiadas (1.er lugar y $50K en una ronda de inversores en Madrid). En SolvyX une ese rigor de ingeniería con IA de punta para entregar automatización y software a medida que mueve la aguja de verdad.',
+  highlights: [
+    '+5 años de ingeniería',
+    'Fintech, IA y blockchain',
+    'Creador de Eranpay',
+    'App premiada · $50K en Madrid',
+  ],
+  linkedin: 'https://www.linkedin.com/in/erickjimenezcruz/',
+  github: 'https://github.com/erfajc97',
 };
 
 export const nav: NavLink[] = [
@@ -155,8 +171,8 @@ export const hero = {
     'FINTECH',
   ],
   // Titular estático (SEO + fallback sin JS / reduced-motion).
-  fallbackHeadline: 'IA, software y marketing que hacen crecer tu negocio.',
-  lead: 'Automatización, contenido, software, apps y fintech — potenciado con IA y entregado en días, no en meses.',
+  fallbackHeadline: 'Automatización con IA y software a medida que hacen crecer tu negocio.',
+  lead: 'Automatizamos tu negocio con IA y construimos el software a medida que te pone por delante de tu competencia — entregado en días, no en meses.',
   secondaryCta: { label: 'Ver lo que hacemos', href: '#trabajo' },
   // Selector interactivo de servicios (pills multi-select).
   servicePrompt: {

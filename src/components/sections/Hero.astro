@@ -91,62 +91,40 @@ const pillIcons: Record<string, IconName> = {
       </div>
     </div>
 
-    <!-- bottom group: the compact service card only, anchored to the bottom on
-         mobile so the robot's face stays visible above it -->
-    <div class="max-w-xl lg:mt-8 lg:max-w-2xl">
-      <!-- interactive service prompt — premium dark glass panel -->
-      <div
-        data-reveal
-        style="--reveal-delay: 180ms;"
-        class="svc-card max-w-xl rounded-[var(--radius-xl2)] border border-white/12 bg-night/45 p-4 backdrop-blur-xl sm:p-5"
-      >
-        <div class="flex items-center gap-2.5">
-          <span class="grid size-8 shrink-0 place-items-center rounded-lg bg-brand/15 text-brand ring-1 ring-brand/25">
-            <Icon name="spark" class="size-4" />
-          </span>
-          <div>
-            <h2 class="font-display text-base font-semibold tracking-tight text-on-night">{sp.title}</h2>
-            <p class="text-xs text-on-night-muted">{sp.subtitle}</p>
-          </div>
-        </div>
+    <!-- bottom group: a light service prompt that floats directly over the
+         video (no boxed container) so the clip keeps the spotlight -->
+    <div data-reveal style="--reveal-delay: 180ms;" class="max-w-xl lg:mt-8 lg:max-w-2xl">
+      <p class="mb-3 text-sm font-medium text-on-night">
+        {sp.title}
+        <span class="text-on-night-muted">· selecciona uno o más</span>
+      </p>
 
-        <div class="mt-3.5 flex flex-wrap gap-2">
-          {
-            sp.options.map((opt) => (
-              <button
-                type="button"
-                class="svc-pill press inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-sm font-medium text-on-night transition-colors duration-200 ease-[var(--ease-snappy)] hover:bg-white/12"
-                data-service={opt}
-                aria-pressed="false"
-              >
-                <Icon name={pillIcons[opt] ?? 'spark'} class="pill-ico size-3.5 shrink-0 text-brand" />
-                {opt}
-              </button>
-            ))
-          }
-        </div>
-
-        <p id="svc-placeholder" class="mt-3 text-[11px] italic text-on-night-muted/70">{sp.placeholder}</p>
-
-        <div id="svc-banner" class="svc-banner mt-2">
-          <div>
-            <div
-              class="flex flex-col gap-3 rounded-2xl border border-white/12 bg-white/8 px-4 py-3.5 sm:flex-row sm:items-center sm:justify-between"
+      <div class="mb-6 flex flex-wrap gap-2">
+        {
+          sp.options.map((opt) => (
+            <button
+              type="button"
+              class="svc-pill press inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 text-sm font-medium text-on-night backdrop-blur-sm transition-colors duration-200 ease-[var(--ease-snappy)] hover:bg-white/12"
+              data-service={opt}
+              aria-pressed="false"
             >
-              <p class="text-sm text-on-night-muted">
-                {sp.bannerLead} <span id="svc-list" class="font-medium text-on-night"></span>
-              </p>
-              <a
-                href={sp.ctaHref}
-                data-open-contact
-                class="btn-3d inline-flex shrink-0 items-center gap-1.5 rounded-full bg-brand px-4 py-2 text-xs font-semibold uppercase tracking-wider text-white hover:bg-brand-strong"
-              >
-                {sp.cta}
-                <Icon name="arrow" class="size-4" />
-              </a>
-            </div>
-          </div>
-        </div>
+              <Icon name={pillIcons[opt] ?? 'spark'} class="pill-ico size-3.5 shrink-0 text-brand" />
+              {opt}
+            </button>
+          ))
+        }
+      </div>
+
+      <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
+        <a
+          href={sp.ctaHref}
+          data-open-contact
+          class="btn-3d inline-flex items-center gap-2 rounded-full bg-brand px-7 py-3.5 text-base font-semibold text-white hover:bg-brand-strong"
+        >
+          Agenda tu llamada
+          <Icon name="arrow" class="size-4" />
+        </a>
+        <span id="svc-list" class="text-sm text-on-night-muted"></span>
       </div>
     </div>
   </div>
@@ -257,18 +235,16 @@ const pillIcons: Record<string, IconName> = {
     }
   }
 
-  // Interactive service pills (multi-select)
+  // Interactive service pills (multi-select) → inline summary next to the CTA
   const pills = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-service]'));
-  const banner = document.getElementById('svc-banner');
-  const placeholder = document.getElementById('svc-placeholder');
   const list = document.getElementById('svc-list');
   const selected = new Set<string>();
 
   const sync = () => {
-    if (list) list.textContent = Array.from(selected).join(', ');
-    const active = selected.size > 0;
-    banner?.classList.toggle('is-active', active);
-    placeholder?.classList.toggle('is-hidden', active);
+    if (list)
+      list.textContent = selected.size
+        ? `Listo para hablar de: ${Array.from(selected).join(', ')}`
+        : '';
   };
 
   pills.forEach((p) => {

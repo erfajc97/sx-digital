@@ -1,0 +1,73 @@
+---
+import { founder } from '@/data/site';
+import Icon from '../ui/Icon.astro';
+
+const initials = founder.name
+  .split(' ')
+  .map((w) => w[0])
+  .slice(0, 2)
+  .join('');
+---
+
+<section id="fundador" class="scroll-mt-24 py-[var(--spacing-section)]">
+  <div class="mx-auto max-w-[1240px] px-4 sm:px-6">
+    <div
+      data-reveal="scale"
+      class="card-3d grid gap-8 rounded-[var(--radius-xl2)] border border-border bg-surface p-7 sm:p-10 md:grid-cols-[auto_1fr] md:gap-12"
+    >
+      <!-- identity -->
+      <div class="flex items-center gap-4 md:w-48 md:flex-col md:items-start md:gap-4">
+        <span
+          class="grid size-20 shrink-0 place-items-center rounded-2xl bg-brand font-display text-2xl font-bold tracking-tight text-white"
+          aria-hidden="true"
+        >
+          {initials}
+        </span>
+        <div class="md:mt-1">
+          <p class="font-display text-lg font-semibold text-ink">{founder.name}</p>
+          <p class="text-sm text-muted">{founder.role}</p>
+        </div>
+      </div>
+
+      <!-- bio -->
+      <div class="flex flex-col gap-5">
+        <span class="text-sm font-semibold uppercase tracking-[0.16em] text-brand">
+          Quién está detrás
+        </span>
+        <p class="text-lg leading-relaxed text-ink-soft">{founder.bio}</p>
+
+        <ul class="flex flex-wrap gap-2">
+          {
+            founder.highlights.map((h) => (
+              <li class="inline-flex items-center gap-1.5 rounded-full bg-canvas px-3 py-1.5 text-xs font-medium text-ink-soft ring-1 ring-border">
+                <Icon name="check" class="size-3.5 text-brand" />
+                {h}
+              </li>
+            ))
+          }
+        </ul>
+
+        <div class="flex flex-wrap items-center gap-3 pt-1">
+          <a
+            href={founder.linkedin}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="press inline-flex items-center gap-2 rounded-full border border-border bg-canvas px-4 py-2 text-sm font-medium text-ink-soft transition-colors hover:bg-surface-2 hover:text-ink"
+          >
+            LinkedIn
+            <Icon name="arrow" class="size-4" />
+          </a>
+          <a
+            href={founder.github}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="press inline-flex items-center gap-2 rounded-full border border-border bg-canvas px-4 py-2 text-sm font-medium text-ink-soft transition-colors hover:bg-surface-2 hover:text-ink"
+          >
+            GitHub
+            <Icon name="arrow" class="size-4" />
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

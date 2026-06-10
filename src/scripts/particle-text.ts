@@ -1,7 +1,8 @@
 /* Particle text effect — vanilla port (no React).
    Adapted from the 21st.dev "ParticleTextEffect":
    - transparent fading trails (destination-out) so it composites over the video
-   - brand colors only (white / cobalt), no rainbow
+   - all-white particles that FADE in/out via alpha (no opaque black squares,
+     so no visible rectangular "box" forms over the video)
    - auto-fit font so Spanish words fit
    - pauses when off-screen or tab hidden; disabled under reduced-motion */
 
@@ -10,7 +11,6 @@ interface Vec {
   y: number;
 }
 
-const COBALT = { r: 96, g: 132, b: 255 };
 const WHITE = { r: 245, g: 247, b: 250 };
 
 class Particle {
@@ -23,10 +23,10 @@ class Particle {
   maxForce = 0.1;
   particleSize = 4;
   isKilled = false;
-  startColor = { r: 0, g: 0, b: 0 };
-  targetColor = { r: 0, g: 0, b: 0 };
-  colorWeight = 0;
-  colorBlendRate = 0.01;
+  /** 0 → invisible, 1 → fully visible. Particles fade in when forming a word
+      and fade out when killed, so they never appear as solid dark squares. */
+  alpha = 0;
+  fadeRate = 0.04;
 
   move() {
     let proximityMult = 1;
@@ -56,13 +56,11 @@ class Particle {
   }
 
   draw(ctx: CanvasRenderingContext2D) {
-    if (this.colorWeight < 1) this.colorWeight = Math.min(this.colorWeight + this.colorBlendRate, 1);
-    const c = {
-      r: Math.round(this.startColor.r + (this.targetColor.r - this.startColor.r) * this.colorWeight),
-      g: Math.round(this.startColor.g + (this.targetColor.g - this.startColor.g) * this.colorWeight),
-      b: Math.round(this.startColor.b + (this.targetColor.b - this.startColor.b) * this.colorWeight),
-    };
-    ctx.fillStyle = `rgb(${c.r}, ${c.g}, ${c.b})`;
+    const targetA = this.isKilled ? 0 : 1;
+    if (this.alpha < targetA) this.alpha = Math.min(this.alpha + this.fadeRate, 1);
+    else if (this.alpha > targetA) this.alpha = Math.max(this.alpha - this.fadeRate, 0);
+    if (this.alpha <= 0) return;
+    ctx.fillStyle = `rgba(${WHITE.r}, ${WHITE.g}, ${WHITE.b}, ${this.alpha})`;
     ctx.fillRect(this.pos.x, this.pos.y, this.particleSize, this.particleSize);
   }
 
@@ -71,19 +69,8 @@ class Particle {
     const p = randomEdge(w / 2, h / 2, (w + h) / 2);
     this.target.x = p.x;
     this.target.y = p.y;
-    this.startColor = blend(this.startColor, this.targetColor, this.colorWeight);
-    this.targetColor = { r: 0, g: 0, b: 0 };
-    this.colorWeight = 0;
     this.isKilled = true;
   }
-}
-
-function blend(a: { r: number; g: number; b: number }, b: { r: number; g: number; b: number }, w: number) {
-  return {
-    r: a.r + (b.r - a.r) * w,
-    g: a.g + (b.g - a.g) * w,
-    b: a.b + (b.b - a.b) * w,
-  };
 }
 
 function randomEdge(x: number, y: number, mag: number): Vec {
@@ -128,7 +115,7 @@ export function initParticleText(canvas: HTMLCanvasElement, words: string[]) {
     return size;
   };
 
-  const setWord = (word: string, color: { r: number; g: number; b: number }) => {
+  const setWord = (word: string) => {
     octx.clearRect(0, 0, W, H);
     const size = fitFont(word);
     octx.fillStyle = 'white';
@@ -153,7 +140,7 @@ export function initParticleText(canvas: HTMLCanvasElement, words: string[]) {
       let p: Particle;
       if (idx < particles.length) {
         p = particles[idx];
-        p.isKilled = false;
+        p.isKilled = false; // fade back in toward the new target
         idx++;
       } else {
         p = new Particle();
@@ -163,12 +150,9 @@ export function initParticleText(canvas: HTMLCanvasElement, words: string[]) {
         p.maxSpeed = Math.random() * 6 + 4;
         p.maxForce = p.maxSpeed * 0.05;
         p.particleSize = Math.random() * 1.5 + 1.5;
-        p.colorBlendRate = Math.random() * 0.0275 + 0.0025;
+        p.fadeRate = Math.random() * 0.03 + 0.02;
         particles.push(p);
       }
-      p.startColor = blend(p.startColor, p.targetColor, p.colorWeight);
-      p.targetColor = color;
-      p.colorWeight = 0;
       p.target.x = x;
       p.target.y = y;
     }
@@ -176,17 +160,19 @@ export function initParticleText(canvas: HTMLCanvasElement, words: string[]) {
   };
 
   const tick = () => {
-    // fade existing pixels toward transparent (motion-blur trails over the video)
-    ctx.globalCompositeOperation = 'destination-out';
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.14)';
-    ctx.fillRect(0, 0, W, H);
-    ctx.globalCompositeOperation = 'source-over';
+    // Fully clear every frame (no motion-blur trail) so no rectangular haze /
+    // "container" ever builds up over the video — only the live particles show.
+    ctx.clearRect(0, 0, W, H);
 
     for (let i = particles.length - 1; i >= 0; i--) {
       const p = particles[i];
       p.move();
       p.draw(ctx);
-      if (p.isKilled && (p.pos.x < -50 || p.pos.x > W + 50 || p.pos.y < -50 || p.pos.y > H + 50)) {
+      // remove fully-faded killed particles, or ones that drifted far off-canvas
+      if (
+        p.isKilled &&
+        (p.alpha <= 0 || p.pos.x < -50 || p.pos.x > W + 50 || p.pos.y < -50 || p.pos.y > H + 50)
+      ) {
         particles.splice(i, 1);
       }
     }
@@ -194,7 +180,7 @@ export function initParticleText(canvas: HTMLCanvasElement, words: string[]) {
     frame++;
     if (frame % 220 === 0) {
       wordIndex = (wordIndex + 1) % words.length;
-      setWord(words[wordIndex], wordIndex % 2 === 0 ? WHITE : COBALT);
+      setWord(words[wordIndex]);
     }
     raf = requestAnimationFrame(tick);
   };
@@ -209,7 +195,7 @@ export function initParticleText(canvas: HTMLCanvasElement, words: string[]) {
     if (raf) cancelAnimationFrame(raf);
   };
 
-  setWord(words[0], WHITE);
+  setWord(words[0]);
   start();
 
   // Pause when off-screen (perf)
