@@ -100,6 +100,33 @@ function initTilt() {
   });
 }
 
+/* -------------------------------------------------- spotlight ---------- */
+function initSpotlight() {
+  if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+
+  document.querySelectorAll<HTMLElement>('[data-spotlight]').forEach((el) => {
+    let rect: DOMRect | null = null;
+    let raf = 0;
+    let x = 0;
+    let y = 0;
+
+    const write = () => {
+      raf = 0;
+      if (!rect) return;
+      el.style.setProperty('--mx', `${((x - rect.left) / rect.width) * 100}%`);
+      el.style.setProperty('--my', `${((y - rect.top) / rect.height) * 100}%`);
+    };
+
+    el.addEventListener('pointerenter', () => (rect = el.getBoundingClientRect()));
+    el.addEventListener('pointermove', (ev) => {
+      x = ev.clientX;
+      y = ev.clientY;
+      if (!raf) raf = requestAnimationFrame(write);
+    });
+    el.addEventListener('pointerleave', () => (rect = null));
+  });
+}
+
 /* -------------------------------------------------- hero video --------- */
 function initHeroVideo() {
   const video = document.querySelector<HTMLVideoElement>('.hero-video');
@@ -138,6 +165,7 @@ function boot() {
   idle(() => {
     initCountUp();
     initTilt();
+    initSpotlight();
   });
 }
 

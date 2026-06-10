@@ -31,12 +31,13 @@ const span: Record<string, string> = {
           return (
             <article
               data-reveal
+              data-spotlight
               style={`--reveal-delay: ${i * 70}ms;`}
               class:list={[
-                'card-3d group relative flex flex-col gap-5 rounded-[var(--radius-card)] p-7 transition-transform duration-300 ease-[var(--ease-snappy)] hover:-translate-y-1',
+                'card-3d edge-top group relative flex flex-col gap-5 overflow-hidden rounded-[var(--radius-card)] p-7 transition-transform duration-300 ease-[var(--ease-snappy)] hover:-translate-y-1',
                 span[s.id] ?? 'lg:col-span-2',
                 featured
-                  ? 'bg-night text-on-night'
+                  ? 'glow-brand bg-night text-on-night'
                   : 'border border-border bg-surface hover:border-border-strong',
               ]}
             >
@@ -46,8 +47,10 @@ const span: Record<string, string> = {
               <div class="relative flex items-center justify-between">
                 <span
                   class:list={[
-                    'grid size-12 place-items-center rounded-2xl',
-                    featured ? 'bg-brand text-white' : 'bg-brand-soft text-brand',
+                    'grid size-12 place-items-center rounded-2xl shadow-[var(--shadow-soft)]',
+                    featured
+                      ? 'bg-gradient-to-br from-brand to-brand-strong text-white'
+                      : 'bg-gradient-to-br from-brand-soft to-[oklch(0.9_0.05_264)] text-brand',
                   ]}
                 >
                   <Icon name={s.icon} class="size-6" />

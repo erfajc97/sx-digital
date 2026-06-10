@@ -316,6 +316,74 @@
   box-shadow: var(--shadow-3d-hover);
 }
 
+/* ============================================================
+   Premium kit — gradient ink, pointer spotlight, glow accents.
+   Cohesive depth layer so the light sections hold up next to the
+   cinematic hero. Transform/opacity/box-shadow only (cheap).
+   ============================================================ */
+
+/* Brand gradient text — for key numbers and accent words */
+.text-gradient {
+  background-image: linear-gradient(118deg, oklch(0.55 0.2 264), oklch(0.7 0.16 286));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Decorative soft glow blob (drop inside a relative + overflow-hidden parent) */
+.glow-spot {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(70px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Brand-tinted elevation for featured dark tiles */
+.glow-brand {
+  box-shadow:
+    var(--shadow-3d),
+    0 24px 70px -26px oklch(0.52 0.193 264 / 0.6);
+}
+
+/* Pointer spotlight — JS sets --mx/--my (%) on hover; fine-pointer only.
+   Content inside must be positioned (relative) so it paints above ::before. */
+[data-spotlight] {
+  position: relative;
+  isolation: isolate;
+}
+[data-spotlight]::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    260px circle at var(--mx, 50%) var(--my, -10%),
+    oklch(0.52 0.193 264 / 0.12),
+    transparent 62%
+  );
+  opacity: 0;
+  transition: opacity 0.35s var(--ease-snappy);
+  pointer-events: none;
+  z-index: 0;
+}
+@media (hover: hover) and (pointer: fine) {
+  [data-spotlight]:hover::before {
+    opacity: 1;
+  }
+}
+
+/* Gradient hairline along a card's top edge (premium seam) */
+.edge-top::after {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  border-radius: inherit;
+  background: linear-gradient(90deg, transparent, oklch(0.52 0.193 264 / 0.55), transparent);
+  z-index: 1;
+}
+
 /* FAQ native disclosure animation (grid-rows, not height) */
 .disclosure {
   display: grid;

@@ -37,29 +37,37 @@ import Icon from '../ui/Icon.astro';
     </div>
 
     <!-- Stats band -->
-    <dl
-      data-reveal
-      class="card-3d mt-16 grid grid-cols-2 gap-px overflow-hidden rounded-[var(--radius-xl2)] border border-border bg-border lg:grid-cols-4"
-    >
-      {
-        stats.map((s) => {
-          const n = parseFloat(s.value.replace(/[^\d.]/g, ''));
-          // Only animate "real" numbers: big counts, a decimal (8.4), or a ratio (×).
-          // (Guard against the period in abbreviations like "2 sem.")
-          const countup = /\d/.test(s.value) && (n >= 10 || s.value.includes('×') || /\d\.\d/.test(s.value));
-          return (
-            <div class="flex flex-col gap-1.5 bg-canvas p-7">
-              <dt
-                class="font-display text-[clamp(2.2rem,4vw,3rem)] font-semibold leading-none tabular-nums text-brand"
-                data-countup={countup ? '' : undefined}
-              >
-                {s.value}
-              </dt>
-              <dd class="text-sm leading-snug text-muted">{s.label}</dd>
-            </div>
-          );
-        })
-      }
-    </dl>
+    <div class="relative mt-16">
+      <div
+        class="glow-spot"
+        style="width:36rem;height:18rem;left:50%;top:35%;transform:translate(-50%,-50%);background:oklch(0.52 0.193 264 / 0.16);"
+        aria-hidden="true"
+      >
+      </div>
+      <dl
+        data-reveal
+        class="card-3d edge-top relative grid grid-cols-2 gap-px overflow-hidden rounded-[var(--radius-xl2)] border border-border bg-border lg:grid-cols-4"
+      >
+        {
+          stats.map((s) => {
+            const n = parseFloat(s.value.replace(/[^\d.]/g, ''));
+            // Only animate "real" numbers: big counts, a decimal (8.4), or a ratio (×).
+            // (Guard against the period in abbreviations like "2 sem.")
+            const countup = /\d/.test(s.value) && (n >= 10 || s.value.includes('×') || /\d\.\d/.test(s.value));
+            return (
+              <div class="group flex flex-col gap-1.5 bg-canvas p-7 transition-colors duration-300 hover:bg-surface">
+                <dt
+                  class="text-gradient font-display text-[clamp(2.2rem,4vw,3rem)] font-semibold leading-none tabular-nums"
+                  data-countup={countup ? '' : undefined}
+                >
+                  {s.value}
+                </dt>
+                <dd class="text-sm leading-snug text-muted">{s.label}</dd>
+              </div>
+            );
+          })
+        }
+      </dl>
+    </div>
   </div>
 </section>

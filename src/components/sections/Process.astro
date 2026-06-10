@@ -5,6 +5,12 @@ import SectionHeading from '../ui/SectionHeading.astro';
 
 <section id="proceso" class="relative scroll-mt-24 overflow-hidden bg-night py-[var(--spacing-section)]">
   <div class="bg-grid-night pointer-events-none absolute inset-0 opacity-50"></div>
+  <div
+    class="glow-spot"
+    style="width:34rem;height:34rem;left:50%;top:-10rem;transform:translateX(-50%);background:oklch(0.52 0.193 264 / 0.28);"
+    aria-hidden="true"
+  >
+  </div>
 
   <div class="relative mx-auto max-w-[1240px] px-4 sm:px-6">
     <SectionHeading
@@ -23,7 +29,7 @@ import SectionHeading from '../ui/SectionHeading.astro';
             class="group flex flex-col gap-4 bg-night p-7 transition-colors duration-300 hover:bg-night-2"
           >
             <div class="flex items-baseline justify-between">
-              <span class="font-display text-5xl font-semibold text-brand">{p.step}</span>
+              <span class="text-gradient font-display text-5xl font-semibold">{p.step}</span>
               <span class="h-px flex-1 translate-y-[-6px] bg-white/10 group-last:hidden ml-4"></span>
             </div>
             <h3 class="text-xl text-on-night">{p.title}</h3>

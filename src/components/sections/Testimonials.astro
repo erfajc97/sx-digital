@@ -18,11 +18,11 @@ import SectionHeading from '../ui/SectionHeading.astro';
             data-reveal
             style={`--reveal-delay: ${i * 90}ms;`}
             class:list={[
-              'card-3d flex flex-col gap-6 rounded-[var(--radius-card)] border border-border bg-canvas p-7',
-              i === 1 ? 'md:-translate-y-5' : '',
+              'card-3d edge-top relative flex flex-col gap-6 overflow-hidden rounded-[var(--radius-card)] border border-border bg-canvas p-7',
+              i === 1 ? 'md:-translate-y-5' : 'card-3d-hover',
             ]}
           >
-            <svg class="size-8 text-brand/30" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <svg class="size-10 text-brand/35" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M9.5 6C6.5 7.5 5 10 5 13v5h6v-6H8c0-2 .8-3.4 2.5-4.3L9.5 6Zm9 0C15.5 7.5 14 10 14 13v5h6v-6h-3c0-2 .8-3.4 2.5-4.3L18.5 6Z" />
             </svg>
             <blockquote class="text-lg leading-relaxed text-ink">
@@ -35,7 +35,7 @@ import SectionHeading from '../ui/SectionHeading.astro';
                 loading="lazy"
                 width="48"
                 height="48"
-                class="size-11 rounded-full object-cover"
+                class="size-11 rounded-full object-cover ring-2 ring-brand/20"
               />
               <div>
                 <p class="font-display font-semibold text-ink">{t.name}</p>

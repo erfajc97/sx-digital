@@ -23,10 +23,10 @@ import Icon from '../ui/Icon.astro';
               data-reveal
               style={`--reveal-delay: ${i * 90}ms;`}
               class:list={[
-                'card-3d flex flex-col gap-6 rounded-[var(--radius-xl2)] p-8',
+                'card-3d edge-top relative flex flex-col gap-6 overflow-hidden rounded-[var(--radius-xl2)] p-8',
                 featured
-                  ? 'bg-night text-on-night lg:-translate-y-4'
-                  : 'border border-border bg-surface',
+                  ? 'glow-brand bg-night text-on-night lg:-translate-y-4'
+                  : 'card-3d-hover border border-border bg-surface',
               ]}
             >
               <div class="flex items-center justify-between">
@@ -41,7 +41,7 @@ import Icon from '../ui/Icon.astro';
               </div>
 
               <div class="flex flex-col gap-1">
-                <span class:list={['font-display text-3xl font-semibold', featured ? 'text-on-night' : 'text-ink']}>
+                <span class:list={['font-display text-3xl font-semibold', featured ? 'text-gradient' : 'text-ink']}>
                   {p.price}
                 </span>
                 <span class:list={['text-sm', featured ? 'text-on-night-muted' : 'text-muted']}>
