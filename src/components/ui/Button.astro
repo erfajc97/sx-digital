@@ -37,10 +37,11 @@ const calAttrs = cal
     }
   : {};
 const finalHref = cal ? brand.bookingUrl : href;
-// On desktop the click handler intercepts cal buttons (modal, no navigation).
-// On mobile it lets the link through — open in a new tab so the booking page
-// is full-screen and the user just closes the tab to return to the landing.
-const isExternal = external || cal;
+// Desktop: the click handler intercepts cal buttons (modal, no navigation).
+// Mobile: it lets the link navigate IN THE SAME TAB to the full-screen Cal
+// page (browser back returns to the landing — no extra tab to accidentally
+// close, no cramped modal).
+const isExternal = external;
 
 const base =
   'btn-3d group inline-flex items-center justify-center gap-2 rounded-full font-medium focus-visible:outline-2';

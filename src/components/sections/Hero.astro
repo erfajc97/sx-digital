@@ -18,7 +18,7 @@ const pillIcons: Record<string, IconName> = {
   <div class="pointer-events-none absolute inset-0 z-0 overflow-hidden">
     <video
       id="hero-video"
-      class="size-full object-cover object-center md:object-right"
+      class="size-full object-cover object-[30%_center] md:object-right"
       autoplay
       muted
       loop
@@ -118,8 +118,6 @@ const pillIcons: Record<string, IconName> = {
       <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
         <a
           href={brand.bookingUrl}
-          target="_blank"
-          rel="noopener noreferrer"
           data-cal-link={brand.calLink}
           data-cal-namespace={brand.calNamespace}
           data-cal-config='{"layout":"month_view"}'
