@@ -3,14 +3,15 @@ import { services } from '@/data/site';
 import SectionHeading from '../ui/SectionHeading.astro';
 import Icon from '../ui/Icon.astro';
 
-// Distinct (but cohesive, cool-family) gradient per service for the card visual.
+// On-brand cobalt → navy gradient for every card. Subtle depth variation only
+// (same hue family ~264), so the set stays cohesive instead of rainbow.
 const visual: Record<string, string> = {
-  'ai-automation': 'from-[oklch(0.5_0.2_264)] to-[oklch(0.27_0.12_280)]',
-  growth: 'from-[oklch(0.52_0.16_210)] to-[oklch(0.29_0.12_235)]',
-  media: 'from-[oklch(0.52_0.17_300)] to-[oklch(0.3_0.13_285)]',
-  fintech: 'from-[oklch(0.52_0.14_175)] to-[oklch(0.29_0.11_200)]',
-  mobile: 'from-[oklch(0.54_0.16_250)] to-[oklch(0.3_0.13_262)]',
-  software: 'from-[oklch(0.48_0.19_264)] to-[oklch(0.27_0.13_255)]',
+  'ai-automation': 'from-[oklch(0.5_0.2_264)] to-[oklch(0.24_0.1_266)]',
+  growth: 'from-[oklch(0.46_0.18_262)] to-[oklch(0.25_0.1_264)]',
+  media: 'from-[oklch(0.45_0.17_268)] to-[oklch(0.24_0.1_266)]',
+  fintech: 'from-[oklch(0.47_0.18_260)] to-[oklch(0.25_0.1_263)]',
+  mobile: 'from-[oklch(0.45_0.17_266)] to-[oklch(0.24_0.1_265)]',
+  software: 'from-[oklch(0.48_0.19_264)] to-[oklch(0.24_0.1_264)]',
 };
 const category: Record<string, string> = {
   'ai-automation': 'Automatización',
