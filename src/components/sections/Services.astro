@@ -102,7 +102,7 @@ const category: Record<string, string> = {
         services.map((s) => {
           const featured = s.id === 'ai-automation';
           return (
-            <article class="group relative flex h-[58vh] max-h-[500px] w-[80vw] max-w-[320px] shrink-0 snap-center flex-col overflow-hidden rounded-[var(--radius-xl2)] border border-border bg-canvas card-3d">
+            <article class="svc-mcard group relative flex h-[58vh] max-h-[500px] w-[80vw] max-w-[320px] shrink-0 snap-center flex-col overflow-hidden rounded-[var(--radius-xl2)] border border-border bg-canvas card-3d will-change-transform">
               <div class:list={['relative h-[44%] overflow-hidden bg-gradient-to-br', visual[s.id] ?? visual.software]}>
                 <div class="bg-grid-night absolute inset-0 opacity-25" />
                 <Icon name={s.icon} class="pointer-events-none absolute -bottom-8 -right-6 size-40 text-white/10" />

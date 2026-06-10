@@ -67,4 +67,41 @@ if (reel) {
       gsap.set(texts, { clearProps: 'all' });
     };
   });
+
+  // Mobile (+motion): tactile "center focus" — the card nearest the centre of
+  // the swipe grows and brightens while the others shrink/dim as you scroll.
+  mm.add('(max-width: 1023px) and (prefers-reduced-motion: no-preference)', () => {
+    const track = document.getElementById('svc-track');
+    if (!track) return;
+    const cards = Array.from(track.querySelectorAll<HTMLElement>('.svc-mcard'));
+    let raf = 0;
+
+    const update = () => {
+      raf = 0;
+      const mid = track.scrollLeft + track.clientWidth / 2;
+      const reach = track.clientWidth * 0.7;
+      cards.forEach((card) => {
+        const c = card.offsetLeft + card.offsetWidth / 2;
+        const t = 1 - Math.min(Math.abs(c - mid) / reach, 1); // 1 at centre → 0
+        card.style.transform = `scale(${(0.88 + t * 0.12).toFixed(3)})`;
+        card.style.opacity = (0.55 + t * 0.45).toFixed(3);
+      });
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(update);
+    };
+
+    track.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+    update();
+
+    return () => {
+      track.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+      cards.forEach((c) => {
+        c.style.removeProperty('transform');
+        c.style.removeProperty('opacity');
+      });
+    };
+  });
 }
