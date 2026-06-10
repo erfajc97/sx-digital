@@ -50,4 +50,61 @@ const { title, description } = Astro.props;
   <script>
     import '@/scripts/enhance';
   </script>
+
+  <!-- Cal.com popup — any element with data-cal-link opens the booking modal -->
+  <script is:inline>
+    (function (C, A, L) {
+      let p = function (a, ar) {
+        a.q.push(ar);
+      };
+      let d = C.document;
+      C.Cal =
+        C.Cal ||
+        function () {
+          let cal = C.Cal;
+          let ar = arguments;
+          if (!cal.loaded) {
+            cal.ns = {};
+            cal.q = cal.q || [];
+            d.head.appendChild(d.createElement('script')).src = A;
+            cal.loaded = true;
+          }
+          if (ar[0] === L) {
+            const api = function () {
+              p(api, arguments);
+            };
+            const namespace = ar[1];
+            api.q = api.q || [];
+            if (typeof namespace === 'string') {
+              cal.ns[namespace] = cal.ns[namespace] || api;
+              p(cal.ns[namespace], ar);
+              p(cal, ['initNamespace', namespace]);
+            } else p(cal, ar);
+            return;
+          }
+          p(cal, ar);
+        };
+    })(window, 'https://app.cal.com/embed/embed.js', 'init');
+
+    Cal('init', { origin: 'https://cal.com' });
+    Cal('ui', {
+      theme: 'dark',
+      cssVarsPerTheme: { dark: { 'cal-brand': '#6f8cf0' } },
+      hideEventTypeDetails: false,
+      layout: 'month_view',
+    });
+
+    // Open the booking modal IN PLACE on any [data-cal-link] click (Cal's own
+    // auto-binding is unreliable, so we call the API explicitly). preventDefault
+    // keeps the href as a no-JS fallback without ever navigating away.
+    document.addEventListener('click', function (e) {
+      const el = e.target.closest && e.target.closest('[data-cal-link]');
+      if (!el) return;
+      e.preventDefault();
+      Cal('modal', {
+        calLink: el.getAttribute('data-cal-link'),
+        config: { layout: 'month_view' },
+      });
+    });
+  </script>
 </BaseLayout>

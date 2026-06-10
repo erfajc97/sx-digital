@@ -110,10 +110,10 @@ export const brand = {
   phone: '+34 645 42 55 82',
   location: 'Barcelona, España · Remote worldwide',
   // Link público de Cal.com (página de reserva). Cámbialo si renombras el usuario.
-  bookingUrl: 'https://cal.com/miguel-brito-knudhf/30min',
+  bookingUrl: 'https://cal.com/solvyxdigital/30min',
   // Solo el "handle/evento" de Cal.com (lo que va después de cal.com/).
-  // Alimenta el calendario embebido en la sección "Agenda".
-  calLink: 'miguel-brito-knudhf/30min',
+  // Abre el modal de reserva desde los botones CTA.
+  calLink: 'solvyxdigital/30min',
   social: [
     { label: 'LinkedIn', href: 'https://www.linkedin.com/company/solvyx-digital/' },
   ],

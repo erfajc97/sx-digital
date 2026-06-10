@@ -1,5 +1,5 @@
 ---
-import { hero, heroMedia } from '@/data/site';
+import { hero, heroMedia, brand } from '@/data/site';
 import type { IconName } from '@/data/site';
 import Icon from '../ui/Icon.astro';
 
@@ -117,8 +117,9 @@ const pillIcons: Record<string, IconName> = {
 
       <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
         <a
-          href={sp.ctaHref}
-          data-open-contact
+          href={brand.bookingUrl}
+          data-cal-link={brand.calLink}
+          data-cal-config='{"layout":"month_view"}'
           class="btn-3d inline-flex items-center gap-2 rounded-full bg-brand px-7 py-3.5 text-base font-semibold text-white hover:bg-brand-strong"
         >
           Agenda tu llamada

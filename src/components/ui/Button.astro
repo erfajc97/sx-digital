@@ -1,6 +1,7 @@
 ---
 import Icon from './Icon.astro';
 import type { IconName } from '@/data/site';
+import { brand } from '@/data/site';
 
 interface Props {
   href: string;
@@ -11,6 +12,8 @@ interface Props {
   external?: boolean;
   /** When true, the link opens the global contact modal (with #agenda fallback). */
   openContact?: boolean;
+  /** When true, the link opens the Cal.com booking modal (no-JS → booking page). */
+  cal?: boolean;
 }
 
 const {
@@ -21,7 +24,18 @@ const {
   class: className = '',
   external = false,
   openContact = false,
+  cal = false,
 } = Astro.props;
+
+// Cal buttons: open the popup modal via data-cal-link; the href points to the
+// public booking page so it still works without JS.
+const calAttrs = cal
+  ? { 'data-cal-link': brand.calLink, 'data-cal-config': JSON.stringify({ layout: 'month_view' }) }
+  : {};
+const finalHref = cal ? brand.bookingUrl : href;
+// Cal buttons keep href as a no-JS fallback but must NOT open a new tab —
+// Cal intercepts the click to open the modal in place.
+const isExternal = external;
 
 const base =
   'btn-3d group inline-flex items-center justify-center gap-2 rounded-full font-medium focus-visible:outline-2';
@@ -38,15 +52,16 @@ const variants = {
   'on-night': 'bg-canvas text-ink hover:bg-on-night-muted',
 };
 
-const rel = external ? 'noopener noreferrer' : undefined;
-const target = external ? '_blank' : undefined;
+const rel = isExternal ? 'noopener noreferrer' : undefined;
+const target = isExternal ? '_blank' : undefined;
 ---
 
 <a
-  href={href}
+  href={finalHref}
   rel={rel}
   target={target}
   data-open-contact={openContact ? '' : undefined}
+  {...calAttrs}
   class:list={[base, sizes[size], variants[variant], className]}
 >
   <slot />
