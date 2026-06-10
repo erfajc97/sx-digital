@@ -1,8 +1,9 @@
-/* Services gallery — scroll-driven "product card" showcase.
-   Desktop (+motion): the section pins and the row of cards scrolls
-   horizontally as you scroll vertically (containerAnimation), with a progress
-   bar and parallax on each card's artwork. Mobile / reduced-motion: native
-   horizontal swipe (scroll-snap). Gated by gsap.matchMedia(). */
+/* Services gallery — scroll-driven slideshow.
+   Desktop (+motion): the section pins and, as you scroll, the service cards
+   appear ONE BY ONE (each rises/fades in as the previous leaves) until the
+   last one is shown, then the pin releases and you continue to the next
+   section. Mobile / reduced-motion: native horizontal swipe (scroll-snap).
+   Gated by gsap.matchMedia(). */
 import gsap from 'gsap';
 import ScrollTrigger from 'gsap/ScrollTrigger';
 
@@ -15,55 +16,62 @@ if (gallery && track) {
   mm.add('(min-width: 1024px) and (prefers-reduced-motion: no-preference)', () => {
     gsap.registerPlugin(ScrollTrigger);
 
-    // Swap from native swipe to pinned/horizontal layout.
+    const cards = gsap.utils.toArray<HTMLElement>('.svc-card');
+    const dots = gsap.utils.toArray<HTMLElement>('.svc-dot');
+    const spacer = track.querySelector<HTMLElement>('.svc-spacer');
+    if (spacer) spacer.style.display = 'none';
+
+    // Pinned full-screen stage; stack every card dead-centre.
     gallery.classList.add('svc-gallery--pinned');
     track.classList.remove('overflow-x-auto', 'snap-x', 'snap-mandatory');
-    track.classList.add('svc-track--static');
+    track.style.display = 'contents'; // let the cards position against the gallery
 
-    const progress = document.getElementById('svc-progress');
-    const getDist = () => Math.max(0, track.scrollWidth - window.innerWidth);
+    gsap.set(cards, {
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      xPercent: -50,
+      yPercent: -50,
+      autoAlpha: 0,
+      y: 70,
+      scale: 0.94,
+    });
+    gsap.set(cards[0], { autoAlpha: 1, y: 0, scale: 1 });
 
-    // Vertical scroll → horizontal travel (ease "none" is required).
-    const tween = gsap.to(track, {
-      x: () => -getDist(),
-      ease: 'none',
+    const setActiveDot = (idx: number) =>
+      dots.forEach((d, i) => d.classList.toggle('is-active', i === idx));
+    setActiveDot(0);
+
+    const tl = gsap.timeline({
+      defaults: { ease: 'power2.inOut' },
       scrollTrigger: {
         trigger: gallery,
         pin: true,
         start: 'top top',
-        end: () => '+=' + getDist(),
+        end: () => '+=' + (cards.length - 1) * window.innerHeight * 0.85,
         scrub: 1,
         invalidateOnRefresh: true,
-        onUpdate: (self) => progress && gsap.set(progress, { scaleX: self.progress }),
+        onUpdate: (self) => setActiveDot(Math.round(self.progress * (cards.length - 1))),
       },
     });
 
-    // Parallax the big watermark icon inside each card as it crosses the view.
-    gsap.utils.toArray<HTMLElement>('.svc-card').forEach((card) => {
-      const art = card.querySelector<HTMLElement>('.svc-art');
-      if (!art) return;
-      gsap.fromTo(
-        art,
-        { xPercent: 14 },
-        {
-          xPercent: -14,
-          ease: 'none',
-          scrollTrigger: {
-            containerAnimation: tween,
-            trigger: card,
-            start: 'left right',
-            end: 'right left',
-            scrub: true,
-          },
-        }
+    for (let i = 1; i < cards.length; i++) {
+      tl.to(cards[i - 1], { autoAlpha: 0, y: -60, scale: 0.92, duration: 1 });
+      tl.fromTo(
+        cards[i],
+        { autoAlpha: 0, y: 70, scale: 0.94 },
+        { autoAlpha: 1, y: 0, scale: 1, duration: 1 },
+        '<0.15'
       );
-    });
+    }
 
     return () => {
       gallery.classList.remove('svc-gallery--pinned');
       track.classList.add('overflow-x-auto', 'snap-x', 'snap-mandatory');
-      track.classList.remove('svc-track--static');
-      gsap.set(track, { clearProps: 'x' });
+      track.style.removeProperty('display');
+      if (spacer) spacer.style.removeProperty('display');
+      gsap.set(cards, { clearProps: 'all' });
+      dots.forEach((d) => d.classList.remove('is-active'));
     };
   });
 }

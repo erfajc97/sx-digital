@@ -77,13 +77,13 @@ const category: Record<string, string> = {
           );
         })
       }
-      <!-- trailing spacer so the last card can rest centred on desktop -->
-      <div class="shrink-0 lg:w-[24vw]" aria-hidden="true"></div>
+      <!-- trailing spacer (mobile swipe only) -->
+      <div class="svc-spacer shrink-0" aria-hidden="true"></div>
     </div>
 
-    <!-- desktop scroll-progress -->
-    <div class="mx-auto mt-2 hidden h-1 w-40 overflow-hidden rounded-full bg-border lg:block">
-      <span id="svc-progress" class="block h-full w-full origin-left scale-x-0 bg-brand"></span>
+    <!-- desktop slideshow position dots -->
+    <div id="svc-dots" class="absolute inset-x-0 bottom-8 z-20 hidden justify-center gap-2.5 lg:flex">
+      {services.map(() => <span class="svc-dot size-2 rounded-full bg-ink/20 transition-all" />)}
     </div>
   </div>
 </section>
@@ -104,6 +104,11 @@ const category: Record<string, string> = {
   }
   .svc-track--static {
     overflow: visible;
+  }
+  .svc-dot.is-active {
+    width: 1.5rem;
+    border-radius: 9999px;
+    background-color: var(--color-brand);
   }
 </style>
 
