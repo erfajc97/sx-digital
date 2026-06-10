@@ -31,11 +31,14 @@ const category: Record<string, string> = {
     />
   </div>
 
-  <!-- Desktop: scroll-driven "View-Master" reel -->
-  <div id="svc-reel" class="relative mt-4 hidden lg:block">
-    <div class="reel-stage relative mx-auto flex min-h-screen max-w-[1240px] items-center gap-6 px-6">
-      <!-- Left: informative text (one per service, cross-faded) -->
-      <div class="relative z-10 h-[360px] w-[42%]">
+  <!-- Scroll-driven "View-Master" reel (desktop: text left + wheel right;
+       mobile: text top + wheel below — same native-scroll-driven rotation) -->
+  <div id="svc-reel" class="relative mt-4">
+    <div
+      class="reel-stage relative mx-auto flex min-h-screen max-w-[1240px] flex-col items-center justify-center gap-2 px-6 lg:flex-row lg:gap-6"
+    >
+      <!-- Informative text (one per service, cross-faded) -->
+      <div class="relative z-10 h-[290px] w-full max-w-md lg:h-[360px] lg:w-[42%] lg:max-w-none">
         {
           services.map((s, i) => (
             <div
@@ -66,17 +69,17 @@ const category: Record<string, string> = {
         }
       </div>
 
-      <!-- Right: the rotating reel of media frames -->
-      <div class="reel-wheel relative h-screen w-[58%]">
+      <!-- The rotating reel of media frames -->
+      <div class="reel-wheel relative h-[46vh] w-full lg:h-screen lg:w-[58%]">
         <!-- faint reel guide circle -->
         <div
-          class="reel-guide pointer-events-none absolute left-1/2 top-1/2 size-[440px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-border"
+          class="reel-guide pointer-events-none absolute left-1/2 top-1/2 size-[290px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-border lg:size-[440px]"
         >
         </div>
         {
           services.map((s, i) => (
             <div
-              class="reel-frame absolute left-1/2 top-1/2 grid h-[300px] w-[232px] place-items-center overflow-hidden rounded-[var(--radius-xl2)] border border-border card-3d"
+              class="reel-frame absolute left-1/2 top-1/2 grid h-[200px] w-[156px] place-items-center overflow-hidden rounded-[var(--radius-card)] border border-border card-3d lg:h-[300px] lg:w-[232px] lg:rounded-[var(--radius-xl2)]"
               data-i={i}
             >
               <div class:list={['absolute inset-0 bg-gradient-to-br', visual[s.id] ?? visual.software]} />
@@ -92,8 +95,8 @@ const category: Record<string, string> = {
     </div>
   </div>
 
-  <!-- Mobile (and reduced-motion desktop): swipe carousel of product cards -->
-  <div class="svc-mobile mt-8 lg:hidden">
+  <!-- Reduced-motion fallback (any size): swipe carousel of product cards -->
+  <div class="svc-mobile mt-8 hidden">
     <div
       id="svc-track"
       class="flex gap-4 overflow-x-auto px-4 pb-4 [scrollbar-width:none] snap-x snap-mandatory"
@@ -147,8 +150,8 @@ const category: Record<string, string> = {
     will-change: transform, opacity;
     transform: translate(-50%, -50%);
   }
-  /* Reduced motion: skip the reel entirely, show the swipe carousel instead. */
-  @media (prefers-reduced-motion: reduce) and (min-width: 1024px) {
+  /* Reduced motion (any size): skip the reel entirely, show the swipe carousel. */
+  @media (prefers-reduced-motion: reduce) {
     #svc-reel {
       display: none;
     }

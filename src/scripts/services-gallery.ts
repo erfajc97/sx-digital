@@ -1,8 +1,11 @@
-/* Services — "View-Master" reel. Desktop (+motion): the section pins and a
-   circular reel of media frames rotates as you scroll; the frame reaching the
-   viewer position (left, next to the text) grows into focus while the
-   informative text on the left cross-fades to match. Mobile / reduced-motion:
-   native swipe carousel. Gated by gsap.matchMedia(). */
+/* Services — "View-Master" reel, desktop AND mobile.
+   The section pins and a circular reel of media frames rotates tied to the
+   native scroll (scrub — the finger/wheel stays in control, no hijacking).
+   The frame reaching the viewer slot grows into focus while the informative
+   text cross-fades to match. Desktop: text left, wheel right, viewer at the
+   wheel's left. Mobile: text top, wheel below, viewer at the wheel's top.
+   Reduced-motion (any size): the reel is hidden by CSS and a plain swipe
+   carousel is shown instead. */
 import gsap from 'gsap';
 import ScrollTrigger from 'gsap/ScrollTrigger';
 
@@ -11,15 +14,13 @@ const reel = document.getElementById('svc-reel');
 if (reel) {
   const mm = gsap.matchMedia();
 
-  mm.add('(min-width: 1024px) and (prefers-reduced-motion: no-preference)', () => {
+  const buildReel = (RADIUS: number, VIEWER: number, perStep: number) => {
     gsap.registerPlugin(ScrollTrigger);
 
     const frames = gsap.utils.toArray<HTMLElement>('.reel-frame');
     const texts = gsap.utils.toArray<HTMLElement>('.reel-text');
     const N = frames.length;
     const STEP = 360 / N;
-    const RADIUS = 210; // orbit radius (px)
-    const VIEWER = 180; // active angle — left of the wheel, toward the text
     let active = -1;
 
     // Position every frame around the circle for a given rotation offset.
@@ -27,7 +28,7 @@ if (reel) {
       frames.forEach((f, i) => {
         const angle = VIEWER + i * STEP + offset;
         // angular distance from the viewer slot (0..180)
-        const d = Math.abs((((angle - VIEWER) % 360) + 540) % 360 - 180);
+        const d = Math.abs(((((angle - VIEWER) % 360) + 540) % 360) - 180);
         const t = 1 - Math.min(d, 140) / 140; // 1 at viewer → 0 far away
         const scale = 0.6 + t * 0.62; // 0.6 … 1.22
         f.style.transform = `translate(-50%, -50%) rotate(${angle}deg) translateX(${RADIUS}px) rotate(${-angle}deg) scale(${scale})`;
@@ -39,7 +40,9 @@ if (reel) {
     const setText = (idx: number) => {
       if (idx === active) return;
       active = idx;
-      texts.forEach((tx, i) => gsap.to(tx, { autoAlpha: i === idx ? 1 : 0, duration: 0.4, ease: 'power2.out' }));
+      texts.forEach((tx, i) =>
+        gsap.to(tx, { autoAlpha: i === idx ? 1 : 0, duration: 0.4, ease: 'power2.out' })
+      );
     };
 
     layout(0);
@@ -49,7 +52,7 @@ if (reel) {
       trigger: reel,
       pin: true,
       start: 'top top',
-      end: () => '+=' + (N - 1) * window.innerHeight * 0.7,
+      end: () => '+=' + (N - 1) * window.innerHeight * perStep,
       scrub: 1,
       invalidateOnRefresh: true,
       onUpdate: (self) => {
@@ -66,42 +69,16 @@ if (reel) {
       });
       gsap.set(texts, { clearProps: 'all' });
     };
-  });
+  };
 
-  // Mobile (+motion): tactile "center focus" — the card nearest the centre of
-  // the swipe grows and brightens while the others shrink/dim as you scroll.
-  mm.add('(max-width: 1023px) and (prefers-reduced-motion: no-preference)', () => {
-    const track = document.getElementById('svc-track');
-    if (!track) return;
-    const cards = Array.from(track.querySelectorAll<HTMLElement>('.svc-mcard'));
-    let raf = 0;
+  // Desktop: wheel on the right, viewer slot on its LEFT (angle 180°).
+  mm.add('(min-width: 1024px) and (prefers-reduced-motion: no-preference)', () =>
+    buildReel(210, 180, 0.7)
+  );
 
-    const update = () => {
-      raf = 0;
-      const mid = track.scrollLeft + track.clientWidth / 2;
-      const reach = track.clientWidth * 0.7;
-      cards.forEach((card) => {
-        const c = card.offsetLeft + card.offsetWidth / 2;
-        const t = 1 - Math.min(Math.abs(c - mid) / reach, 1); // 1 at centre → 0
-        card.style.transform = `scale(${(0.88 + t * 0.12).toFixed(3)})`;
-        card.style.opacity = (0.55 + t * 0.45).toFixed(3);
-      });
-    };
-    const onScroll = () => {
-      if (!raf) raf = requestAnimationFrame(update);
-    };
-
-    track.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll, { passive: true });
-    update();
-
-    return () => {
-      track.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onScroll);
-      cards.forEach((c) => {
-        c.style.removeProperty('transform');
-        c.style.removeProperty('opacity');
-      });
-    };
-  });
+  // Mobile/tablet: wheel below the text, viewer slot at the TOP (angle 270°).
+  // Smaller radius so orbiting frames stay inside a phone viewport.
+  mm.add('(max-width: 1023px) and (prefers-reduced-motion: no-preference)', () =>
+    buildReel(116, 270, 0.55)
+  );
 }
