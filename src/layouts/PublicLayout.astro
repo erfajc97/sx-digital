@@ -4,6 +4,7 @@ import IntroGate from '@/components/IntroGate.astro';
 import Navbar from '@/components/Navbar.astro';
 import Footer from '@/components/Footer.astro';
 import ContactModal from '@/components/ContactModal.astro';
+import { brand } from '@/data/site';
 
 interface Props {
   title?: string;
@@ -11,6 +12,8 @@ interface Props {
 }
 
 const { title, description } = Astro.props;
+const calLink = brand.calLink;
+const calNs = brand.calNamespace;
 ---
 
 <BaseLayout title={title} description={description}>
@@ -51,8 +54,10 @@ const { title, description } = Astro.props;
     import '@/scripts/enhance';
   </script>
 
-  <!-- Cal.com popup — any element with data-cal-link opens the booking modal -->
-  <script is:inline>
+  <!-- Cal.com popup — namespaced + preloaded so a single modal instance opens
+       instantly (no cold loader) and never leaks duplicate boxes. Elements with
+       data-cal-namespace + data-cal-link open it; href is the no-JS fallback. -->
+  <script is:inline define:vars={{ calLink, calNs }}>
     (function (C, A, L) {
       let p = function (a, ar) {
         a.q.push(ar);
@@ -93,14 +98,17 @@ const { title, description } = Astro.props;
       hideEventTypeDetails: false,
       layout: 'month_view',
     });
-
-    // Open the booking modal IN PLACE on any [data-cal-link] click (Cal's own
-    // auto-binding is unreliable, so we call the API explicitly). preventDefault
-    // keeps the href as a no-JS fallback without ever navigating away.
+    // Open the booking modal IN PLACE (Cal's auto-binding navigates instead, so
+    // we drive it explicitly with the GLOBAL modal API — the namespaced one
+    // leaves an orphan "loading" box that lingers as a stuck loader). Sweep any
+    // leftover box first so nothing stale remains after closing/reopening.
     document.addEventListener('click', function (e) {
       const el = e.target.closest && e.target.closest('[data-cal-link]');
       if (!el) return;
       e.preventDefault();
+      document.querySelectorAll('cal-modal-box').forEach(function (b) {
+        b.remove();
+      });
       Cal('modal', {
         calLink: el.getAttribute('data-cal-link'),
         config: { layout: 'month_view' },

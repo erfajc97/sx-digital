@@ -114,6 +114,8 @@ export const brand = {
   // Solo el "handle/evento" de Cal.com (lo que va después de cal.com/).
   // Abre el modal de reserva desde los botones CTA.
   calLink: 'solvyxdigital/30min',
+  // Namespace del embed Cal (una sola instancia precargada, sin fugas).
+  calNamespace: 'solvyx',
   social: [
     { label: 'LinkedIn', href: 'https://www.linkedin.com/company/solvyx-digital/' },
   ],

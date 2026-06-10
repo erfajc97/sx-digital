@@ -30,7 +30,11 @@ const {
 // Cal buttons: open the popup modal via data-cal-link; the href points to the
 // public booking page so it still works without JS.
 const calAttrs = cal
-  ? { 'data-cal-link': brand.calLink, 'data-cal-config': JSON.stringify({ layout: 'month_view' }) }
+  ? {
+      'data-cal-link': brand.calLink,
+      'data-cal-namespace': brand.calNamespace,
+      'data-cal-config': JSON.stringify({ layout: 'month_view' }),
+    }
   : {};
 const finalHref = cal ? brand.bookingUrl : href;
 // Cal buttons keep href as a no-JS fallback but must NOT open a new tab —
