@@ -1,0 +1,239 @@
+---
+/* Intro gate — full-viewport cinematic video that plays once on entry,
+   locks the page until it ends, then fades out to reveal the site.
+
+   Sound: browsers block autoplay WITH audio, so the clip starts muted
+   (guaranteed to play + lock the screen) and a pulsing "Activar sonido"
+   button restarts it unmuted on the first tap. Auto-dismisses on `ended`,
+   skippable, and shown only once per browser session (sessionStorage).
+   Skipped entirely on prefers-reduced-motion. */
+const intro = {
+  video: '/hero/intro.mp4',
+  videoWebm: '/hero/intro.webm',
+  poster: '/hero/intro-poster.jpg',
+  // Mobile: vertical crop centered on the robot (logo lives off to the side
+  // in the 16:9 master, so it would be cut on a portrait screen anyway).
+  videoMobile: '/hero/intro-mobile.mp4',
+  videoMobileWebm: '/hero/intro-mobile.webm',
+  posterMobile: '/hero/intro-mobile-poster.jpg',
+};
+---
+
+<div id="intro-gate" class="intro-gate" role="dialog" aria-label="Intro SolvyX" aria-modal="true">
+  <video
+    id="intro-video"
+    class="intro-video"
+    muted
+    playsinline
+    preload="auto"
+    poster={intro.poster}
+    data-poster-mobile={intro.posterMobile}
+    data-src-mobile={intro.videoMobile}
+    data-src-mobile-webm={intro.videoMobileWebm}
+    width="1920"
+    height="1080"
+  >
+    <source src={intro.videoWebm} type="video/webm" />
+    <source src={intro.video} type="video/mp4" />
+  </video>
+
+  <!-- vignette so UI controls read over any frame -->
+  <div class="intro-vignette" aria-hidden="true"></div>
+
+  <!-- Skip -->
+  <button id="intro-skip" type="button" class="intro-skip">
+    Saltar intro
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="size-4" aria-hidden="true">
+      <path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+  </button>
+
+  <!-- Progress bar -->
+  <div class="intro-progress" aria-hidden="true"><span id="intro-bar"></span></div>
+</div>
+
+<style>
+  .intro-gate {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: grid;
+    place-items: center;
+    background: #07080d;
+    opacity: 1;
+    transition: opacity 0.7s ease;
+  }
+  .intro-gate.is-leaving {
+    opacity: 0;
+  }
+  .intro-gate.is-done {
+    display: none;
+  }
+
+  .intro-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .intro-vignette {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(120% 120% at 50% 45%, transparent 55%, oklch(0.07 0.02 265 / 0.55) 100%);
+    pointer-events: none;
+  }
+
+  /* Skip — bottom right */
+  .intro-skip {
+    position: absolute;
+    right: 1.25rem;
+    bottom: 1.5rem;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.55rem 1rem;
+    border-radius: 999px;
+    border: 1px solid oklch(1 0 0 / 0.14);
+    background: oklch(0 0 0 / 0.35);
+    color: oklch(1 0 0 / 0.72);
+    font-size: 0.8rem;
+    font-weight: 500;
+    backdrop-filter: blur(6px);
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease;
+  }
+  .intro-skip:hover {
+    color: #fff;
+    border-color: oklch(1 0 0 / 0.35);
+  }
+
+  /* Progress bar — bottom edge */
+  .intro-progress {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 3px;
+    background: oklch(1 0 0 / 0.1);
+    z-index: 2;
+  }
+  #intro-bar {
+    display: block;
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(to right, oklch(0.62 0.19 264), oklch(0.72 0.16 264));
+    box-shadow: 0 0 12px oklch(0.62 0.19 264 / 0.8);
+    transition: width 0.1s linear;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .intro-gate { display: none; }
+  }
+</style>
+
+<script>
+  const START_AT = 2; // skip the first 2s of the clip
+  const gate = document.getElementById('intro-gate') as HTMLElement | null;
+  const video = document.getElementById('intro-video') as HTMLVideoElement | null;
+  const skipBtn = document.getElementById('intro-skip') as HTMLButtonElement | null;
+  const bar = document.getElementById('intro-bar') as HTMLElement | null;
+
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function unlock() {
+    document.documentElement.style.overflow = '';
+    document.body.style.overflow = '';
+  }
+
+  function dismiss() {
+    if (!gate) return;
+    gate.classList.add('is-leaving');
+    if (video) {
+      video.pause();
+    }
+    unlock();
+    window.setTimeout(() => gate.classList.add('is-done'), 700);
+  }
+
+  if (!gate || !video || reduce) {
+    // Nothing to show — make sure the page is scrollable and the gate is gone.
+    if (gate) gate.classList.add('is-done');
+    unlock();
+  } else {
+    // Lock scroll while the intro plays.
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+
+    // On small screens, swap to the vertical robot crop (the 16:9 master's
+    // logo sits off-side and would be cut in portrait anyway).
+    if (window.matchMedia('(max-width: 767px)').matches && video.dataset.srcMobile) {
+      if (video.dataset.posterMobile) video.poster = video.dataset.posterMobile;
+      video.innerHTML = '';
+      if (video.dataset.srcMobileWebm) {
+        const w = document.createElement('source');
+        w.src = video.dataset.srcMobileWebm;
+        w.type = 'video/webm';
+        video.appendChild(w);
+      }
+      const m = document.createElement('source');
+      m.src = video.dataset.srcMobile;
+      m.type = 'video/mp4';
+      video.appendChild(m);
+      video.load();
+    }
+
+    // Begin playback at START_AT (once we know the frame is seekable).
+    const seekStart = () => {
+      try {
+        if (video.currentTime < START_AT) video.currentTime = START_AT;
+      } catch {
+        /* ignore */
+      }
+    };
+    if (video.readyState >= 1) seekStart();
+    else video.addEventListener('loadedmetadata', seekStart, { once: true });
+
+    // Try to autoplay WITH sound. Browsers usually block this, so on failure
+    // fall back to muted autoplay and unmute on the first user gesture.
+    video.volume = 1;
+    video.muted = false;
+    video.play().catch(() => {
+      video.muted = true;
+      video.play().catch(() => {
+        // Autoplay blocked entirely → don't trap the user.
+        dismiss();
+      });
+
+      const unmute = () => {
+        video.muted = false;
+        video.volume = 1;
+        video.play().catch(() => {});
+      };
+      const opts = { once: true, passive: true } as AddEventListenerOptions;
+      ['pointerdown', 'touchstart', 'keydown', 'wheel'].forEach((ev) =>
+        window.addEventListener(ev, unmute, opts)
+      );
+    });
+
+    // Progress bar (mapped from START_AT → end)
+    video.addEventListener('timeupdate', () => {
+      if (bar && video.duration > START_AT) {
+        const pct = ((video.currentTime - START_AT) / (video.duration - START_AT)) * 100;
+        bar.style.width = `${Math.max(0, Math.min(100, pct))}%`;
+      }
+    });
+
+    video.addEventListener('ended', dismiss);
+    skipBtn?.addEventListener('click', dismiss);
+
+    // Safety: if the video never loads, don't trap the user.
+    window.setTimeout(() => {
+      if (video.readyState < 2 && !gate.classList.contains('is-done')) dismiss();
+    }, 8000);
+  }
+</script>

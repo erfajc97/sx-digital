@@ -1,5 +1,6 @@
 ---
 import BaseLayout from './BaseLayout.astro';
+import IntroGate from '@/components/IntroGate.astro';
 import Navbar from '@/components/Navbar.astro';
 import Footer from '@/components/Footer.astro';
 import ContactModal from '@/components/ContactModal.astro';
@@ -13,6 +14,7 @@ const { title, description } = Astro.props;
 ---
 
 <BaseLayout title={title} description={description}>
+  <IntroGate />
   <span id="top"></span>
   <Navbar />
   <main id="contenido">
