@@ -138,12 +138,14 @@ export const founder = {
   avatar: '/avatar-solvyx-ej.png',
 };
 
+/* Rutas absolutas ("/#...") para que el nav funcione también desde las
+   páginas internas (/nosotros, /agendar), no solo desde la landing. */
 export const nav: NavLink[] = [
-  { label: 'Servicios', href: '#servicios' },
-  { label: 'Trabajo', href: '#trabajo' },
-  { label: 'Proceso', href: '#proceso' },
-  { label: 'Planes', href: '#planes' },
-  { label: 'Preguntas', href: '#faq' },
+  { label: 'Servicios', href: '/#servicios' },
+  { label: 'Trabajo', href: '/#trabajo' },
+  { label: 'Planes', href: '/#planes' },
+  { label: 'Nosotros', href: '/nosotros' },
+  { label: 'Preguntas', href: '/#faq' },
 ];
 
 /* Hero background video (optional). Leave `video` empty to keep the animated
@@ -464,6 +466,10 @@ export const faqs: Faq[] = [
     q: '¿El código y las cuentas son míos?',
     a: 'Siempre. Entregamos el repositorio, la documentación y los accesos a tu nombre. Sin cajas negras ni amarres.',
   },
+  {
+    q: '¿Quiénes están detrás de SolvyX?',
+    a: 'SolvyX la lidera Erick Jiménez Cruz, ingeniero full-stack senior con más de 5 años construyendo fintech y sistemas de alto rendimiento (creador de Eranpay). Conoce al equipo y cómo trabajamos en la página "Nosotros".',
+  },
 ];
 
 export const finalCta = {
@@ -481,20 +487,21 @@ export const footer = {
     {
       title: 'Servicios',
       links: [
-        { label: 'Automatización con IA', href: '#servicios' },
-        { label: 'Marketing y ads con IA', href: '#servicios' },
-        { label: 'Multimedia con IA', href: '#servicios' },
-        { label: 'Fintech & Blockchain', href: '#servicios' },
-        { label: 'Software y apps', href: '#servicios' },
+        { label: 'Automatización con IA', href: '/#servicios' },
+        { label: 'Marketing y ads con IA', href: '/#servicios' },
+        { label: 'Multimedia con IA', href: '/#servicios' },
+        { label: 'Fintech & Blockchain', href: '/#servicios' },
+        { label: 'Software y apps', href: '/#servicios' },
       ],
     },
     {
       title: 'Estudio',
       links: [
-        { label: 'Trabajo', href: '#trabajo' },
-        { label: 'Proceso', href: '#proceso' },
-        { label: 'Planes', href: '#planes' },
-        { label: 'Preguntas', href: '#faq' },
+        { label: 'Quiénes somos', href: '/nosotros' },
+        { label: 'Trabajo', href: '/#trabajo' },
+        { label: 'Planes', href: '/#planes' },
+        { label: 'Agenda una llamada', href: '/agendar' },
+        { label: 'Preguntas', href: '/#faq' },
       ],
     },
   ],

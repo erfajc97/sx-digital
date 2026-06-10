@@ -4,14 +4,16 @@ import Hero from '@/components/sections/Hero.astro';
 import TrustMarquee from '@/components/sections/TrustMarquee.astro';
 import Services from '@/components/sections/Services.astro';
 import Work from '@/components/sections/Work.astro';
-import Process from '@/components/sections/Process.astro';
 import Stats from '@/components/sections/Stats.astro';
-import BrandShowcase from '@/components/sections/BrandShowcase.astro';
-import Testimonials from '@/components/sections/Testimonials.astro';
-import Founder from '@/components/sections/Founder.astro';
 import Packages from '@/components/sections/Packages.astro';
+import Testimonials from '@/components/sections/Testimonials.astro';
 import Faq from '@/components/sections/Faq.astro';
 import Booking from '@/components/sections/Booking.astro';
+
+/* Conversion-first order: pricing right after proof (stats), social proof
+   after, FAQ + booking to close. Founder, process and the brand showcase
+   live on /nosotros — keeps the landing focused (especially on mobile)
+   while the E-E-A-T content gets its own indexed page. */
 ---
 
 <PublicLayout>
@@ -19,12 +21,9 @@ import Booking from '@/components/sections/Booking.astro';
   <TrustMarquee />
   <Services />
   <Work />
-  <Process />
   <Stats />
-  <BrandShowcase />
-  <Testimonials />
-  <Founder />
   <Packages />
+  <Testimonials />
   <Faq />
   <Booking />
 </PublicLayout>

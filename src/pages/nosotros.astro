@@ -1,0 +1,53 @@
+---
+import PublicLayout from '@/layouts/PublicLayout.astro';
+import Founder from '@/components/sections/Founder.astro';
+import Process from '@/components/sections/Process.astro';
+import BrandShowcase from '@/components/sections/BrandShowcase.astro';
+import CtaBanner from '@/components/sections/CtaBanner.astro';
+import { brand, founder } from '@/data/site';
+
+const title = `Quiénes somos — el equipo detrás de ${brand.name} | Automatización con IA y software a medida`;
+const description = `Conoce a ${founder.name}, fundador de ${brand.name}: ingeniero full-stack senior en fintech, IA y blockchain (creador de Eranpay). Así trabajamos: demos en vivo, entregas en días y código a tu nombre.`;
+
+const origin = Astro.site ? Astro.site.origin : `https://${brand.domain}`;
+const aboutLd = {
+  '@context': 'https://schema.org',
+  '@type': 'AboutPage',
+  '@id': `${origin}/nosotros#about`,
+  url: `${origin}/nosotros`,
+  name: 'Quiénes somos — SolvyX',
+  inLanguage: 'es',
+  isPartOf: { '@id': `${origin}/#website` },
+  about: { '@id': `${origin}/#organization` },
+  mainEntity: { '@id': `${origin}/#founder` },
+};
+---
+
+<PublicLayout title={title} description={description} intro={false} solidNav>
+  <!-- Page header -->
+  <section class="relative overflow-hidden bg-surface pb-10 pt-32 sm:pt-36">
+    <div class="bg-grid pointer-events-none absolute inset-0 opacity-60" aria-hidden="true"></div>
+    <div class="relative mx-auto max-w-[1240px] px-4 sm:px-6">
+      <div data-reveal class="flex max-w-2xl flex-col gap-4">
+        <span class="inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.18em] text-brand">
+          <span class="h-px w-6 bg-brand"></span>
+          Nosotros
+        </span>
+        <h1 class="text-[clamp(2.2rem,5vw,3.5rem)] leading-[1.05] text-ink">
+          Un estudio pequeño con estándar de ingeniería grande
+        </h1>
+        <p class="text-lg leading-relaxed text-muted" style="max-width: 58ch;">
+          {brand.name} une IA de punta con rigor de ingeniería fintech. Pocos clientes a la
+          vez, foco total en cada uno, y todo lo que construimos queda a tu nombre.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <Founder />
+  <Process />
+  <BrandShowcase />
+  <CtaBanner />
+
+  <script type="application/ld+json" set:html={JSON.stringify(aboutLd)} />
+</PublicLayout>

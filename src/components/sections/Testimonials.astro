@@ -11,37 +11,39 @@ import SectionHeading from '../ui/SectionHeading.astro';
       title="Lo que dicen quienes ya nos contrataron"
     />
 
-    <div class="mt-12 grid gap-5 md:grid-cols-3">
+    <!-- Compact quotes: identity row on top, short quote below — roughly half
+         the height of the old cards, so mobile doesn't drown in scroll. -->
+    <div class="mt-10 grid gap-3 sm:gap-4 md:grid-cols-3">
       {
         testimonials.map((t, i) => (
           <figure
             data-reveal
-            style={`--reveal-delay: ${i * 90}ms;`}
-            class:list={[
-              'card-3d edge-top relative flex flex-col gap-6 overflow-hidden rounded-[var(--radius-card)] border border-border bg-canvas p-7',
-              i === 1 ? 'md:-translate-y-5' : 'card-3d-hover',
-            ]}
+            style={`--reveal-delay: ${i * 80}ms;`}
+            class="card-3d edge-top relative flex flex-col gap-3 overflow-hidden rounded-[var(--radius-card)] border border-border bg-canvas p-5"
           >
-            <svg class="size-10 text-brand/35" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <path d="M9.5 6C6.5 7.5 5 10 5 13v5h6v-6H8c0-2 .8-3.4 2.5-4.3L9.5 6Zm9 0C15.5 7.5 14 10 14 13v5h6v-6h-3c0-2 .8-3.4 2.5-4.3L18.5 6Z" />
-            </svg>
-            <blockquote class="text-lg leading-relaxed text-ink">
-              {t.quote}
-            </blockquote>
-            <figcaption class="mt-auto flex items-center gap-3.5 border-t border-border pt-5">
+            <figcaption class="flex items-center gap-3">
               <img
                 src={t.avatar}
                 alt={t.name}
                 loading="lazy"
-                width="48"
-                height="48"
-                class="size-11 rounded-full object-cover ring-2 ring-brand/20"
+                width="40"
+                height="40"
+                class="size-9 shrink-0 rounded-full object-cover ring-2 ring-brand/20"
               />
-              <div>
-                <p class="font-display font-semibold text-ink">{t.name}</p>
-                <p class="text-sm text-muted">{t.role}</p>
+              <div class="min-w-0">
+                <p class="truncate font-display text-sm font-semibold text-ink">{t.name}</p>
+                <p class="truncate text-xs text-muted">{t.role}</p>
               </div>
+              <svg
+                class="ml-auto size-5 shrink-0 text-brand/30"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path d="M9.5 6C6.5 7.5 5 10 5 13v5h6v-6H8c0-2 .8-3.4 2.5-4.3L9.5 6Zm9 0C15.5 7.5 14 10 14 13v5h6v-6h-3c0-2 .8-3.4 2.5-4.3L18.5 6Z" />
+              </svg>
             </figcaption>
+            <blockquote class="text-sm leading-relaxed text-ink-soft">{t.quote}</blockquote>
           </figure>
         ))
       }

@@ -1,0 +1,144 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { brand } from '@/data/site';
+
+/* Standalone booking page — a clean, shareable link (WhatsApp, email, bio)
+   that drops people straight on the calendar. No intro gate, no full nav:
+   nothing between the click and picking a slot. */
+const title = `Agenda una llamada de 30 min | ${brand.name}`;
+const description =
+  'Reserva 30 minutos con SolvyX. Elige el horario que te convenga y salimos de la llamada con una ruta clara y un estimado honesto — sin compromiso.';
+
+const origin = Astro.site ? Astro.site.origin : `https://${brand.domain}`;
+const contactLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ContactPage',
+  '@id': `${origin}/agendar#contact`,
+  url: `${origin}/agendar`,
+  name: 'Agenda una llamada — SolvyX',
+  inLanguage: 'es',
+  isPartOf: { '@id': `${origin}/#website` },
+  about: { '@id': `${origin}/#organization` },
+};
+
+const calLink = brand.calLink;
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="flex min-h-screen flex-col bg-surface">
+    <!-- Minimal header -->
+    <header class="border-b border-border bg-canvas/80 backdrop-blur">
+      <div class="mx-auto flex max-w-[1100px] items-center justify-between px-4 py-3 sm:px-6">
+        <a href="/" class="press flex items-center" aria-label={`${brand.name} — inicio`}>
+          <img
+            src={brand.logo3d}
+            alt={brand.name}
+            class="h-10 w-auto sm:h-11"
+            width="441"
+            height="233"
+            style="transform: scaleX(1.1); transform-origin: left center;"
+          />
+        </a>
+        <a
+          href={`mailto:${brand.email}`}
+          class="text-sm text-muted underline-offset-2 hover:text-ink hover:underline"
+        >
+          {brand.email}
+        </a>
+      </div>
+    </header>
+
+    <main class="mx-auto w-full max-w-[1100px] flex-1 px-4 py-10 sm:px-6 sm:py-14">
+      <div class="mx-auto mb-8 max-w-xl text-center">
+        <span class="inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.18em] text-brand">
+          Agenda
+        </span>
+        <h1 class="mt-3 text-[clamp(1.9rem,5vw,2.8rem)] leading-[1.08] text-ink">
+          Reserva una llamada de 30 minutos
+        </h1>
+        <p class="mt-3 text-base leading-relaxed text-muted sm:text-lg">
+          Elige el horario que mejor te venga. Salimos de la llamada con una ruta clara
+          y un estimado honesto — sin compromiso.
+        </p>
+      </div>
+
+      <!-- Live calendar -->
+      <div class="card-3d overflow-hidden rounded-[var(--radius-xl2)] border border-border bg-canvas p-2 sm:p-4">
+        <div id="cal-booking" class="min-h-[560px] w-full"></div>
+        <noscript>
+          <div class="grid min-h-[16rem] place-items-center p-6 text-center">
+            <a
+              href={brand.bookingUrl}
+              class="btn-3d inline-flex items-center gap-2 rounded-full bg-brand px-7 py-3.5 font-semibold text-white"
+            >
+              Abrir el calendario
+            </a>
+          </div>
+        </noscript>
+      </div>
+
+      <p class="mt-6 text-center text-sm text-muted">
+        ¿Prefieres escribirnos primero?
+        <a class="font-medium text-brand underline-offset-2 hover:underline" href={`mailto:${brand.email}`}>
+          {brand.email}
+        </a>
+      </p>
+    </main>
+
+    <footer class="border-t border-border py-5">
+      <p class="text-center text-xs text-muted">
+        © {new Date().getFullYear()} {brand.name} · Automatización con IA y software a medida
+      </p>
+    </footer>
+  </div>
+
+  <script type="application/ld+json" set:html={JSON.stringify(contactLd)} />
+
+  <script is:inline define:vars={{ calLink }}>
+    (function (C, A, L) {
+      let p = function (a, ar) {
+        a.q.push(ar);
+      };
+      let d = C.document;
+      C.Cal =
+        C.Cal ||
+        function () {
+          let cal = C.Cal;
+          let ar = arguments;
+          if (!cal.loaded) {
+            cal.ns = {};
+            cal.q = cal.q || [];
+            d.head.appendChild(d.createElement('script')).src = A;
+            cal.loaded = true;
+          }
+          if (ar[0] === L) {
+            const api = function () {
+              p(api, arguments);
+            };
+            const namespace = ar[1];
+            api.q = api.q || [];
+            if (typeof namespace === 'string') {
+              cal.ns[namespace] = cal.ns[namespace] || api;
+              p(cal.ns[namespace], ar);
+              p(cal, ['initNamespace', namespace]);
+            } else p(cal, ar);
+            return;
+          }
+          p(cal, ar);
+        };
+    })(window, 'https://app.cal.com/embed/embed.js', 'init');
+
+    Cal('init', { origin: 'https://cal.com' });
+    Cal('inline', {
+      elementOrSelector: '#cal-booking',
+      calLink: calLink,
+      layout: 'month_view',
+    });
+    Cal('ui', {
+      theme: 'light',
+      cssVarsPerTheme: { light: { 'cal-brand': '#3b5bdb' } },
+      hideEventTypeDetails: false,
+      layout: 'month_view',
+    });
+  </script>
+</BaseLayout>

@@ -9,17 +9,21 @@ import { brand } from '@/data/site';
 interface Props {
   title?: string;
   description?: string;
+  /** Show the cinematic intro gate (landing only by default elsewhere). */
+  intro?: boolean;
+  /** Solid navbar from the top — for pages without the dark hero. */
+  solidNav?: boolean;
 }
 
-const { title, description } = Astro.props;
+const { title, description, intro = true, solidNav = false } = Astro.props;
 const calLink = brand.calLink;
 const calNs = brand.calNamespace;
 ---
 
 <BaseLayout title={title} description={description}>
-  <IntroGate />
+  {intro && <IntroGate />}
   <span id="top"></span>
-  <Navbar />
+  <Navbar solid={solidNav} />
   <main id="contenido">
     <slot />
   </main>
