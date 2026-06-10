@@ -17,7 +17,7 @@ const trackVh = 100 + (work.length - 1) * 58; // scroll length for the pinned fa
 
   <!-- Desktop: scroll-driven 3D fan (shown by JS on lg + motion) -->
   <div id="work-track" class="hidden" style={`height: ${trackVh}vh;`}>
-    <div class="sticky top-0 flex h-screen items-center justify-center">
+    <div class="sticky top-0 flex h-screen items-center justify-center overflow-x-clip">
       <div id="work-fan" class="relative w-full max-w-[1180px] [perspective:1300px]">
         {
           work.map((item, i) => (
