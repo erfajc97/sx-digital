@@ -78,6 +78,13 @@ const intro = {
     object-fit: cover;
     object-position: center;
   }
+  /* Mobile clip: the robot's face sits toward the right of the baked crop —
+     anchor right so cover-cropping eats the empty left side, never the face. */
+  @media (max-width: 767px) {
+    .intro-video {
+      object-position: 88% center;
+    }
+  }
 
   .intro-vignette {
     position: absolute;
@@ -145,6 +152,20 @@ const intro = {
 
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  // Play the intro on a real entrance (reload, direct visit, external link) but
+  // NOT when navigating back home from another page of the site.
+  const navEntry = performance.getEntriesByType('navigation')[0] as
+    | PerformanceNavigationTiming
+    | undefined;
+  const cameFromSite = (() => {
+    try {
+      return !!document.referrer && new URL(document.referrer).origin === location.origin;
+    } catch {
+      return false;
+    }
+  })();
+  const internalNav = navEntry?.type !== 'reload' && cameFromSite;
+
   function unlock() {
     document.documentElement.style.overflow = '';
     document.body.style.overflow = '';
@@ -163,7 +184,7 @@ const intro = {
     window.setTimeout(() => gate.classList.add('is-done'), 700);
   }
 
-  if (!gate || !video || reduce) {
+  if (!gate || !video || reduce || internalNav) {
     // Nothing to show — make sure the page is scrollable and the gate is gone.
     if (gate) gate.classList.add('is-done');
     unlock();

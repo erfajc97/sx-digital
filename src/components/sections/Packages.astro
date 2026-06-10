@@ -27,7 +27,7 @@ import Icon from '../ui/Icon.astro';
               data-reveal
               style={`--reveal-delay: ${i * 90}ms;`}
               class:list={[
-                'card-3d edge-top relative flex w-[85vw] max-w-[330px] shrink-0 snap-center flex-col gap-4 overflow-hidden rounded-[var(--radius-xl2)] p-6 sm:gap-6 sm:p-8 lg:w-auto lg:max-w-none',
+                'card-3d edge-top relative flex w-[78vw] max-w-[300px] shrink-0 snap-center flex-col gap-4 overflow-hidden rounded-[var(--radius-xl2)] p-6 sm:gap-6 sm:p-8 lg:w-auto lg:max-w-none',
                 featured ? 'order-first lg:order-none' : '',
                 featured
                   ? 'glow-brand bg-night text-on-night lg:-translate-y-4'
@@ -84,6 +84,20 @@ import Icon from '../ui/Icon.astro';
         })
       }
     </div>
+
+    <!-- Mobile swipe position dots (also a "this scrolls" affordance) -->
+    <div id="pkg-dots" class="mt-1 flex justify-center gap-2.5 lg:hidden">
+      {
+        packages.map((_, i) => (
+          <button
+            type="button"
+            class="pkg-dot size-2 rounded-full bg-ink/25 transition-all"
+            aria-current={i === 0 ? 'true' : 'false'}
+            aria-label={`Ir al plan ${i + 1}`}
+          />
+        ))
+      }
+    </div>
   </div>
 </section>
 
@@ -91,4 +105,54 @@ import Icon from '../ui/Icon.astro';
   .pkg-track::-webkit-scrollbar {
     display: none;
   }
+  .pkg-dot[aria-current='true'] {
+    width: 1.5rem;
+    border-radius: 9999px;
+    background-color: var(--color-brand);
+  }
 </style>
+
+<script>
+  // Sync the dots with the mobile swipe (visual order — the featured plan is
+  // reordered first via CSS) and let a tap jump to that plan.
+  const track = document.querySelector<HTMLElement>('.pkg-track');
+  const wrap = document.getElementById('pkg-dots');
+  if (track && wrap) {
+    const dots = Array.from(wrap.querySelectorAll<HTMLButtonElement>('button'));
+    const items = Array.from(track.querySelectorAll<HTMLElement>('article')).sort(
+      (a, b) => a.offsetLeft - b.offsetLeft
+    );
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const mid = track.scrollLeft + track.clientWidth / 2;
+      let best = 0;
+      let bd = Infinity;
+      items.forEach((el, i) => {
+        const d = Math.abs(el.offsetLeft + el.offsetWidth / 2 - mid);
+        if (d < bd) {
+          bd = d;
+          best = i;
+        }
+      });
+      dots.forEach((d, i) => d.setAttribute('aria-current', i === best ? 'true' : 'false'));
+    };
+    track.addEventListener(
+      'scroll',
+      () => {
+        if (!raf) raf = requestAnimationFrame(update);
+      },
+      { passive: true }
+    );
+    dots.forEach((d, i) =>
+      d.addEventListener('click', () => {
+        const el = items[i];
+        track.scrollTo({
+          left: el.offsetLeft - (track.clientWidth - el.offsetWidth) / 2,
+          behavior: 'smooth',
+        });
+      })
+    );
+    update();
+  }
+</script>
