@@ -144,6 +144,9 @@ import Button from './ui/Button.astro';
      dark hero, and a hairline glow keeps the dark "X" legible. */
   .nav-logo {
     filter: drop-shadow(0 1px 2px oklch(0 0 0 / 0.25));
+    /* widen the wordmark a touch so it doesn't read cramped on the sides */
+    transform: scaleX(1.1);
+    transform-origin: left center;
   }
   #site-header:not(.is-scrolled) .nav-logo {
     filter: drop-shadow(0 1px 6px oklch(0 0 0 / 0.55));
