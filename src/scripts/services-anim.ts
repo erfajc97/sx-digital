@@ -51,6 +51,20 @@ if (section) {
     );
     io.observe(section);
 
+    // Featured tile: slow diagonal light sweep on a loop.
+    const sheen = section.querySelector<HTMLElement>('[data-svc-sheen]');
+    let sheenTween: gsap.core.Tween | undefined;
+    if (sheen) {
+      gsap.set(sheen, { xPercent: -130 });
+      sheenTween = gsap.to(sheen, {
+        xPercent: 340,
+        duration: 1.8,
+        ease: 'power2.inOut',
+        repeat: -1,
+        repeatDelay: 4.5,
+      });
+    }
+
     // Magnetic cursor-following 3D tilt + depth lift (fine pointers only).
     const cleanups: Array<() => void> = [];
     if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
@@ -94,6 +108,7 @@ if (section) {
 
     return () => {
       cleanups.forEach((fn) => fn());
+      sheenTween && sheenTween.kill();
       gsap.set([...cards, ...icons], { clearProps: 'all' });
     };
   });

@@ -14,8 +14,18 @@ const span: Record<string, string> = {
 };
 ---
 
-<section id="servicios" class="scroll-mt-24 py-[var(--spacing-section)]">
-  <div class="mx-auto max-w-[1240px] px-4 sm:px-6">
+<section id="servicios" class="relative scroll-mt-24 overflow-hidden py-[var(--spacing-section)]">
+  <!-- Premium backdrop: faint top grid + soft brand aurora -->
+  <div class="pointer-events-none absolute inset-0" aria-hidden="true">
+    <div class="bg-grid absolute inset-x-0 top-0 h-[70%] opacity-50"></div>
+    <div
+      class="glow-spot"
+      style="width:46rem;height:32rem;left:50%;top:-4rem;transform:translateX(-50%);background:oklch(0.62 0.19 264 / 0.1);"
+    >
+    </div>
+  </div>
+
+  <div class="relative z-10 mx-auto max-w-[1240px] px-4 sm:px-6">
     <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
       <SectionHeading
         eyebrow="Lo que hacemos por ti"
@@ -37,23 +47,30 @@ const span: Record<string, string> = {
                 span[s.id] ?? 'lg:col-span-2',
                 featured
                   ? 'glow-brand bg-night text-on-night'
-                  : 'border border-border bg-surface hover:border-border-strong',
+                  : 'border border-border bg-gradient-to-b from-canvas to-surface hover:border-brand/30',
               ]}
             >
               {featured && (
-                <div class="bg-grid-night pointer-events-none absolute inset-0 rounded-[var(--radius-card)] opacity-40" />
+                <>
+                  <div class="bg-grid-night pointer-events-none absolute inset-0 rounded-[var(--radius-card)] opacity-40" />
+                  {/* slow diagonal light sweep (animated by services-anim) */}
+                  <span
+                    data-svc-sheen
+                    class="pointer-events-none absolute inset-y-0 left-0 z-[1] w-1/2 -skew-x-12 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+                  />
+                </>
               )}
               <div class="relative flex items-center justify-between">
                 <span
                   data-svc-icon
                   class:list={[
-                    'grid size-12 place-items-center rounded-2xl shadow-[var(--shadow-soft)]',
+                    'grid size-14 place-items-center rounded-2xl shadow-[var(--shadow-soft)] ring-1',
                     featured
-                      ? 'bg-gradient-to-br from-brand to-brand-strong text-white'
-                      : 'bg-gradient-to-br from-brand-soft to-[oklch(0.9_0.05_264)] text-brand',
+                      ? 'bg-gradient-to-br from-brand to-brand-strong text-white ring-white/15'
+                      : 'bg-gradient-to-br from-brand-soft to-[oklch(0.9_0.05_264)] text-brand ring-brand/15',
                   ]}
                 >
-                  <Icon name={s.icon} class="size-6" />
+                  <Icon name={s.icon} class="size-7" />
                 </span>
                 {featured && (
                   <span class="rounded-full border border-white/15 px-3 py-1 text-[11px] uppercase tracking-wider text-on-night-muted">
