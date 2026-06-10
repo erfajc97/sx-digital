@@ -20,9 +20,15 @@ import Button from '../ui/Button.astro';
       </div>
 
       <div class="relative mx-auto flex max-w-2xl flex-col items-center gap-7 text-center">
-        <span class="grid size-14 place-items-center rounded-2xl bg-white/15 font-display text-lg font-bold text-white">
-          {brand.monogram}
-        </span>
+        <img
+          src={brand.logo3d}
+          alt={brand.name}
+          width="441"
+          height="233"
+          loading="lazy"
+          class="h-12 w-auto drop-shadow-[0_3px_10px_rgba(0,0,0,0.4)] sm:h-14"
+          style="transform: scaleX(1.1);"
+        />
         <h2 class="text-[clamp(2rem,4.5vw,3.25rem)] leading-[1.06] text-white">
           {finalCta.title}
         </h2>

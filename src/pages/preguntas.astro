@@ -1,0 +1,85 @@
+---
+import PublicLayout from '@/layouts/PublicLayout.astro';
+import CtaBanner from '@/components/sections/CtaBanner.astro';
+import Icon from '@/components/ui/Icon.astro';
+import { brand, faqs } from '@/data/site';
+
+const title = `Preguntas frecuentes — precios, tiempos y cómo trabajamos | ${brand.name}`;
+const description =
+  'Respuestas claras antes de empezar: cuánto cuesta (desde $1,200 USD), qué tan rápido entregamos (días, no meses), cómo conseguimos clientes con IA y de quién es el código. Sin letra pequeña.';
+
+const origin = Astro.site ? Astro.site.origin : `https://${brand.domain}`;
+const faqLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': `${origin}/preguntas#faq`,
+  url: `${origin}/preguntas`,
+  inLanguage: 'es',
+  isPartOf: { '@id': `${origin}/#website` },
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+};
+---
+
+<PublicLayout title={title} description={description} intro={false} solidNav>
+  <!-- Page header -->
+  <section class="relative overflow-hidden bg-surface pb-8 pt-32 sm:pt-36">
+    <div class="bg-grid pointer-events-none absolute inset-0 opacity-60" aria-hidden="true"></div>
+    <div class="relative mx-auto max-w-[1240px] px-4 sm:px-6">
+      <div data-reveal class="flex max-w-2xl flex-col gap-4">
+        <span class="inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.18em] text-brand">
+          <span class="h-px w-6 bg-brand"></span>
+          Preguntas frecuentes
+        </span>
+        <h1 class="text-[clamp(2.2rem,5vw,3.5rem)] leading-[1.05] text-ink">
+          Lo que sueles preguntarnos antes de empezar
+        </h1>
+        <p class="text-lg leading-relaxed text-muted" style="max-width: 58ch;">
+          Respuestas directas sobre precios, tiempos y cómo trabajamos. ¿No ves tu duda?
+          Escríbenos a
+          <a class="font-medium text-brand underline-offset-2 hover:underline" href={`mailto:${brand.email}`}>
+            {brand.email}
+          </a>
+          y te respondemos el mismo día.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Accordion -->
+  <section class="bg-surface pb-[var(--spacing-section)]">
+    <div class="mx-auto max-w-3xl px-4 sm:px-6">
+      <div data-reveal class="flex flex-col">
+        {
+          faqs.map((f) => (
+            <details class="group border-b border-border first:border-t">
+              <summary class="press flex cursor-pointer list-none items-center justify-between gap-4 py-5 text-lg font-medium text-ink">
+                {f.q}
+                <span class="grid size-8 shrink-0 place-items-center rounded-full border border-border bg-canvas text-brand">
+                  <Icon
+                    name="plus"
+                    class="faq-plus size-4 transition-transform duration-300 ease-[var(--ease-snappy)]"
+                  />
+                </span>
+              </summary>
+              <div class="disclosure">
+                <div>
+                  <p class="pb-5 pr-10 leading-relaxed text-muted" style="max-width: 64ch;">
+                    {f.a}
+                  </p>
+                </div>
+              </div>
+            </details>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <CtaBanner />
+
+  <script type="application/ld+json" set:html={JSON.stringify(faqLd)} />
+</PublicLayout>

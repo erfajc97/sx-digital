@@ -14,7 +14,11 @@ import Icon from '../ui/Icon.astro';
       description="Desde una pieza puntual hasta un equipo dedicado. Precios honestos desde la primera llamada."
     />
 
-    <div class="mt-12 grid items-stretch gap-5 lg:grid-cols-3">
+    <!-- Mobile: compact swipe (featured plan first, peek of the next).
+         Desktop: 3-col grid. -->
+    <div
+      class="pkg-track mt-10 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-4 [scrollbar-width:none] lg:mt-12 lg:grid lg:grid-cols-3 lg:items-stretch lg:gap-5 lg:overflow-visible lg:pb-0"
+    >
       {
         packages.map((p, i) => {
           const featured = p.featured;
@@ -23,7 +27,8 @@ import Icon from '../ui/Icon.astro';
               data-reveal
               style={`--reveal-delay: ${i * 90}ms;`}
               class:list={[
-                'card-3d edge-top relative flex flex-col gap-6 overflow-hidden rounded-[var(--radius-xl2)] p-8',
+                'card-3d edge-top relative flex w-[85vw] max-w-[330px] shrink-0 snap-center flex-col gap-4 overflow-hidden rounded-[var(--radius-xl2)] p-6 sm:gap-6 sm:p-8 lg:w-auto lg:max-w-none',
+                featured ? 'order-first lg:order-none' : '',
                 featured
                   ? 'glow-brand bg-night text-on-night lg:-translate-y-4'
                   : 'card-3d-hover border border-border bg-surface',
@@ -41,7 +46,7 @@ import Icon from '../ui/Icon.astro';
               </div>
 
               <div class="flex flex-col gap-1">
-                <span class:list={['font-display text-3xl font-semibold', featured ? 'text-gradient' : 'text-ink']}>
+                <span class:list={['font-display text-2xl font-semibold sm:text-3xl', featured ? 'text-gradient' : 'text-ink']}>
                   {p.price}
                 </span>
                 <span class:list={['text-sm', featured ? 'text-on-night-muted' : 'text-muted']}>
@@ -53,7 +58,7 @@ import Icon from '../ui/Icon.astro';
                 {p.description}
               </p>
 
-              <ul class="flex flex-col gap-3 border-t pt-5"
+              <ul class="flex flex-col gap-2.5 border-t pt-4 sm:gap-3 sm:pt-5"
                   class:list={featured ? 'border-white/10' : 'border-border'}>
                 {p.features.map((f) => (
                   <li class="flex items-start gap-2.5 text-sm">
@@ -81,3 +86,9 @@ import Icon from '../ui/Icon.astro';
     </div>
   </div>
 </section>
+
+<style>
+  .pkg-track::-webkit-scrollbar {
+    display: none;
+  }
+</style>

@@ -145,7 +145,7 @@ export const nav: NavLink[] = [
   { label: 'Trabajo', href: '/#trabajo' },
   { label: 'Planes', href: '/#planes' },
   { label: 'Nosotros', href: '/nosotros' },
-  { label: 'Preguntas', href: '/#faq' },
+  { label: 'Preguntas', href: '/preguntas' },
 ];
 
 /* Hero background video (optional). Leave `video` empty to keep the animated
@@ -501,7 +501,7 @@ export const footer = {
         { label: 'Trabajo', href: '/#trabajo' },
         { label: 'Planes', href: '/#planes' },
         { label: 'Agenda una llamada', href: '/agendar' },
-        { label: 'Preguntas', href: '/#faq' },
+        { label: 'Preguntas frecuentes', href: '/preguntas' },
       ],
     },
   ],
