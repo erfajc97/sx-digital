@@ -37,9 +37,10 @@ const calAttrs = cal
     }
   : {};
 const finalHref = cal ? brand.bookingUrl : href;
-// Cal buttons keep href as a no-JS fallback but must NOT open a new tab —
-// Cal intercepts the click to open the modal in place.
-const isExternal = external;
+// On desktop the click handler intercepts cal buttons (modal, no navigation).
+// On mobile it lets the link through — open in a new tab so the booking page
+// is full-screen and the user just closes the tab to return to the landing.
+const isExternal = external || cal;
 
 const base =
   'btn-3d group inline-flex items-center justify-center gap-2 rounded-full font-medium focus-visible:outline-2';

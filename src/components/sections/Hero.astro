@@ -49,7 +49,7 @@ const pillIcons: Record<string, IconName> = {
 
   <!-- Content -->
   <div
-    class="relative z-10 mx-auto flex min-h-[100svh] w-full max-w-7xl flex-col justify-between px-6 pb-6 pt-20 sm:px-8 sm:pt-24 lg:min-h-[100dvh] lg:justify-center lg:py-0"
+    class="relative z-10 mx-auto flex min-h-[100svh] w-full max-w-7xl flex-col justify-between px-6 pb-7 pt-16 sm:px-8 sm:pb-6 sm:pt-24 lg:min-h-[100dvh] lg:justify-center lg:py-0"
   >
     <div class="max-w-xl lg:max-w-2xl">
       <!-- Headline: static h1 (SEO + reduced-motion + no-JS), swapped to the
@@ -57,13 +57,13 @@ const pillIcons: Record<string, IconName> = {
       <h1
         id="hero-fallback"
         data-reveal
-        class="mb-6 max-w-[16ch] font-display text-[clamp(2.4rem,6vw,4.5rem)] font-semibold leading-[1.04] tracking-[-0.03em] text-on-night"
+        class="mb-3 max-w-[16ch] font-display text-[clamp(1.85rem,7vw,4.5rem)] font-semibold leading-[1.06] tracking-[-0.03em] text-on-night sm:mb-6 sm:leading-[1.04]"
       >
         {hero.fallbackHeadline}
       </h1>
       <canvas
         id="hero-particles"
-        class="mb-4 hidden h-auto w-full max-w-[40rem]"
+        class="mb-3 hidden h-auto w-full max-w-[40rem] sm:mb-4"
         data-words={JSON.stringify(hero.particleWords)}
         aria-hidden="true"></canvas>
 
@@ -71,13 +71,13 @@ const pillIcons: Record<string, IconName> = {
       <p
         data-reveal
         style="--reveal-delay: 120ms; max-width: 46ch;"
-        class="mb-8 text-lg leading-relaxed text-on-night-muted"
+        class="mb-4 line-clamp-3 text-sm leading-relaxed text-on-night-muted sm:mb-8 sm:line-clamp-none sm:text-lg"
       >
         {hero.lead}
       </p>
 
-      <!-- secondary link — moved up so it doesn't sit under the card -->
-      <div data-reveal style="--reveal-delay: 200ms;" class="mt-1">
+      <!-- secondary link — hidden on mobile to keep the hero within one screen -->
+      <div data-reveal style="--reveal-delay: 200ms;" class="mt-1 hidden sm:block">
         <a
           href={hero.secondaryCta.href}
           class="group inline-flex w-fit items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-medium text-on-night backdrop-blur-sm transition-colors hover:border-white/30 hover:text-white"
@@ -94,17 +94,17 @@ const pillIcons: Record<string, IconName> = {
     <!-- bottom group: a light service prompt that floats directly over the
          video (no boxed container) so the clip keeps the spotlight -->
     <div data-reveal style="--reveal-delay: 180ms;" class="max-w-xl lg:mt-8 lg:max-w-2xl">
-      <p class="mb-3 text-sm font-medium text-on-night">
+      <p class="mb-2 text-sm font-medium text-on-night sm:mb-3">
         {sp.title}
         <span class="text-on-night-muted">· selecciona uno o más</span>
       </p>
 
-      <div class="mb-6 flex flex-wrap gap-2">
+      <div class="mb-4 flex flex-wrap gap-1.5 sm:mb-6 sm:gap-2">
         {
           sp.options.map((opt) => (
             <button
               type="button"
-              class="svc-pill press inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 text-sm font-medium text-on-night backdrop-blur-sm transition-colors duration-200 ease-[var(--ease-snappy)] hover:bg-white/12"
+              class="svc-pill press inline-flex items-center gap-1 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium text-on-night backdrop-blur-sm transition-colors duration-200 ease-[var(--ease-snappy)] hover:bg-white/12 sm:gap-1.5 sm:px-3.5 sm:py-1.5 sm:text-sm"
               data-service={opt}
               aria-pressed="false"
             >
@@ -118,6 +118,8 @@ const pillIcons: Record<string, IconName> = {
       <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
         <a
           href={brand.bookingUrl}
+          target="_blank"
+          rel="noopener noreferrer"
           data-cal-link={brand.calLink}
           data-cal-namespace={brand.calNamespace}
           data-cal-config='{"layout":"month_view"}'
