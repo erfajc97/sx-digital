@@ -1,26 +1,34 @@
 ---
 import '@/styles/fonts.css';
 import '@/styles/global.css';
-import { brand, services, founder } from '@/data/site';
+import { getDict, altPathFor, defaultLocale, type Locale } from '@/i18n';
 
 interface Props {
   title?: string;
   description?: string;
 }
 
-const {
-  title = `Automatización con IA y Desarrollo de Software a Medida | ${brand.name}`,
-  description = brand.tagline,
-} = Astro.props;
+const locale = (Astro.currentLocale ?? defaultLocale) as Locale;
+const { brand, services, founder, ui, seo } = getDict(locale);
+
+const { title = ui.defaultTitle, description = brand.tagline } = Astro.props;
 
 const origin = Astro.site ? Astro.site.origin : `https://${brand.domain}`;
 const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : Astro.url.pathname;
 const ogImage = `${origin}/og-cover.jpg`;
 const logoImage = `${origin}/solvyxX-3D.jpg`;
 
+/* hreflang pair: this page in the other language (when a counterpart exists). */
+const otherLocale: Locale = locale === 'en' ? 'es' : 'en';
+const altPath = altPathFor(Astro.url.pathname, otherLocale);
+const altHref = altPath ? new URL(altPath, origin).href : undefined;
+const esHref = locale === 'es' ? canonical : altHref;
+const enHref = locale === 'en' ? canonical : altHref;
+
 // Structured data (JSON-LD) — Organization + WebSite + Service catalog.
-// FAQPage schema intentionally omitted (Google restricts rich results to
-// gov/health sites). Organization signals power AI Overviews / GEO citations.
+// FAQPage schema intentionally omitted on the landing (it lives on /preguntas).
+// Organization signals power AI Overviews / GEO citations. The @ids are
+// locale-independent (same entities); descriptions follow the page language.
 const jsonLd = {
   '@context': 'https://schema.org',
   '@graph': [
@@ -34,21 +42,9 @@ const jsonLd = {
       image: ogImage,
       email: brand.email,
       telephone: brand.phone,
-      slogan: 'Automatización con IA y software a medida — en días, no en meses.',
-      description:
-        'Especialistas en automatización con IA y desarrollo de software a medida. Automatizamos procesos de negocio y marketing con inteligencia artificial (conexión de ads, generación y nurturing de leads), creamos multimedia con IA, y construimos software a medida, apps móviles, wallets fintech y blockchain — entregado en días, no en meses.',
-      knowsAbout: [
-        'Automatización con IA',
-        'Desarrollo de software a medida',
-        'Inteligencia artificial para negocios',
-        'Agentes de IA',
-        'Marketing con IA',
-        'Generación de leads',
-        'Aplicaciones móviles',
-        'Fintech',
-        'Blockchain',
-        'Integración de APIs',
-      ],
+      slogan: seo.slogan,
+      description: seo.orgDescription,
+      knowsAbout: seo.knowsAbout,
       sameAs: brand.social.map((s) => s.href),
       contactPoint: {
         '@type': 'ContactPoint',
@@ -74,15 +70,7 @@ const jsonLd = {
       jobTitle: founder.role,
       description: founder.bio,
       worksFor: { '@id': `${origin}/#organization` },
-      knowsAbout: [
-        'Automatización con IA',
-        'Desarrollo de software a medida',
-        'Fintech',
-        'Blockchain',
-        'React',
-        'Node.js',
-        'Rust',
-      ],
+      knowsAbout: seo.founderKnows,
       sameAs: [founder.linkedin, founder.github],
     },
     {
@@ -90,7 +78,7 @@ const jsonLd = {
       '@id': `${origin}/#website`,
       url: origin,
       name: brand.name,
-      inLanguage: 'es',
+      inLanguage: locale,
       publisher: { '@id': `${origin}/#organization` },
     },
     {
@@ -99,21 +87,14 @@ const jsonLd = {
       name: brand.name,
       url: origin,
       image: ogImage,
-      description:
-        'Agencia y estudio especializado en automatización con IA y desarrollo de software a medida para empresas que quieren crecer rápido.',
-      serviceType: [
-        'Automatización con IA',
-        'Desarrollo de software a medida',
-        'Marketing con IA',
-        'Aplicaciones móviles',
-        'Fintech y blockchain',
-      ],
+      description: seo.serviceDescription,
+      serviceType: seo.serviceTypes,
       priceRange: '$$$',
       areaServed: 'Worldwide',
       provider: { '@id': `${origin}/#organization` },
       hasOfferCatalog: {
         '@type': 'OfferCatalog',
-        name: 'Servicios',
+        name: locale === 'en' ? 'Services' : 'Servicios',
         itemListElement: services.map((s) => ({
           '@type': 'Offer',
           itemOffered: { '@type': 'Service', name: s.title, description: s.description },
@@ -125,7 +106,7 @@ const jsonLd = {
 ---
 
 <!doctype html>
-<html lang="es">
+<html lang={locale}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -133,6 +114,9 @@ const jsonLd = {
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=5" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=5" />
     <link rel="canonical" href={canonical} />
+    {esHref && <link rel="alternate" hreflang="es" href={esHref} />}
+    {enHref && <link rel="alternate" hreflang="en" href={enHref} />}
+    {esHref && <link rel="alternate" hreflang="x-default" href={esHref} />}
     <meta name="generator" content={Astro.generator} />
     <meta name="robots" content="index, follow, max-image-preview:large" />
 
@@ -142,7 +126,7 @@ const jsonLd = {
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={brand.name} />
-    <meta property="og:locale" content="es_ES" />
+    <meta property="og:locale" content={locale === 'en' ? 'en_US' : 'es_ES'} />
     <meta property="og:url" content={canonical} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
@@ -150,12 +134,12 @@ const jsonLd = {
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:type" content="image/jpeg" />
-    <meta property="og:image:alt" content="SolvyX — automatización con IA y desarrollo de software a medida" />
+    <meta property="og:image:alt" content={seo.ogAlt} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
-    <meta name="twitter:image:alt" content="SolvyX — automatización con IA y desarrollo de software a medida" />
+    <meta name="twitter:image:alt" content={seo.ogAlt} />
     <meta name="theme-color" content="#3b5bdb" />
 
     <!-- Structured data -->
@@ -170,7 +154,7 @@ const jsonLd = {
       href="#contenido"
       class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-ink focus:px-4 focus:py-2 focus:text-canvas"
     >
-      Saltar al contenido
+      {ui.nav.skip}
     </a>
     <slot />
   </body>

@@ -164,6 +164,11 @@ export const heroMedia = {
   posterMobile: '/hero/poster-mobile.jpg',
 };
 
+export interface ServiceOption {
+  label: string;
+  icon: IconName;
+}
+
 export const hero = {
   eyebrow: 'Estudio de IA · Automatización · Software · Fintech',
   // Titular: las palabras se animan con el efecto de partículas (ciclan).
@@ -184,7 +189,13 @@ export const hero = {
   servicePrompt: {
     title: '¿Qué necesitas?',
     subtitle: 'Selecciona todo lo que aplique',
-    options: ['Automatización IA', 'Marketing & Ads', 'Web / App', 'Fintech', 'Otro'],
+    options: [
+      { label: 'Automatización IA', icon: 'ai' },
+      { label: 'Marketing & Ads', icon: 'megaphone' },
+      { label: 'Web / App', icon: 'web' },
+      { label: 'Fintech', icon: 'wallet' },
+      { label: 'Otro', icon: 'spark' },
+    ] as ServiceOption[],
     placeholder: 'Toca para elegir uno o más servicios.',
     bannerLead: 'Listo para hablar de:',
     cta: 'Vamos',
@@ -478,6 +489,125 @@ export const finalCta = {
     'Agenda 30 minutos. Salimos de la llamada con una ruta clara y un estimado honesto — sin compromiso.',
   primary: { label: 'Agenda tu llamada', href: '#agenda' },
   secondary: { label: 'contact@solvyxdigital.com', href: 'mailto:contact@solvyxdigital.com' },
+};
+
+/* UI strings de componentes compartidos (se traducen por idioma). */
+export const ui = {
+  defaultTitle: 'Automatización con IA y Desarrollo de Software a Medida | SolvyX',
+  nav: { cta: 'Agendar llamada', open: 'Abrir menú', close: 'Cerrar menú', skip: 'Saltar al contenido', home: 'inicio' },
+  marquee: 'Equipos que confían en nosotros para construir',
+  heroUi: { selectHint: 'selecciona uno o más', cta: 'Agenda tu llamada', selectedPrefix: 'Listo para hablar de:' },
+  servicesSection: {
+    eyebrow: 'Lo que hacemos por ti',
+    title: 'Marketing con IA que vende por ti — y la ingeniería que lo sostiene',
+    description:
+      'Nuestro fuerte: ads, leads y contenido con IA que llenan tu agenda. Y cuando necesitas producto, construimos el software, las apps y la fintech que aguantan el crecimiento.',
+    spotKicker: 'Lo que más piden ahora',
+    spotTitle: 'Más clientes en piloto automático',
+    spotText:
+      'Conectamos tus ads de Meta y Google a una IA que captura, califica y nutre leads sola — y producimos los videos e imágenes que alimentan tus campañas.',
+    spotChips: ['+213% leads', 'Campañas 24/7', 'Contenido en días'],
+    spotCta: 'Quiero más clientes',
+    spotPlans: 'Ver planes',
+    reelKicker: 'Todo lo que hacemos, en un vistazo',
+    categories: {
+      'ai-automation': 'Automatización',
+      growth: 'Marketing IA',
+      media: 'Contenido IA',
+      fintech: 'Fintech',
+      mobile: 'Apps',
+      software: 'Software',
+    } as Record<string, string>,
+  },
+  workSection: {
+    eyebrow: 'Trabajo seleccionado',
+    title: 'Productos en producción, no maquetas',
+    description: 'Una muestra de lo que hemos construido. Desliza para recorrer los proyectos.',
+    dotAria: 'Ir al proyecto',
+  },
+  statsSection: {
+    eyebrow: 'Por qué SolvyX',
+    title: 'La diferencia entre contratar a un proveedor y a un socio',
+    description: 'Trabajamos como una extensión de tu equipo. Pocos clientes a la vez, foco total en cada uno.',
+  },
+  processSection: {
+    eyebrow: 'Cómo trabajamos',
+    title: 'Un proceso que ves avanzar cada semana',
+    description:
+      'Nada de cajas negras ni reportes que no entiendes. Demos en vivo, decisiones rápidas y código en producción.',
+  },
+  showcase: {
+    kicker: 'Ingeniería con IA',
+    title: 'Construido para producción, no para demos',
+    text: 'Diseñamos y construimos software, automatización y fintech con estándar real de producción — seguro, escalable y listo para crecer contigo.',
+    cta: 'Hablemos de tu proyecto',
+    alt: 'SolvyX — render 3D de la marca',
+  },
+  testimonialsSection: { eyebrow: 'En palabras de clientes', title: 'Lo que dicen quienes ya nos contrataron' },
+  packagesSection: {
+    eyebrow: 'Formas de trabajar juntos',
+    title: 'Elige el ritmo que tu proyecto necesita',
+    description: 'Desde una pieza puntual hasta un equipo dedicado. Precios honestos desde la primera llamada.',
+    badge: 'Recomendado',
+    dotAria: 'Ir al plan',
+  },
+  bookingUi: { fallback: '¿Prefieres que te escribamos? Déjanos un mensaje' },
+  founderUi: { eyebrow: 'Quién está detrás' },
+  footerUi: { rights: 'Todos los derechos reservados.' },
+  introUi: { skip: 'Saltar intro', aria: 'Intro SolvyX' },
+  modalUi: {
+    close: 'Cerrar',
+    name: 'Nombre',
+    namePh: 'Tu nombre',
+    email: 'Correo',
+    emailPh: 'tucorreo@empresa.com',
+    company: 'Empresa',
+    companyPh: 'Nombre de tu empresa',
+    project: 'Tipo de proyecto',
+    projectPh: 'Elige una opción…',
+    message: 'Cuéntanos más',
+    optional: '(opcional)',
+    messagePh: 'Una frase sobre tu idea o reto',
+    or: 'O escríbenos a',
+  },
+};
+
+/* Textos para datos estructurados / meta (por idioma). */
+export const seo = {
+  slogan: 'Automatización con IA y software a medida — en días, no en meses.',
+  orgDescription:
+    'Especialistas en automatización con IA y desarrollo de software a medida. Automatizamos procesos de negocio y marketing con inteligencia artificial (conexión de ads, generación y nurturing de leads), creamos multimedia con IA, y construimos software a medida, apps móviles, wallets fintech y blockchain — entregado en días, no en meses.',
+  serviceDescription:
+    'Agencia y estudio especializado en automatización con IA y desarrollo de software a medida para empresas que quieren crecer rápido.',
+  ogAlt: 'SolvyX — automatización con IA y desarrollo de software a medida',
+  knowsAbout: [
+    'Automatización con IA',
+    'Desarrollo de software a medida',
+    'Inteligencia artificial para negocios',
+    'Agentes de IA',
+    'Marketing con IA',
+    'Generación de leads',
+    'Aplicaciones móviles',
+    'Fintech',
+    'Blockchain',
+    'Integración de APIs',
+  ],
+  serviceTypes: [
+    'Automatización con IA',
+    'Desarrollo de software a medida',
+    'Marketing con IA',
+    'Aplicaciones móviles',
+    'Fintech y blockchain',
+  ],
+  founderKnows: [
+    'Automatización con IA',
+    'Desarrollo de software a medida',
+    'Fintech',
+    'Blockchain',
+    'React',
+    'Node.js',
+    'Rust',
+  ],
 };
 
 export const footer = {

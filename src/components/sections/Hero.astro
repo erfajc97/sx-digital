@@ -1,16 +1,11 @@
 ---
-import { hero, heroMedia, brand } from '@/data/site';
-import type { IconName } from '@/data/site';
 import Icon from '../ui/Icon.astro';
+import { getDict, defaultLocale, type Locale } from '@/i18n';
+
+const locale = (Astro.currentLocale ?? defaultLocale) as Locale;
+const { hero, heroMedia, brand, ui } = getDict(locale);
 
 const sp = hero.servicePrompt;
-const pillIcons: Record<string, IconName> = {
-  'Automatización IA': 'ai',
-  'Marketing & Ads': 'megaphone',
-  'Web / App': 'web',
-  Fintech: 'wallet',
-  Otro: 'spark',
-};
 ---
 
 <section id="hero" class="relative min-h-[100svh] overflow-hidden bg-night lg:min-h-[100dvh]">
@@ -96,7 +91,7 @@ const pillIcons: Record<string, IconName> = {
     <div data-reveal style="--reveal-delay: 180ms;" class="max-w-xl lg:mt-8 lg:max-w-2xl">
       <p class="mb-2 text-sm font-medium text-on-night sm:mb-3">
         {sp.title}
-        <span class="text-on-night-muted">· selecciona uno o más</span>
+        <span class="text-on-night-muted">· {ui.heroUi.selectHint}</span>
       </p>
 
       <div class="mb-4 flex flex-wrap gap-1.5 sm:mb-6 sm:gap-2">
@@ -105,11 +100,11 @@ const pillIcons: Record<string, IconName> = {
             <button
               type="button"
               class="svc-pill press inline-flex items-center gap-1 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium text-on-night backdrop-blur-sm transition-colors duration-200 ease-[var(--ease-snappy)] hover:bg-white/12 sm:gap-1.5 sm:px-3.5 sm:py-1.5 sm:text-sm"
-              data-service={opt}
+              data-service={opt.label}
               aria-pressed="false"
             >
-              <Icon name={pillIcons[opt] ?? 'spark'} class="pill-ico size-3.5 shrink-0 text-brand" />
-              {opt}
+              <Icon name={opt.icon} class="pill-ico size-3.5 shrink-0 text-brand" />
+              {opt.label}
             </button>
           ))
         }
@@ -123,10 +118,10 @@ const pillIcons: Record<string, IconName> = {
           data-cal-config='{"layout":"month_view"}'
           class="btn-3d inline-flex items-center gap-2 rounded-full bg-brand px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-strong sm:px-7 sm:py-3.5 sm:text-base"
         >
-          Agenda tu llamada
+          {ui.heroUi.cta}
           <Icon name="arrow" class="size-4" />
         </a>
-        <span id="svc-list" class="text-sm text-on-night-muted"></span>
+        <span id="svc-list" class="text-sm text-on-night-muted" data-prefix={ui.heroUi.selectedPrefix}></span>
       </div>
     </div>
   </div>
@@ -245,7 +240,7 @@ const pillIcons: Record<string, IconName> = {
   const sync = () => {
     if (list)
       list.textContent = selected.size
-        ? `Listo para hablar de: ${Array.from(selected).join(', ')}`
+        ? `${list.dataset.prefix ?? ''} ${Array.from(selected).join(', ')}`
         : '';
   };
 

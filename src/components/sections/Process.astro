@@ -1,6 +1,10 @@
 ---
-import { process } from '@/data/site';
 import SectionHeading from '../ui/SectionHeading.astro';
+import { getDict, defaultLocale, type Locale } from '@/i18n';
+
+const locale = (Astro.currentLocale ?? defaultLocale) as Locale;
+const { process, ui } = getDict(locale);
+const t = ui.processSection;
 ---
 
 <section id="proceso" class="relative scroll-mt-24 overflow-hidden bg-night py-[var(--spacing-section)]">
@@ -13,12 +17,7 @@ import SectionHeading from '../ui/SectionHeading.astro';
   </div>
 
   <div class="relative mx-auto max-w-[1240px] px-4 sm:px-6">
-    <SectionHeading
-      tone="night"
-      eyebrow="Cómo trabajamos"
-      title="Un proceso que ves avanzar cada semana"
-      description="Nada de cajas negras ni reportes que no entiendes. Demos en vivo, decisiones rápidas y código en producción."
-    />
+    <SectionHeading tone="night" eyebrow={t.eyebrow} title={t.title} description={t.description} />
 
     <ol class="mt-14 grid gap-px overflow-hidden rounded-[var(--radius-xl2)] border border-white/10 bg-white/10 sm:grid-cols-2 lg:grid-cols-4">
       {

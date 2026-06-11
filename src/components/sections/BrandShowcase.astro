@@ -1,5 +1,10 @@
 ---
 import Button from '../ui/Button.astro';
+import { getDict, defaultLocale, type Locale } from '@/i18n';
+
+const locale = (Astro.currentLocale ?? defaultLocale) as Locale;
+const { ui } = getDict(locale);
+const t = ui.showcase;
 ---
 
 <section class="py-[var(--spacing-section)]">
@@ -14,7 +19,7 @@ import Button from '../ui/Button.astro';
           <source srcset="/solvyxX-3D.webp" type="image/webp" />
           <img
             src="/solvyxX-3D.jpg"
-            alt="SolvyX — render 3D de la marca"
+            alt={t.alt}
             width="1200"
             height="1200"
             loading="lazy"
@@ -32,18 +37,17 @@ import Button from '../ui/Button.astro';
       <!-- copy -->
       <div class="flex flex-col items-start justify-center gap-5 px-6 py-12 sm:px-12 sm:py-16">
         <span class="text-sm font-semibold uppercase tracking-[0.16em] text-brand-soft">
-          Ingeniería con IA
+          {t.kicker}
         </span>
         <h2 class="text-[clamp(1.9rem,3.6vw,2.85rem)] leading-[1.08] text-white text-balance">
-          Construido para producción, no para demos
+          {t.title}
         </h2>
         <p class="text-lg leading-relaxed text-white/80" style="max-width: 48ch;">
-          Diseñamos y construimos software, automatización y fintech con estándar
-          real de producción — seguro, escalable y listo para crecer contigo.
+          {t.text}
         </p>
         <div class="mt-1">
           <Button href="#agenda" cal size="lg" variant="on-night" icon="arrow">
-            Hablemos de tu proyecto
+            {t.cta}
           </Button>
         </div>
       </div>

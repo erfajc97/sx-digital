@@ -7,6 +7,11 @@
    button restarts it unmuted on the first tap. Auto-dismisses on `ended`,
    skippable, and shown only once per browser session (sessionStorage).
    Skipped entirely on prefers-reduced-motion. */
+import { getDict, defaultLocale, type Locale } from '@/i18n';
+
+const locale = (Astro.currentLocale ?? defaultLocale) as Locale;
+const { ui } = getDict(locale);
+
 const intro = {
   video: '/hero/intro.mp4',
   videoWebm: '/hero/intro.webm',
@@ -19,7 +24,7 @@ const intro = {
 };
 ---
 
-<div id="intro-gate" class="intro-gate" role="dialog" aria-label="Intro SolvyX" aria-modal="true">
+<div id="intro-gate" class="intro-gate" role="dialog" aria-label={ui.introUi.aria} aria-modal="true">
   <video
     id="intro-video"
     class="intro-video"
@@ -42,7 +47,7 @@ const intro = {
 
   <!-- Skip -->
   <button id="intro-skip" type="button" class="intro-skip">
-    Saltar intro
+    {ui.introUi.skip}
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="size-4" aria-hidden="true">
       <path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round" />
     </svg>

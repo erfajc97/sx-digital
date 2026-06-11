@@ -1,6 +1,9 @@
 ---
-import { finalCta, brand } from '@/data/site';
 import Button from '../ui/Button.astro';
+import { getDict, defaultLocale, type Locale } from '@/i18n';
+
+const locale = (Astro.currentLocale ?? defaultLocale) as Locale;
+const { finalCta, brand } = getDict(locale);
 ---
 
 <section class="pb-[var(--spacing-section)] pt-4">

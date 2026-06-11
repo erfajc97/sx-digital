@@ -1,0 +1,56 @@
+---
+import PublicLayout from '@/layouts/PublicLayout.astro';
+import Founder from '@/components/sections/Founder.astro';
+import Process from '@/components/sections/Process.astro';
+import BrandShowcase from '@/components/sections/BrandShowcase.astro';
+import CtaBanner from '@/components/sections/CtaBanner.astro';
+import { getDict } from '@/i18n';
+
+const { brand, founder } = getDict('en');
+
+const title = `About us — the team behind ${brand.name} | AI automation and custom software`;
+const description = `Meet ${founder.name}, founder of ${brand.name}: senior full-stack engineer in fintech, AI and blockchain (creator of Eranpay). How we work: live demos, delivery in days and code under your name.`;
+
+const origin = Astro.site ? Astro.site.origin : `https://${brand.domain}`;
+const aboutLd = {
+  '@context': 'https://schema.org',
+  '@type': 'AboutPage',
+  '@id': `${origin}/en/about#about`,
+  url: `${origin}/en/about`,
+  name: 'About us — SolvyX',
+  inLanguage: 'en',
+  isPartOf: { '@id': `${origin}/#website` },
+  about: { '@id': `${origin}/#organization` },
+  mainEntity: { '@id': `${origin}/#founder` },
+};
+---
+
+<PublicLayout title={title} description={description} intro={false} solidNav>
+  <!-- Page header -->
+  <section class="relative overflow-hidden bg-surface pb-10 pt-32 sm:pt-36">
+    <div class="bg-grid pointer-events-none absolute inset-0 opacity-60" aria-hidden="true"></div>
+    <div class="relative mx-auto max-w-[1240px] px-4 sm:px-6">
+      <div data-reveal class="flex max-w-2xl flex-col gap-4">
+        <span class="inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.18em] text-brand">
+          <span class="h-px w-6 bg-brand"></span>
+          About us
+        </span>
+        <h1 class="text-[clamp(2.2rem,5vw,3.5rem)] leading-[1.05] text-ink">
+          A small studio with big engineering standards
+        </h1>
+        <p class="text-lg leading-relaxed text-muted" style="max-width: 58ch;">
+          {brand.name} pairs cutting-edge AI with fintech-grade engineering rigor. Few
+          clients at a time, full focus on each one — and everything we build ships
+          under your name.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <Founder />
+  <Process />
+  <BrandShowcase />
+  <CtaBanner />
+
+  <script type="application/ld+json" set:html={JSON.stringify(aboutLd)} />
+</PublicLayout>

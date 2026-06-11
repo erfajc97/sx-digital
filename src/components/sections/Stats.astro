@@ -1,17 +1,17 @@
 ---
-import { differentiators, stats } from '@/data/site';
 import SectionHeading from '../ui/SectionHeading.astro';
 import Icon from '../ui/Icon.astro';
+import { getDict, defaultLocale, type Locale } from '@/i18n';
+
+const locale = (Astro.currentLocale ?? defaultLocale) as Locale;
+const { differentiators, stats, ui } = getDict(locale);
+const t = ui.statsSection;
 ---
 
 <section class="py-[var(--spacing-section)]">
   <div class="mx-auto max-w-[1240px] px-4 sm:px-6">
     <div class="grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
-      <SectionHeading
-        eyebrow="Por qué SolvyX"
-        title="La diferencia entre contratar a un proveedor y a un socio"
-        description="Trabajamos como una extensión de tu equipo. Pocos clientes a la vez, foco total en cada uno."
-      />
+      <SectionHeading eyebrow={t.eyebrow} title={t.title} description={t.description} />
 
       <div class="flex flex-col divide-y divide-border">
         {

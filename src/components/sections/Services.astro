@@ -1,13 +1,18 @@
 ---
-import { services, brand } from '@/data/site';
 import SectionHeading from '../ui/SectionHeading.astro';
 import Icon from '../ui/Icon.astro';
+import { getDict, defaultLocale, type Locale } from '@/i18n';
+
+const locale = (Astro.currentLocale ?? defaultLocale) as Locale;
+const { services, brand, ui } = getDict(locale);
+const t = ui.servicesSection;
 
 /* Sales focus: the best-sellers (Marketing/Ads + Multimedia con IA) get a
    FIXED, always-visible spotlight — plain HTML the crawler reads in full.
-   The View-Master reel then showcases the rest of the catalogue. */
+   The View-Master reel showcases the FULL catalogue (all six — each frame is
+   a future 5s video slot, and six frames keep the wheel feeling rich). */
 const hot = services.filter((s) => s.id === 'growth' || s.id === 'media');
-const rest = services.filter((s) => s.id !== 'growth' && s.id !== 'media');
+const reelServices = [...hot, ...services.filter((s) => s.id !== 'growth' && s.id !== 'media')];
 
 // On-brand cobalt → navy gradient per card (subtle depth variation only).
 const visual: Record<string, string> = {
@@ -18,23 +23,12 @@ const visual: Record<string, string> = {
   mobile: 'from-[oklch(0.45_0.17_266)] to-[oklch(0.24_0.1_265)]',
   software: 'from-[oklch(0.48_0.19_264)] to-[oklch(0.24_0.1_264)]',
 };
-const category: Record<string, string> = {
-  'ai-automation': 'Automatización',
-  growth: 'Marketing IA',
-  media: 'Contenido IA',
-  fintech: 'Fintech',
-  mobile: 'Apps',
-  software: 'Software',
-};
+const category = t.categories;
 ---
 
 <section id="servicios" class="relative scroll-mt-24 bg-surface">
   <div class="mx-auto max-w-[1240px] px-4 pt-[var(--spacing-section)] sm:px-6">
-    <SectionHeading
-      eyebrow="Lo que hacemos por ti"
-      title="Marketing con IA que vende por ti — y la ingeniería que lo sostiene"
-      description="Nuestro fuerte: ads, leads y contenido con IA que llenan tu agenda. Y cuando necesitas producto, construimos el software, las apps y la fintech que aguantan el crecimiento."
-    />
+    <SectionHeading eyebrow={t.eyebrow} title={t.title} description={t.description} />
 
     <!-- ⭐ Fixed spotlight — the money services, always visible -->
     <div
@@ -49,30 +43,28 @@ const category: Record<string, string> = {
       >
       </div>
 
-      <div class="relative grid gap-8 p-7 sm:p-10 lg:grid-cols-[1.1fr_1fr] lg:items-center lg:gap-12">
+      <div class="relative grid gap-6 p-5 sm:gap-8 sm:p-10 lg:grid-cols-[1.1fr_1fr] lg:items-center lg:gap-12">
         <!-- pitch -->
-        <div class="flex flex-col gap-5">
+        <div class="flex flex-col gap-4 sm:gap-5">
           <span class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-brand-soft">
             <span class="h-px w-6 bg-brand"></span>
-            Lo que más piden ahora
+            {t.spotKicker}
           </span>
           <h3 class="font-display text-[clamp(1.7rem,3.4vw,2.6rem)] font-semibold leading-[1.1]">
-            Más clientes en piloto automático
+            {t.spotTitle}
           </h3>
           <p class="text-base leading-relaxed text-on-night-muted sm:text-lg" style="max-width: 50ch;">
-            Conectamos tus ads de Meta y Google a una IA que captura, califica y nutre
-            leads sola — y producimos los videos e imágenes que alimentan tus campañas.
+            {t.spotText}
           </p>
           <ul class="flex flex-wrap gap-2">
-            <li class="inline-flex items-center gap-1.5 rounded-full bg-white/8 px-3 py-1.5 text-xs font-medium text-on-night">
-              <Icon name="chart" class="size-3.5 text-brand-soft" /> +213% leads
-            </li>
-            <li class="inline-flex items-center gap-1.5 rounded-full bg-white/8 px-3 py-1.5 text-xs font-medium text-on-night">
-              <Icon name="spark" class="size-3.5 text-brand-soft" /> Campañas 24/7
-            </li>
-            <li class="inline-flex items-center gap-1.5 rounded-full bg-white/8 px-3 py-1.5 text-xs font-medium text-on-night">
-              <Icon name="video" class="size-3.5 text-brand-soft" /> Contenido en días
-            </li>
+            {
+              t.spotChips.map((chip, i) => (
+                <li class="inline-flex items-center gap-1.5 rounded-full bg-white/8 px-3 py-1.5 text-xs font-medium text-on-night">
+                  <Icon name={(['chart', 'spark', 'video'] as const)[i] ?? 'spark'} class="size-3.5 text-brand-soft" />
+                  {chip}
+                </li>
+              ))
+            }
           </ul>
           <div class="flex flex-wrap items-center gap-x-5 gap-y-3 pt-1">
             <a
@@ -82,31 +74,33 @@ const category: Record<string, string> = {
               data-cal-config='{"layout":"month_view"}'
               class="btn-3d inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-semibold text-white hover:bg-brand-strong sm:px-7 sm:py-3.5 sm:text-base"
             >
-              Quiero más clientes
+              {t.spotCta}
               <Icon name="arrow" class="size-4" />
             </a>
             <a
-              href="/#planes"
+              href="#planes"
               class="text-sm font-medium text-on-night-muted underline-offset-2 hover:text-white hover:underline"
             >
-              Ver planes
+              {t.spotPlans}
             </a>
           </div>
         </div>
 
-        <!-- the two hot services, plainly listed -->
-        <div class="flex flex-col gap-4">
+        <!-- the two hot services, plainly listed (compact rows on mobile) -->
+        <div class="flex flex-col gap-3 sm:gap-4">
           {
             hot.map((s) => (
-              <article class="rounded-[var(--radius-card)] border border-white/10 bg-white/5 p-5 backdrop-blur-sm">
+              <article class="rounded-[var(--radius-card)] border border-white/10 bg-white/5 p-4 backdrop-blur-sm sm:p-5">
                 <div class="flex items-center gap-3">
-                  <span class="grid size-11 shrink-0 place-items-center rounded-xl bg-brand/90 text-white ring-1 ring-white/20">
+                  <span class="grid size-10 shrink-0 place-items-center rounded-xl bg-brand/90 text-white ring-1 ring-white/20 sm:size-11">
                     <Icon name={s.icon} class="size-5" />
                   </span>
-                  <h4 class="font-display text-lg font-semibold">{s.title}</h4>
+                  <h4 class="font-display text-base font-semibold sm:text-lg">{s.title}</h4>
                 </div>
-                <p class="mt-3 text-sm leading-relaxed text-on-night-muted">{s.description}</p>
-                <ul class="mt-3 flex flex-wrap gap-1.5">
+                <p class="mt-2.5 line-clamp-2 text-sm leading-relaxed text-on-night-muted sm:mt-3 sm:line-clamp-none">
+                  {s.description}
+                </p>
+                <ul class="mt-3 hidden flex-wrap gap-1.5 sm:flex">
                   {s.bullets.map((b) => (
                     <li class="rounded-full bg-white/8 px-2.5 py-1 text-[11px] text-on-night-muted">{b}</li>
                   ))}
@@ -118,9 +112,9 @@ const category: Record<string, string> = {
       </div>
     </div>
 
-    <!-- kicker for the rest of the catalogue -->
-    <p class="mt-14 text-center text-xs font-semibold uppercase tracking-[0.2em] text-muted">
-      ¿Necesitas más? También construimos esto
+    <!-- kicker for the full catalogue reel -->
+    <p class="mt-10 text-center text-xs font-semibold uppercase tracking-[0.2em] text-muted sm:mt-14">
+      {t.reelKicker}
     </p>
   </div>
 
@@ -133,7 +127,7 @@ const category: Record<string, string> = {
       <!-- Informative text (one per service, cross-faded) -->
       <div class="relative z-10 h-[270px] w-full max-w-md lg:h-[360px] lg:w-[42%] lg:max-w-none">
         {
-          rest.map((s, i) => (
+          reelServices.map((s, i) => (
             <div
               class="reel-text absolute inset-0 flex flex-col justify-center gap-3 lg:gap-4"
               data-i={i}
@@ -170,9 +164,9 @@ const category: Record<string, string> = {
         >
         </div>
         {
-          rest.map((s, i) => (
+          reelServices.map((s, i) => (
             <div
-              class="reel-frame absolute left-1/2 top-1/2 grid h-[190px] w-[148px] place-items-center overflow-hidden rounded-[var(--radius-card)] border border-border card-3d lg:h-[300px] lg:w-[232px] lg:rounded-[var(--radius-xl2)]"
+              class="reel-frame absolute left-1/2 top-1/2 grid h-[205px] w-[160px] place-items-center overflow-hidden rounded-[var(--radius-card)] border border-border card-3d lg:h-[300px] lg:w-[232px] lg:rounded-[var(--radius-xl2)]"
               data-i={i}
             >
               <div class:list={['absolute inset-0 bg-gradient-to-br', visual[s.id] ?? visual.software]} />
@@ -195,7 +189,7 @@ const category: Record<string, string> = {
       class="flex gap-4 overflow-x-auto px-4 pb-4 [scrollbar-width:none] snap-x snap-mandatory"
     >
       {
-        rest.map((s) => (
+        reelServices.map((s) => (
           <article class="group relative flex h-[58vh] max-h-[500px] w-[80vw] max-w-[320px] shrink-0 snap-center flex-col overflow-hidden rounded-[var(--radius-xl2)] border border-border bg-canvas card-3d">
             <div class:list={['relative h-[44%] overflow-hidden bg-gradient-to-br', visual[s.id] ?? visual.software]}>
               <div class="bg-grid-night absolute inset-0 opacity-25" />

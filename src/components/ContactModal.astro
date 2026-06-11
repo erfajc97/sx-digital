@@ -1,8 +1,12 @@
 ---
-import { brand, contact } from '@/data/site';
 import Icon from './ui/Icon.astro';
+import { getDict, defaultLocale, type Locale } from '@/i18n';
+
+const locale = (Astro.currentLocale ?? defaultLocale) as Locale;
+const { brand, contact, ui } = getDict(locale);
 
 const m = contact.modal;
+const f = ui.modalUi;
 ---
 
 <dialog id="contact-modal" class="contact-dialog" aria-labelledby="contact-title">
@@ -19,7 +23,7 @@ const m = contact.modal;
         type="button"
         data-close-contact
         class="press grid size-9 shrink-0 place-items-center rounded-full border border-border text-ink-soft transition-colors hover:bg-surface-2"
-        aria-label="Cerrar"
+        aria-label={f.close}
       >
         <svg viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
           <path d="M6 6l12 12M18 6 6 18"></path>
@@ -31,45 +35,45 @@ const m = contact.modal;
     <form id="contact-form" class="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto px-6 py-5">
       <div class="grid gap-3 sm:grid-cols-2">
         <label class="flex flex-col gap-1">
-          <span class="text-sm font-medium text-ink">Nombre</span>
+          <span class="text-sm font-medium text-ink">{f.name}</span>
           <input
             name="nombre"
             type="text"
             required
             autocomplete="name"
-            placeholder="Tu nombre"
+            placeholder={f.namePh}
             class="field"
           />
         </label>
         <label class="flex flex-col gap-1">
-          <span class="text-sm font-medium text-ink">Correo</span>
+          <span class="text-sm font-medium text-ink">{f.email}</span>
           <input
             name="correo"
             type="email"
             required
             autocomplete="email"
-            placeholder="tucorreo@empresa.com"
+            placeholder={f.emailPh}
             class="field"
           />
         </label>
       </div>
 
       <label class="flex flex-col gap-1">
-        <span class="text-sm font-medium text-ink">Empresa</span>
-        <input name="empresa" type="text" autocomplete="organization" placeholder="Nombre de tu empresa" class="field" />
+        <span class="text-sm font-medium text-ink">{f.company}</span>
+        <input name="empresa" type="text" autocomplete="organization" placeholder={f.companyPh} class="field" />
       </label>
 
       <label class="flex flex-col gap-1">
-        <span class="text-sm font-medium text-ink">Tipo de proyecto</span>
+        <span class="text-sm font-medium text-ink">{f.project}</span>
         <select name="proyecto" class="field" required>
-          <option value="" disabled selected>Elige una opción…</option>
+          <option value="" disabled selected>{f.projectPh}</option>
           {contact.projectTypes.map((t) => <option value={t}>{t}</option>)}
         </select>
       </label>
 
       <label class="flex flex-col gap-1">
-        <span class="text-sm font-medium text-ink">Cuéntanos más <span class="text-muted">(opcional)</span></span>
-        <textarea name="mensaje" rows="2" placeholder="Una frase sobre tu idea o reto" class="field resize-none"></textarea>
+        <span class="text-sm font-medium text-ink">{f.message} <span class="text-muted">{f.optional}</span></span>
+        <textarea name="mensaje" rows="2" placeholder={f.messagePh} class="field resize-none"></textarea>
       </label>
 
       <button
@@ -80,7 +84,7 @@ const m = contact.modal;
         <Icon name="arrow" class="size-4" />
       </button>
       <p class="text-center text-xs text-muted">
-        O escríbenos a <a href={`mailto:${brand.email}`} class="text-brand hover:underline">{brand.email}</a>
+        {f.or} <a href={`mailto:${brand.email}`} class="text-brand hover:underline">{brand.email}</a>
       </p>
     </form>
 
@@ -95,7 +99,7 @@ const m = contact.modal;
         data-close-contact
         class="press mt-2 rounded-full border border-border px-5 py-2 text-sm font-medium text-ink-soft hover:bg-surface-2"
       >
-        Cerrar
+        {f.close}
       </button>
     </div>
   </div>

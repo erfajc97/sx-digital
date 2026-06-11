@@ -1,0 +1,24 @@
+---
+import PublicLayout from '@/layouts/PublicLayout.astro';
+import Hero from '@/components/sections/Hero.astro';
+import TrustMarquee from '@/components/sections/TrustMarquee.astro';
+import Services from '@/components/sections/Services.astro';
+import Work from '@/components/sections/Work.astro';
+import Stats from '@/components/sections/Stats.astro';
+import Packages from '@/components/sections/Packages.astro';
+import Testimonials from '@/components/sections/Testimonials.astro';
+import Booking from '@/components/sections/Booking.astro';
+
+/* English landing — every section self-localizes via Astro.currentLocale. */
+---
+
+<PublicLayout>
+  <Hero />
+  <TrustMarquee />
+  <Services />
+  <Work />
+  <Stats />
+  <Packages />
+  <Testimonials />
+  <Booking />
+</PublicLayout>

@@ -1,6 +1,9 @@
 ---
-import { contact, brand } from '@/data/site';
 import Icon from '../ui/Icon.astro';
+import { getDict, defaultLocale, type Locale } from '@/i18n';
+
+const locale = (Astro.currentLocale ?? defaultLocale) as Locale;
+const { contact, brand, ui } = getDict(locale);
 
 const a = contact.agenda;
 ---
@@ -53,7 +56,7 @@ const a = contact.agenda;
             data-open-contact
             class="text-sm text-white/80 underline-offset-2 hover:text-white hover:underline"
           >
-            ¿Prefieres que te escribamos? Déjanos un mensaje
+            {ui.bookingUi.fallback}
           </button>
         </div>
       </div>

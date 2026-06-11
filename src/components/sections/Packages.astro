@@ -1,18 +1,17 @@
 ---
-import { packages } from '@/data/site';
 import SectionHeading from '../ui/SectionHeading.astro';
 import Button from '../ui/Button.astro';
 import Icon from '../ui/Icon.astro';
+import { getDict, defaultLocale, type Locale } from '@/i18n';
+
+const locale = (Astro.currentLocale ?? defaultLocale) as Locale;
+const { packages, ui } = getDict(locale);
+const t = ui.packagesSection;
 ---
 
 <section id="planes" class="scroll-mt-24 py-[var(--spacing-section)]">
   <div class="mx-auto max-w-[1240px] px-4 sm:px-6">
-    <SectionHeading
-      align="center"
-      eyebrow="Formas de trabajar juntos"
-      title="Elige el ritmo que tu proyecto necesita"
-      description="Desde una pieza puntual hasta un equipo dedicado. Precios honestos desde la primera llamada."
-    />
+    <SectionHeading align="center" eyebrow={t.eyebrow} title={t.title} description={t.description} />
 
     <!-- Mobile: compact swipe (featured plan first, peek of the next).
          Desktop: 3-col grid. -->
@@ -40,7 +39,7 @@ import Icon from '../ui/Icon.astro';
                 </h3>
                 {featured && (
                   <span class="rounded-full bg-brand px-3 py-1 text-[11px] font-medium uppercase tracking-wider text-white">
-                    Recomendado
+                    {t.badge}
                   </span>
                 )}
               </div>
@@ -93,7 +92,7 @@ import Icon from '../ui/Icon.astro';
             type="button"
             class="pkg-dot size-2 rounded-full bg-ink/25 transition-all"
             aria-current={i === 0 ? 'true' : 'false'}
-            aria-label={`Ir al plan ${i + 1}`}
+            aria-label={`${t.dotAria} ${i + 1}`}
           />
         ))
       }
