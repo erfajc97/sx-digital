@@ -185,6 +185,7 @@ const intro = {
     if (video) {
       video.pause();
     }
+    window.scrollTo(0, 0); // reveal the hero, never a mid-page section
     unlock();
     window.setTimeout(() => gate.classList.add('is-done'), 700);
   }
@@ -194,6 +195,16 @@ const intro = {
     if (gate) gate.classList.add('is-done');
     unlock();
   } else {
+    // The reveal must land on the HERO: stop the browser from restoring the
+    // previous scroll position on reload (it would leave the page mid-scroll
+    // behind the intro) and pin the viewport to the top.
+    try {
+      history.scrollRestoration = 'manual';
+    } catch {
+      /* unsupported */
+    }
+    window.scrollTo(0, 0);
+
     // Lock scroll while the intro plays.
     document.documentElement.style.overflow = 'hidden';
     document.body.style.overflow = 'hidden';

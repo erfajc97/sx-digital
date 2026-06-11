@@ -1,0 +1,95 @@
+---
+/* Language suggestion — SEO-safe "auto-translate":
+   · No IP/Accept-Language server redirects (crawlers must always reach both
+     versions; hreflang does the routing in search results).
+   · First visit, mismatched browser language → a small toast offers the
+     counterpart page in ITS language. The choice (or a navbar switch, or a
+     dismiss) is stored.
+   · Returning visitors with a stored choice that differs from the page get
+     client-side redirected to the counterpart — an explicit user preference,
+     not geo-sniffing, so it's safe. */
+import { getDict, altPathFor, defaultLocale, type Locale } from '@/i18n';
+
+const locale = (Astro.currentLocale ?? defaultLocale) as Locale;
+const other: Locale = locale === 'en' ? 'es' : 'en';
+const altPath = altPathFor(Astro.url.pathname, other) ?? (other === 'en' ? '/en/' : '/');
+// The banner speaks the TARGET language (the one we're offering).
+const banner = getDict(other).ui.langBanner;
+---
+
+<div
+  id="lang-suggest"
+  hidden
+  class="fixed inset-x-4 bottom-4 z-[90] mx-auto flex w-fit max-w-[94vw] items-center gap-3 rounded-full border border-border bg-canvas/95 py-2 pl-4 pr-2 shadow-[var(--shadow-3d)] backdrop-blur"
+  role="status"
+>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" class="size-4 shrink-0 text-brand" aria-hidden="true">
+    <circle cx="12" cy="12" r="9" />
+    <path d="M3.5 12h17M12 3c2.5 2.4 3.8 5.5 3.8 9S14.5 18.6 12 21c-2.5-2.4-3.8-5.5-3.8-9S9.5 5.4 12 3Z" />
+  </svg>
+  <p class="text-sm text-ink-soft">{banner.text}</p>
+  <a
+    id="lang-accept"
+    href={altPath}
+    data-lang-switch={other}
+    class="press shrink-0 rounded-full bg-brand px-3.5 py-1.5 text-sm font-semibold text-white hover:bg-brand-strong"
+  >
+    {banner.cta}
+  </a>
+  <button
+    id="lang-dismiss"
+    type="button"
+    aria-label={banner.close}
+    class="press grid size-7 shrink-0 place-items-center rounded-full text-muted hover:bg-surface-2 hover:text-ink"
+  >
+    <svg viewBox="0 0 24 24" class="size-3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+      <path d="M6 6l12 12M18 6 6 18"></path>
+    </svg>
+  </button>
+</div>
+
+<script is:inline define:vars={{ pageLocale: locale, other, altPath }}>
+  (function () {
+    const KEY = 'solvyx-lang';
+    let stored = null;
+    try {
+      stored = localStorage.getItem(KEY);
+    } catch {
+      /* private mode */
+    }
+    const remember = (v) => {
+      try {
+        localStorage.setItem(KEY, v);
+      } catch {
+        /* ignore */
+      }
+    };
+
+    // Any explicit language switch (navbar pill, banner CTA) becomes the pref.
+    document.querySelectorAll('[data-lang-switch]').forEach((el) => {
+      el.addEventListener('click', () => remember(el.dataset.langSwitch));
+    });
+
+    // Returning visitor with an explicit preference → take them to their language.
+    if (stored === 'es' || stored === 'en') {
+      if (stored !== pageLocale && stored === other) location.replace(altPath);
+      return;
+    }
+
+    // First visit: suggest (never force) when the browser language mismatches.
+    const langs = navigator.languages || [navigator.language || ''];
+    const wantsEs = langs.some((l) => (l || '').toLowerCase().startsWith('es'));
+    const target = wantsEs ? 'es' : 'en';
+    if (target === pageLocale) return;
+
+    const toast = document.getElementById('lang-suggest');
+    if (!toast) return;
+    setTimeout(() => {
+      toast.hidden = false;
+    }, 1200);
+    document.getElementById('lang-dismiss')?.addEventListener('click', () => {
+      remember(pageLocale); // "stay here" is a preference too
+      toast.hidden = true;
+    });
+  })();
+</script>

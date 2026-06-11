@@ -411,6 +411,11 @@ export const ui = {
   founderUi: { eyebrow: 'Who is behind it' },
   footerUi: { rights: 'All rights reserved.' },
   introUi: { skip: 'Skip intro', aria: 'SolvyX intro' },
+  langBanner: {
+    text: 'This page is also available in English.',
+    cta: 'View in English',
+    close: 'Close',
+  },
   modalUi: {
     close: 'Close',
     name: 'Name',

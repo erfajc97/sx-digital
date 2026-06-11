@@ -1,6 +1,7 @@
 ---
 import '@/styles/fonts.css';
 import '@/styles/global.css';
+import LangSuggest from '@/components/LangSuggest.astro';
 import { getDict, altPathFor, defaultLocale, type Locale } from '@/i18n';
 
 interface Props {
@@ -157,5 +158,6 @@ const jsonLd = {
       {ui.nav.skip}
     </a>
     <slot />
+    <LangSuggest />
   </body>
 </html>

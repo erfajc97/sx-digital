@@ -555,6 +555,11 @@ export const ui = {
   founderUi: { eyebrow: 'Quién está detrás' },
   footerUi: { rights: 'Todos los derechos reservados.' },
   introUi: { skip: 'Saltar intro', aria: 'Intro SolvyX' },
+  langBanner: {
+    text: 'Esta página también está disponible en español.',
+    cta: 'Ver en español',
+    close: 'Cerrar',
+  },
   modalUi: {
     close: 'Cerrar',
     name: 'Nombre',
