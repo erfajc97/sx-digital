@@ -14,7 +14,7 @@ const reel = document.getElementById('svc-reel');
 if (reel) {
   const mm = gsap.matchMedia();
 
-  const buildReel = (RADIUS: number, VIEWER: number, perStep: number) => {
+  const buildReel = (RADIUS: number, VIEWER: number, perStep: number, scaleSpan: number) => {
     gsap.registerPlugin(ScrollTrigger);
 
     const frames = gsap.utils.toArray<HTMLElement>('.reel-frame');
@@ -30,7 +30,7 @@ if (reel) {
         // angular distance from the viewer slot (0..180)
         const d = Math.abs(((((angle - VIEWER) % 360) + 540) % 360) - 180);
         const t = 1 - Math.min(d, 140) / 140; // 1 at viewer → 0 far away
-        const scale = 0.6 + t * 0.62; // 0.6 … 1.22
+        const scale = 0.6 + t * scaleSpan; // 0.6 … (0.6 + span)
         f.style.transform = `translate(-50%, -50%) rotate(${angle}deg) translateX(${RADIUS}px) rotate(${-angle}deg) scale(${scale})`;
         f.style.opacity = (0.25 + t * 0.75).toFixed(3);
         f.style.zIndex = String(Math.round(t * 100));
@@ -73,12 +73,13 @@ if (reel) {
 
   // Desktop: wheel on the right, viewer slot on its LEFT (angle 180°).
   mm.add('(min-width: 1024px) and (prefers-reduced-motion: no-preference)', () =>
-    buildReel(210, 180, 0.7)
+    buildReel(210, 180, 0.7, 0.62)
   );
 
   // Mobile/tablet: wheel below the text, viewer slot at the TOP (angle 270°).
-  // Smaller radius so orbiting frames stay inside a phone viewport.
+  // Smaller radius + gentler focus scale so the orbit fits a phone viewport
+  // and the top frame never climbs into the text/chips above.
   mm.add('(max-width: 1023px) and (prefers-reduced-motion: no-preference)', () =>
-    buildReel(116, 270, 0.55)
+    buildReel(112, 270, 0.55, 0.5)
   );
 }

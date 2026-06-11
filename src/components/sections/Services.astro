@@ -1,7 +1,13 @@
 ---
-import { services } from '@/data/site';
+import { services, brand } from '@/data/site';
 import SectionHeading from '../ui/SectionHeading.astro';
 import Icon from '../ui/Icon.astro';
+
+/* Sales focus: the best-sellers (Marketing/Ads + Multimedia con IA) get a
+   FIXED, always-visible spotlight — plain HTML the crawler reads in full.
+   The View-Master reel then showcases the rest of the catalogue. */
+const hot = services.filter((s) => s.id === 'growth' || s.id === 'media');
+const rest = services.filter((s) => s.id !== 'growth' && s.id !== 'media');
 
 // On-brand cobalt → navy gradient per card (subtle depth variation only).
 const visual: Record<string, string> = {
@@ -26,23 +32,110 @@ const category: Record<string, string> = {
   <div class="mx-auto max-w-[1240px] px-4 pt-[var(--spacing-section)] sm:px-6">
     <SectionHeading
       eyebrow="Lo que hacemos por ti"
-      title="IA que hace crecer tu negocio, y software que lo sostiene"
-      description="Gira la rueda con el scroll: cada servicio entra al visor con su explicación. Automatización, marketing y contenido con IA — y el software, las apps y la fintech que lo respaldan."
+      title="Marketing con IA que vende por ti — y la ingeniería que lo sostiene"
+      description="Nuestro fuerte: ads, leads y contenido con IA que llenan tu agenda. Y cuando necesitas producto, construimos el software, las apps y la fintech que aguantan el crecimiento."
     />
+
+    <!-- ⭐ Fixed spotlight — the money services, always visible -->
+    <div
+      data-reveal="scale"
+      class="card-3d glow-brand relative mt-10 overflow-hidden rounded-[var(--radius-xl2)] bg-night text-on-night"
+    >
+      <div class="bg-grid-night pointer-events-none absolute inset-0 opacity-30"></div>
+      <div
+        class="glow-spot"
+        style="width:30rem;height:22rem;right:-8rem;top:-8rem;background:oklch(0.52 0.193 264 / 0.3);"
+        aria-hidden="true"
+      >
+      </div>
+
+      <div class="relative grid gap-8 p-7 sm:p-10 lg:grid-cols-[1.1fr_1fr] lg:items-center lg:gap-12">
+        <!-- pitch -->
+        <div class="flex flex-col gap-5">
+          <span class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-brand-soft">
+            <span class="h-px w-6 bg-brand"></span>
+            Lo que más piden ahora
+          </span>
+          <h3 class="font-display text-[clamp(1.7rem,3.4vw,2.6rem)] font-semibold leading-[1.1]">
+            Más clientes en piloto automático
+          </h3>
+          <p class="text-base leading-relaxed text-on-night-muted sm:text-lg" style="max-width: 50ch;">
+            Conectamos tus ads de Meta y Google a una IA que captura, califica y nutre
+            leads sola — y producimos los videos e imágenes que alimentan tus campañas.
+          </p>
+          <ul class="flex flex-wrap gap-2">
+            <li class="inline-flex items-center gap-1.5 rounded-full bg-white/8 px-3 py-1.5 text-xs font-medium text-on-night">
+              <Icon name="chart" class="size-3.5 text-brand-soft" /> +213% leads
+            </li>
+            <li class="inline-flex items-center gap-1.5 rounded-full bg-white/8 px-3 py-1.5 text-xs font-medium text-on-night">
+              <Icon name="spark" class="size-3.5 text-brand-soft" /> Campañas 24/7
+            </li>
+            <li class="inline-flex items-center gap-1.5 rounded-full bg-white/8 px-3 py-1.5 text-xs font-medium text-on-night">
+              <Icon name="video" class="size-3.5 text-brand-soft" /> Contenido en días
+            </li>
+          </ul>
+          <div class="flex flex-wrap items-center gap-x-5 gap-y-3 pt-1">
+            <a
+              href={brand.bookingUrl}
+              data-cal-link={brand.calLink}
+              data-cal-namespace={brand.calNamespace}
+              data-cal-config='{"layout":"month_view"}'
+              class="btn-3d inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-semibold text-white hover:bg-brand-strong sm:px-7 sm:py-3.5 sm:text-base"
+            >
+              Quiero más clientes
+              <Icon name="arrow" class="size-4" />
+            </a>
+            <a
+              href="/#planes"
+              class="text-sm font-medium text-on-night-muted underline-offset-2 hover:text-white hover:underline"
+            >
+              Ver planes
+            </a>
+          </div>
+        </div>
+
+        <!-- the two hot services, plainly listed -->
+        <div class="flex flex-col gap-4">
+          {
+            hot.map((s) => (
+              <article class="rounded-[var(--radius-card)] border border-white/10 bg-white/5 p-5 backdrop-blur-sm">
+                <div class="flex items-center gap-3">
+                  <span class="grid size-11 shrink-0 place-items-center rounded-xl bg-brand/90 text-white ring-1 ring-white/20">
+                    <Icon name={s.icon} class="size-5" />
+                  </span>
+                  <h4 class="font-display text-lg font-semibold">{s.title}</h4>
+                </div>
+                <p class="mt-3 text-sm leading-relaxed text-on-night-muted">{s.description}</p>
+                <ul class="mt-3 flex flex-wrap gap-1.5">
+                  {s.bullets.map((b) => (
+                    <li class="rounded-full bg-white/8 px-2.5 py-1 text-[11px] text-on-night-muted">{b}</li>
+                  ))}
+                </ul>
+              </article>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- kicker for the rest of the catalogue -->
+    <p class="mt-14 text-center text-xs font-semibold uppercase tracking-[0.2em] text-muted">
+      ¿Necesitas más? También construimos esto
+    </p>
   </div>
 
-  <!-- Scroll-driven "View-Master" reel (desktop: text left + wheel right;
-       mobile: text top + wheel below — same native-scroll-driven rotation) -->
-  <div id="svc-reel" class="relative mt-4">
+  <!-- Scroll-driven "View-Master" reel with the remaining services
+       (desktop: text left + wheel right; mobile: text top + wheel below) -->
+  <div id="svc-reel" class="relative">
     <div
       class="reel-stage relative mx-auto flex min-h-screen max-w-[1240px] flex-col items-center justify-center gap-2 px-6 lg:flex-row lg:gap-6"
     >
       <!-- Informative text (one per service, cross-faded) -->
-      <div class="relative z-10 h-[290px] w-full max-w-md lg:h-[360px] lg:w-[42%] lg:max-w-none">
+      <div class="relative z-10 h-[270px] w-full max-w-md lg:h-[360px] lg:w-[42%] lg:max-w-none">
         {
-          services.map((s, i) => (
+          rest.map((s, i) => (
             <div
-              class="reel-text absolute inset-0 flex flex-col justify-center gap-4"
+              class="reel-text absolute inset-0 flex flex-col justify-center gap-3 lg:gap-4"
               data-i={i}
               style={i === 0 ? '' : 'opacity:0;visibility:hidden;'}
             >
@@ -50,10 +143,10 @@ const category: Record<string, string> = {
                 <span class="h-px w-6 bg-brand" />
                 {category[s.id]}
               </span>
-              <h3 class="font-display text-[clamp(1.9rem,3vw,2.7rem)] font-semibold leading-[1.1] text-ink">
+              <h3 class="font-display text-[clamp(1.6rem,3vw,2.7rem)] font-semibold leading-[1.1] text-ink">
                 {s.title}
               </h3>
-              <p class="text-lg leading-relaxed text-muted" style="max-width: 42ch;">
+              <p class="text-base leading-relaxed text-muted lg:text-lg" style="max-width: 42ch;">
                 {s.description}
               </p>
               <ul class="flex flex-wrap gap-2 pt-1">
@@ -70,21 +163,21 @@ const category: Record<string, string> = {
       </div>
 
       <!-- The rotating reel of media frames -->
-      <div class="reel-wheel relative h-[46vh] w-full lg:h-screen lg:w-[58%]">
+      <div class="reel-wheel relative mt-16 h-[42vh] w-full lg:mt-0 lg:h-screen lg:w-[58%]">
         <!-- faint reel guide circle -->
         <div
-          class="reel-guide pointer-events-none absolute left-1/2 top-1/2 size-[290px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-border lg:size-[440px]"
+          class="reel-guide pointer-events-none absolute left-1/2 top-1/2 size-[270px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-border lg:size-[440px]"
         >
         </div>
         {
-          services.map((s, i) => (
+          rest.map((s, i) => (
             <div
-              class="reel-frame absolute left-1/2 top-1/2 grid h-[200px] w-[156px] place-items-center overflow-hidden rounded-[var(--radius-card)] border border-border card-3d lg:h-[300px] lg:w-[232px] lg:rounded-[var(--radius-xl2)]"
+              class="reel-frame absolute left-1/2 top-1/2 grid h-[190px] w-[148px] place-items-center overflow-hidden rounded-[var(--radius-card)] border border-border card-3d lg:h-[300px] lg:w-[232px] lg:rounded-[var(--radius-xl2)]"
               data-i={i}
             >
               <div class:list={['absolute inset-0 bg-gradient-to-br', visual[s.id] ?? visual.software]} />
               <div class="bg-grid-night absolute inset-0 opacity-25" />
-              <Icon name={s.icon} class="relative size-16 text-white" />
+              <Icon name={s.icon} class="relative size-14 text-white lg:size-16" />
               <span class="absolute inset-x-0 bottom-4 text-center text-[11px] font-medium uppercase tracking-[0.16em] text-white/80">
                 {category[s.id]}
               </span>
@@ -95,47 +188,39 @@ const category: Record<string, string> = {
     </div>
   </div>
 
-  <!-- Reduced-motion fallback (any size): swipe carousel of product cards -->
+  <!-- Reduced-motion fallback (any size): swipe carousel of the same services -->
   <div class="svc-mobile mt-8 hidden">
     <div
       id="svc-track"
       class="flex gap-4 overflow-x-auto px-4 pb-4 [scrollbar-width:none] snap-x snap-mandatory"
     >
       {
-        services.map((s) => {
-          const featured = s.id === 'ai-automation';
-          return (
-            <article class="svc-mcard group relative flex h-[58vh] max-h-[500px] w-[80vw] max-w-[320px] shrink-0 snap-center flex-col overflow-hidden rounded-[var(--radius-xl2)] border border-border bg-canvas card-3d will-change-transform">
-              <div class:list={['relative h-[44%] overflow-hidden bg-gradient-to-br', visual[s.id] ?? visual.software]}>
-                <div class="bg-grid-night absolute inset-0 opacity-25" />
-                <Icon name={s.icon} class="pointer-events-none absolute -bottom-8 -right-6 size-40 text-white/10" />
-                <span class="absolute left-5 top-5 grid size-11 place-items-center rounded-2xl bg-white/15 text-white ring-1 ring-white/25 backdrop-blur">
-                  <Icon name={s.icon} class="size-6" />
-                </span>
-                <span class="absolute right-5 top-6 text-[11px] font-medium uppercase tracking-[0.16em] text-white/70">
-                  {category[s.id]}
-                </span>
-                {featured && (
-                  <span class="absolute bottom-4 left-5 rounded-full bg-white/15 px-3 py-1 text-[11px] font-medium uppercase tracking-wider text-white backdrop-blur">
-                    Lo más pedido
-                  </span>
-                )}
-              </div>
-              <div class="flex flex-1 flex-col gap-3 p-5">
-                <h3 class="font-display text-lg font-semibold text-ink">{s.title}</h3>
-                <p class="line-clamp-3 text-sm leading-relaxed text-muted">{s.description}</p>
-                <ul class="mt-auto flex flex-wrap gap-2 pt-2">
-                  {s.bullets.map((b) => (
-                    <li class="inline-flex items-center gap-1.5 rounded-full bg-surface px-3 py-1 text-xs text-ink-soft ring-1 ring-border">
-                      <Icon name="check" class="size-3.5 text-brand" />
-                      {b}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </article>
-          );
-        })
+        rest.map((s) => (
+          <article class="group relative flex h-[58vh] max-h-[500px] w-[80vw] max-w-[320px] shrink-0 snap-center flex-col overflow-hidden rounded-[var(--radius-xl2)] border border-border bg-canvas card-3d">
+            <div class:list={['relative h-[44%] overflow-hidden bg-gradient-to-br', visual[s.id] ?? visual.software]}>
+              <div class="bg-grid-night absolute inset-0 opacity-25" />
+              <Icon name={s.icon} class="pointer-events-none absolute -bottom-8 -right-6 size-40 text-white/10" />
+              <span class="absolute left-5 top-5 grid size-11 place-items-center rounded-2xl bg-white/15 text-white ring-1 ring-white/25 backdrop-blur">
+                <Icon name={s.icon} class="size-6" />
+              </span>
+              <span class="absolute right-5 top-6 text-[11px] font-medium uppercase tracking-[0.16em] text-white/70">
+                {category[s.id]}
+              </span>
+            </div>
+            <div class="flex flex-1 flex-col gap-3 p-5">
+              <h3 class="font-display text-lg font-semibold text-ink">{s.title}</h3>
+              <p class="line-clamp-3 text-sm leading-relaxed text-muted">{s.description}</p>
+              <ul class="mt-auto flex flex-wrap gap-2 pt-2">
+                {s.bullets.map((b) => (
+                  <li class="inline-flex items-center gap-1.5 rounded-full bg-surface px-3 py-1 text-xs text-ink-soft ring-1 ring-border">
+                    <Icon name="check" class="size-3.5 text-brand" />
+                    {b}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </article>
+        ))
       }
       <div class="shrink-0 pr-4" aria-hidden="true"></div>
     </div>
@@ -150,7 +235,7 @@ const category: Record<string, string> = {
     will-change: transform, opacity;
     transform: translate(-50%, -50%);
   }
-  /* Reduced motion (any size): skip the reel entirely, show the swipe carousel. */
+  /* Reduced motion: skip the reel entirely, show the swipe carousel instead. */
   @media (prefers-reduced-motion: reduce) {
     #svc-reel {
       display: none;
