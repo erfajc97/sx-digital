@@ -12,12 +12,11 @@ interface Vec {
 }
 
 const WHITE = 'rgb(245, 247, 250)';
-const STEP_MS = 1000 / 60; // physics is tuned per 60 Hz step
+const STEP_MS = 1000 / 60; // speeds/forces/fades are tuned per 1/60 s
 
 class Particle {
   pos: Vec = { x: 0, y: 0 };
   vel: Vec = { x: 0, y: 0 };
-  acc: Vec = { x: 0, y: 0 };
   target: Vec = { x: 0, y: 0 };
   closeEnoughTarget = 100;
   maxSpeed = 1;
@@ -29,42 +28,34 @@ class Particle {
   alpha = 0;
   fadeRate = 0.04;
 
-  move() {
-    let proximityMult = 1;
-    const d = Math.hypot(this.pos.x - this.target.x, this.pos.y - this.target.y);
-    if (d < this.closeEnoughTarget) proximityMult = d / this.closeEnoughTarget;
-
-    const tt = { x: this.target.x - this.pos.x, y: this.target.y - this.pos.y };
-    const m = Math.hypot(tt.x, tt.y);
-    if (m > 0) {
-      tt.x = (tt.x / m) * this.maxSpeed * proximityMult;
-      tt.y = (tt.y / m) * this.maxSpeed * proximityMult;
-    }
-    const steer = { x: tt.x - this.vel.x, y: tt.y - this.vel.y };
-    const sm = Math.hypot(steer.x, steer.y);
+  /** Advance by `k` sixtieths of a second (k = 0.5 on a 120 Hz frame, 2 on
+      a 30 fps one), so every frame moves the particle by exactly the time
+      that passed — no every-other-frame stepping on 120 Hz screens. Plain
+      scalars on purpose: allocating vectors here meant ~360k short-lived
+      objects/s on a phone, and the GC pauses showed as hitches. */
+  step(k: number) {
+    const dx = this.target.x - this.pos.x;
+    const dy = this.target.y - this.pos.y;
+    const d = Math.hypot(dx, dy);
+    // desired velocity: full speed, braking linearly inside closeEnoughTarget
+    const speed = this.maxSpeed * (d < this.closeEnoughTarget ? d / this.closeEnoughTarget : 1);
+    let sx = (d > 0 ? (dx / d) * speed : 0) - this.vel.x;
+    let sy = (d > 0 ? (dy / d) * speed : 0) - this.vel.y;
     // Cap the steering force (don't force it to max): forcing it made every
-    // particle overshoot and buzz around its letter, so words took ~1 s to
-    // settle into something readable.
+    // particle overshoot and buzz around its letter.
+    const sm = Math.hypot(sx, sy);
     if (sm > this.maxForce) {
-      steer.x = (steer.x / sm) * this.maxForce;
-      steer.y = (steer.y / sm) * this.maxForce;
+      sx = (sx / sm) * this.maxForce;
+      sy = (sy / sm) * this.maxForce;
     }
-    this.acc.x += steer.x;
-    this.acc.y += steer.y;
-    this.vel.x += this.acc.x;
-    this.vel.y += this.acc.y;
-    this.pos.x += this.vel.x;
-    this.pos.y += this.vel.y;
-    this.acc.x = 0;
-    this.acc.y = 0;
-  }
+    this.vel.x += sx * k;
+    this.vel.y += sy * k;
+    this.pos.x += this.vel.x * k;
+    this.pos.y += this.vel.y * k;
 
-  /** One 60 Hz simulation step: steer toward the target and fade in/out. */
-  step() {
-    this.move();
-    const targetA = this.isKilled ? 0 : 1;
-    if (this.alpha < targetA) this.alpha = Math.min(this.alpha + this.fadeRate, 1);
-    else if (this.alpha > targetA) this.alpha = Math.max(this.alpha - this.fadeRate, 0);
+    const fade = this.fadeRate * k;
+    if (this.isKilled) this.alpha = Math.max(this.alpha - fade, 0);
+    else if (this.alpha < 1) this.alpha = Math.min(this.alpha + fade, 1);
   }
 
   /** Caller sets the fill colour once per frame; only alpha changes here. */
@@ -99,7 +90,6 @@ export function initParticleText(canvas: HTMLCanvasElement, words: string[]) {
   const pixelSteps = narrow ? 26 : 12;
   const sizeBoost = narrow ? 1.8 : 1;
   let last = 0; // previous frame timestamp
-  let pending = 0; // simulation steps owed to real time
   // Time on screen per word, in ms (time-based so 120 Hz screens don't cycle
   // twice as fast as 60 Hz ones).
   const WORD_MS = 3700;
@@ -112,7 +102,8 @@ export function initParticleText(canvas: HTMLCanvasElement, words: string[]) {
   const off = document.createElement('canvas');
   off.width = W;
   off.height = H;
-  const octx = off.getContext('2d')!;
+  // CPU-backed: reading pixels back from a GPU canvas is slow on Safari
+  const octx = off.getContext('2d', { willReadFrequently: true })!;
 
   // Sample the brand display face (Clash Display) so the formed words carry the
   // brand identity instead of generic Arial. Arial stays as the fallback until
@@ -150,8 +141,9 @@ export function initParticleText(canvas: HTMLCanvasElement, words: string[]) {
       only travels to the matching part of the next word (short paths → the
       word reads clearly almost at once instead of crossing the whole canvas
       as a cloud). Spare particles fade out in place; missing ones appear on
-      their letter. `first`: the opening word appears already formed. */
-  const setWord = (word: string, first = false) => {
+      their letter. `first`: the opening word forms from scattered particles. */
+  /** Rasterise `word` and sample its target points, left → right. */
+  const sample = (word: string): Vec[] => {
     octx.clearRect(0, 0, W, H);
     const size = fitFont(word);
     octx.fillStyle = 'white';
@@ -165,13 +157,35 @@ export function initParticleText(canvas: HTMLCanvasElement, words: string[]) {
     for (let i = 0; i < pixels.length; i += pixelSteps * 4) {
       if (pixels[i + 3] > 0) targets.push({ x: (i / 4) % W, y: Math.floor(i / 4 / W) });
     }
-    targets.sort((a, b) => a.x - b.x);
+    return targets.sort((a, b) => a.x - b.x);
+  };
+
+  // Every word is sampled ahead of time (one per idle slot, while the intro
+  // plays), so a word change never rasterises + reads pixels mid-animation —
+  // that read cost a dropped frame or two right at each transition.
+  const cache = new Map<string, Vec[]>();
+  const targetsFor = (word: string) => {
+    let t = cache.get(word);
+    if (!t) cache.set(word, (t = sample(word)));
+    return t;
+  };
+  // (Safari has no requestIdleCallback: space the samples out instead)
+  const idle = (fn: () => void, i: number) =>
+    'requestIdleCallback' in window
+      ? window.requestIdleCallback(fn, { timeout: 1000 })
+      : window.setTimeout(fn, 60 + i * 120);
+  const warm = () => words.forEach((w, i) => idle(() => targetsFor(w), i));
+
+  const setWord = (word: string, first = false) => {
+    const targets = targetsFor(word);
 
     const alive = particles.filter((p) => !p.isKilled).sort((a, b) => a.pos.x - b.pos.x);
     const n = targets.length;
     const m = alive.length;
-    const spreadX = first ? 12 : 40;
-    const spreadY = first ? 8 : 30;
+    // first word: particles converge from up to ±200px — a visible arrival
+    // that still reads in ~0,5 s; later words travel short paths instead
+    const spreadX = first ? 400 : 40;
+    const spreadY = first ? 240 : 30;
 
     if (m >= n) {
       // more particles than points: spread the pick evenly, fade the rest
@@ -203,24 +217,16 @@ export function initParticleText(canvas: HTMLCanvasElement, words: string[]) {
     // "container" ever builds up over the video — only the live particles show.
     ctx.clearRect(0, 0, W, H);
 
-    // Advance the simulation by real elapsed time (in 60 Hz steps), so a phone
-    // that drops to 30 fps still forms the word in the same time, and a 120 Hz
-    // screen doesn't run it twice as fast. Cap the catch-up so a slow device
-    // skips ahead instead of spiralling.
-    pending += (last ? Math.min(now - last, 100) : STEP_MS) / STEP_MS;
+    // Move by the real time since the last frame (in 1/60 s units): smooth on
+    // 120 Hz, same speed at 30 fps. Capped so a stall doesn't teleport dots.
+    const k = (last ? Math.min(now - last, 50) : STEP_MS) / STEP_MS;
     last = now;
-    let steps = 0;
-    while (pending >= 1 && steps < 4) {
-      pending -= 1;
-      steps++;
-    }
-    if (steps === 4) pending = 0;
 
     ctx.fillStyle = WHITE;
     let keep = 0;
     for (let i = 0; i < particles.length; i++) {
       const p = particles[i];
-      for (let s = 0; s < steps; s++) p.step();
+      p.step(k);
       // drop fully-faded killed particles, or ones that drifted far off-canvas
       if (
         p.isKilled &&
@@ -248,7 +254,6 @@ export function initParticleText(canvas: HTMLCanvasElement, words: string[]) {
     running = true;
     wordSince = 0; // back in view → current word gets its full time again
     last = 0; // and no catch-up for the time spent paused
-    pending = 0;
     raf = requestAnimationFrame(tick);
   };
   const stop = () => {
@@ -267,18 +272,26 @@ export function initParticleText(canvas: HTMLCanvasElement, words: string[]) {
   const gate = document.getElementById('intro-gate');
   if (!gate || document.documentElement.dataset.intro === 'done') begin();
   else {
-    window.addEventListener('solvyx:intro-done', begin, { once: true });
+    // start halfway through the gate's 0,7 s fade-out, so the particles'
+    // arrival happens in view rather than behind the fading intro
+    window.addEventListener('solvyx:intro-done', () => window.setTimeout(begin, 350), {
+      once: true,
+    });
     window.setTimeout(begin, 6000); // never leave the headline blank
   }
 
-  // Re-sample the current word only if Clash Display arrives AFTER the word
-  // was formed in the Arial fallback. Never when it's already loaded: a
-  // re-sample reshuffles every particle to a random spot on another letter,
-  // which made the first word take ~1,4 s to read instead of settling at once.
+  // Sample with Clash Display, not the Arial fallback: warm the cache once the
+  // font is ready. If it only arrives after the first word formed, drop the
+  // Arial samples and re-shape the current word once (never when it was
+  // already loaded — a needless re-shape scrambles a word that's settled).
   const FONT_SPEC = '700 200px "Clash Display"';
   if (document.fonts && 'load' in document.fonts && !document.fonts.check(FONT_SPEC)) {
-    document.fonts.load(FONT_SPEC).then(() => ready && setWord(words[wordIndex]));
-  }
+    document.fonts.load(FONT_SPEC).then(() => {
+      cache.clear();
+      if (ready) setWord(words[wordIndex]);
+      warm();
+    });
+  } else warm();
 
   // Pause when off-screen (perf)
   if ('IntersectionObserver' in window) {

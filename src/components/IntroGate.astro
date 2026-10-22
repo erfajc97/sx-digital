@@ -258,13 +258,13 @@ const bits = Array.from({ length: 28 }, (_, i) => ({
     width: 100%;
     height: auto;
   }
-  /* estallido de resplandor azul al llegar el haz */
+  /* estallido de resplandor azul al llegar el haz (degradado ya suave: sin
+     filter: blur, que la GPU recalcula en cada fotograma mientras escala) */
   .intro-burst {
     position: absolute;
-    inset: -45% -25%;
+    inset: -50% -30%;
     border-radius: 50%;
-    background: radial-gradient(closest-side, oklch(0.75 0.16 255 / 0.95), oklch(0.7 0.155 260 / 0.5) 45%, oklch(0.86 0.14 200 / 0.15) 70%, transparent);
-    filter: blur(10px);
+    background: radial-gradient(closest-side, oklch(0.75 0.16 255 / 0.9), oklch(0.7 0.155 260 / 0.45) 40%, oklch(0.86 0.14 200 / 0.12) 68%, transparent);
     opacity: 0;
     transform: scale(0.4);
     animation: burst 1s 1.85s ease-out both;
@@ -366,6 +366,25 @@ const bits = Array.from({ length: 28 }, (_, i) => ({
   @keyframes logo-in {
     0% { opacity: 0; filter: blur(12px); transform: scale(0.94); }
     100% { opacity: 1; filter: blur(0); transform: scale(1); }
+  }
+  /* Pantallas táctiles: mismas entradas sin animar el desenfoque (un blur
+     animado se repinta en cada fotograma y traba la intro en iPhone). */
+  @keyframes solvy-in-lite {
+    0% { opacity: 0; transform: scale(0.82); }
+    60% { opacity: 0.85; }
+    100% { opacity: 1; transform: scale(1); }
+  }
+  @keyframes logo-in-lite {
+    0% { opacity: 0; transform: scale(0.94); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+  @media (hover: none) {
+    .intro-solvy {
+      animation-name: solvy-in-lite;
+    }
+    .intro-logo {
+      animation-name: logo-in-lite;
+    }
   }
   @keyframes burst {
     0% { opacity: 0; transform: scale(0.4); }
