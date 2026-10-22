@@ -11,7 +11,8 @@ interface Vec {
   y: number;
 }
 
-const WHITE = { r: 245, g: 247, b: 250 };
+const WHITE = 'rgb(245, 247, 250)';
+const STEP_MS = 1000 / 60; // physics is tuned per 60 Hz step
 
 class Particle {
   pos: Vec = { x: 0, y: 0 };
@@ -55,12 +56,18 @@ class Particle {
     this.acc.y = 0;
   }
 
-  draw(ctx: CanvasRenderingContext2D) {
+  /** One 60 Hz simulation step: steer toward the target and fade in/out. */
+  step() {
+    this.move();
     const targetA = this.isKilled ? 0 : 1;
     if (this.alpha < targetA) this.alpha = Math.min(this.alpha + this.fadeRate, 1);
     else if (this.alpha > targetA) this.alpha = Math.max(this.alpha - this.fadeRate, 0);
+  }
+
+  /** Caller sets the fill colour once per frame; only alpha changes here. */
+  draw(ctx: CanvasRenderingContext2D) {
     if (this.alpha <= 0) return;
-    ctx.fillStyle = `rgba(${WHITE.r}, ${WHITE.g}, ${WHITE.b}, ${this.alpha})`;
+    ctx.globalAlpha = this.alpha;
     ctx.fillRect(this.pos.x, this.pos.y, this.particleSize, this.particleSize);
   }
 
@@ -92,7 +99,14 @@ export function initParticleText(canvas: HTMLCanvasElement, words: string[]) {
   canvas.height = H;
   const ctx = canvas.getContext('2d')!;
   const particles: Particle[] = [];
-  const pixelSteps = 6;
+  // On phones this 1100px canvas is shown ~3x smaller, so the default density
+  // means ~10k sub-pixel dots per word — more than a phone can move at 60 fps.
+  // Sample sparser and draw bigger dots there: same look, ~45% of the work.
+  const narrow = canvas.clientWidth > 0 && canvas.clientWidth < 700;
+  const pixelSteps = narrow ? 13 : 6;
+  const sizeBoost = narrow ? 1.8 : 1;
+  let last = 0; // previous frame timestamp
+  let pending = 0; // simulation steps owed to real time
   // Time on screen per word, in ms (time-based so 120 Hz screens don't cycle
   // twice as fast as 60 Hz ones).
   const WORD_MS = 3700;
@@ -157,19 +171,19 @@ export function initParticleText(canvas: HTMLCanvasElement, words: string[]) {
       } else {
         p = new Particle();
         if (burst) {
-          p.pos.x = x + (Math.random() - 0.5) * 160;
-          p.pos.y = y + (Math.random() - 0.5) * 120;
+          p.pos.x = x + (Math.random() - 0.5) * 80;
+          p.pos.y = y + (Math.random() - 0.5) * 60;
         } else {
           const rp = randomEdge(W / 2, H / 2, (W + H) / 2);
           p.pos.x = rp.x;
           p.pos.y = rp.y;
         }
-        // 6–15 px/frame: each word reads in ~1,4 s (first one ~0,8 s) out of
+        // 6–15 px/step: each word reads in ~1,3 s (first one ~0,8 s) out of
         // its 3,7 s on screen; slower and the next word starts before this one
         // has finished forming.
         p.maxSpeed = Math.random() * 9 + 6;
         p.maxForce = p.maxSpeed * 0.05;
-        p.particleSize = Math.random() * 1.5 + 1.5;
+        p.particleSize = (Math.random() * 1.5 + 1.5) * sizeBoost;
         p.fadeRate = burst ? Math.random() * 0.04 + 0.06 : Math.random() * 0.03 + 0.02;
         particles.push(p);
       }
@@ -184,18 +198,36 @@ export function initParticleText(canvas: HTMLCanvasElement, words: string[]) {
     // "container" ever builds up over the video — only the live particles show.
     ctx.clearRect(0, 0, W, H);
 
-    for (let i = particles.length - 1; i >= 0; i--) {
+    // Advance the simulation by real elapsed time (in 60 Hz steps), so a phone
+    // that drops to 30 fps still forms the word in the same time, and a 120 Hz
+    // screen doesn't run it twice as fast. Cap the catch-up so a slow device
+    // skips ahead instead of spiralling.
+    pending += (last ? Math.min(now - last, 100) : STEP_MS) / STEP_MS;
+    last = now;
+    let steps = 0;
+    while (pending >= 1 && steps < 4) {
+      pending -= 1;
+      steps++;
+    }
+    if (steps === 4) pending = 0;
+
+    ctx.fillStyle = WHITE;
+    let keep = 0;
+    for (let i = 0; i < particles.length; i++) {
       const p = particles[i];
-      p.move();
-      p.draw(ctx);
-      // remove fully-faded killed particles, or ones that drifted far off-canvas
+      for (let s = 0; s < steps; s++) p.step();
+      // drop fully-faded killed particles, or ones that drifted far off-canvas
       if (
         p.isKilled &&
         (p.alpha <= 0 || p.pos.x < -50 || p.pos.x > W + 50 || p.pos.y < -50 || p.pos.y > H + 50)
       ) {
-        particles.splice(i, 1);
+        continue;
       }
+      p.draw(ctx);
+      particles[keep++] = p;
     }
+    particles.length = keep; // in-place compaction (no O(n²) splices)
+    ctx.globalAlpha = 1;
 
     if (!wordSince) wordSince = now;
     else if (now - wordSince >= WORD_MS) {
@@ -210,6 +242,8 @@ export function initParticleText(canvas: HTMLCanvasElement, words: string[]) {
     if (running || !ready) return;
     running = true;
     wordSince = 0; // back in view → current word gets its full time again
+    last = 0; // and no catch-up for the time spent paused
+    pending = 0;
     raf = requestAnimationFrame(tick);
   };
   const stop = () => {
@@ -232,12 +266,13 @@ export function initParticleText(canvas: HTMLCanvasElement, words: string[]) {
     window.setTimeout(begin, 6000); // never leave the headline blank
   }
 
-  // Re-sample the current word once Clash Display is actually loaded, so it
-  // doesn't stay in the Arial fallback if the font arrives late.
-  if (document.fonts && 'load' in document.fonts) {
-    document.fonts
-      .load('700 200px "Clash Display"')
-      .then(() => ready && setWord(words[wordIndex]));
+  // Re-sample the current word only if Clash Display arrives AFTER the word
+  // was formed in the Arial fallback. Never when it's already loaded: a
+  // re-sample reshuffles every particle to a random spot on another letter,
+  // which made the first word take ~1,4 s to read instead of settling at once.
+  const FONT_SPEC = '700 200px "Clash Display"';
+  if (document.fonts && 'load' in document.fonts && !document.fonts.check(FONT_SPEC)) {
+    document.fonts.load(FONT_SPEC).then(() => ready && setWord(words[wordIndex]));
   }
 
   // Pause when off-screen (perf)
