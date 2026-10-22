@@ -42,7 +42,10 @@ class Particle {
     }
     const steer = { x: tt.x - this.vel.x, y: tt.y - this.vel.y };
     const sm = Math.hypot(steer.x, steer.y);
-    if (sm > 0) {
+    // Cap the steering force (don't force it to max): forcing it made every
+    // particle overshoot and buzz around its letter, so words took ~1 s to
+    // settle into something readable.
+    if (sm > this.maxForce) {
       steer.x = (steer.x / sm) * this.maxForce;
       steer.y = (steer.y / sm) * this.maxForce;
     }
@@ -71,25 +74,15 @@ class Particle {
     ctx.fillRect(this.pos.x, this.pos.y, this.particleSize, this.particleSize);
   }
 
-  kill(w: number, h: number) {
+  /** Not needed by the next word: drift a little and fade out where it is
+      (flying off to the canvas edges left a scattered cloud over the word). */
+  kill() {
     if (this.isKilled) return;
-    const p = randomEdge(w / 2, h / 2, (w + h) / 2);
-    this.target.x = p.x;
-    this.target.y = p.y;
+    this.target.x = this.pos.x + (Math.random() - 0.5) * 60;
+    this.target.y = this.pos.y + (Math.random() - 0.5) * 40;
+    this.fadeRate = Math.max(this.fadeRate, 0.06);
     this.isKilled = true;
   }
-}
-
-function randomEdge(x: number, y: number, mag: number): Vec {
-  const rx = Math.random() * 1000;
-  const ry = Math.random() * 500;
-  const dir = { x: rx - x, y: ry - y };
-  const m = Math.hypot(dir.x, dir.y);
-  if (m > 0) {
-    dir.x = (dir.x / m) * mag;
-    dir.y = (dir.y / m) * mag;
-  }
-  return { x: x + dir.x, y: y + dir.y };
 }
 
 export function initParticleText(canvas: HTMLCanvasElement, words: string[]) {
@@ -99,11 +92,11 @@ export function initParticleText(canvas: HTMLCanvasElement, words: string[]) {
   canvas.height = H;
   const ctx = canvas.getContext('2d')!;
   const particles: Particle[] = [];
-  // On phones this 1100px canvas is shown ~3x smaller, so the default density
-  // means ~10k sub-pixel dots per word — more than a phone can move at 60 fps.
-  // Sample sparser and draw bigger dots there: same look, ~45% of the work.
+  // One particle every `pixelSteps` text pixels (~5k per word on desktop).
+  // On phones this 1100px canvas is shown ~3x smaller, so sample sparser and
+  // draw bigger dots there: same look, ~45% of the particles to move.
   const narrow = canvas.clientWidth > 0 && canvas.clientWidth < 700;
-  const pixelSteps = narrow ? 13 : 6;
+  const pixelSteps = narrow ? 26 : 12;
   const sizeBoost = narrow ? 1.8 : 1;
   let last = 0; // previous frame timestamp
   let pending = 0; // simulation steps owed to real time
@@ -138,10 +131,27 @@ export function initParticleText(canvas: HTMLCanvasElement, words: string[]) {
     return size;
   };
 
-  /** `burst`: new particles spawn around their target and fade in fast, so
-      the first word reads in well under a second instead of flying in from
-      the canvas edges. */
-  const setWord = (word: string, burst = false) => {
+  const spawn = (t: Vec, spreadX: number, spreadY: number) => {
+    const p = new Particle();
+    p.pos.x = t.x + (Math.random() - 0.5) * spreadX;
+    p.pos.y = t.y + (Math.random() - 0.5) * spreadY;
+    p.target.x = t.x;
+    p.target.y = t.y;
+    // 6–15 px/step with short paths: every word reads in well under a second
+    p.maxSpeed = Math.random() * 9 + 6;
+    p.maxForce = p.maxSpeed * 0.05;
+    p.particleSize = (Math.random() * 1.5 + 1.5) * sizeBoost;
+    p.fadeRate = Math.random() * 0.06 + 0.08;
+    particles.push(p);
+  };
+
+  /** Re-shape the particles into `word`. Particles and target points are
+      both ordered left → right and paired proportionally, so each particle
+      only travels to the matching part of the next word (short paths → the
+      word reads clearly almost at once instead of crossing the whole canvas
+      as a cloud). Spare particles fade out in place; missing ones appear on
+      their letter. `first`: the opening word appears already formed. */
+  const setWord = (word: string, first = false) => {
     octx.clearRect(0, 0, W, H);
     const size = fitFont(word);
     octx.fillStyle = 'white';
@@ -151,46 +161,41 @@ export function initParticleText(canvas: HTMLCanvasElement, words: string[]) {
     octx.fillText(word, 8, H / 2);
 
     const pixels = octx.getImageData(0, 0, W, H).data;
-    const coords: number[] = [];
-    for (let i = 0; i < pixels.length; i += pixelSteps * 4) coords.push(i);
-    for (let i = coords.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [coords[i], coords[j]] = [coords[j], coords[i]];
+    const targets: Vec[] = [];
+    for (let i = 0; i < pixels.length; i += pixelSteps * 4) {
+      if (pixels[i + 3] > 0) targets.push({ x: (i / 4) % W, y: Math.floor(i / 4 / W) });
     }
+    targets.sort((a, b) => a.x - b.x);
 
-    let idx = 0;
-    for (const ci of coords) {
-      if (pixels[ci + 3] <= 0) continue;
-      const x = (ci / 4) % W;
-      const y = Math.floor(ci / 4 / W);
-      let p: Particle;
-      if (idx < particles.length) {
-        p = particles[idx];
-        p.isKilled = false; // fade back in toward the new target
-        idx++;
-      } else {
-        p = new Particle();
-        if (burst) {
-          p.pos.x = x + (Math.random() - 0.5) * 80;
-          p.pos.y = y + (Math.random() - 0.5) * 60;
-        } else {
-          const rp = randomEdge(W / 2, H / 2, (W + H) / 2);
-          p.pos.x = rp.x;
-          p.pos.y = rp.y;
-        }
-        // 6–15 px/step: each word reads in ~1,3 s (first one ~0,8 s) out of
-        // its 3,7 s on screen; slower and the next word starts before this one
-        // has finished forming.
-        p.maxSpeed = Math.random() * 9 + 6;
-        p.maxForce = p.maxSpeed * 0.05;
-        p.particleSize = (Math.random() * 1.5 + 1.5) * sizeBoost;
-        p.fadeRate = burst ? Math.random() * 0.04 + 0.06 : Math.random() * 0.03 + 0.02;
-        particles.push(p);
+    const alive = particles.filter((p) => !p.isKilled).sort((a, b) => a.pos.x - b.pos.x);
+    const n = targets.length;
+    const m = alive.length;
+    const spreadX = first ? 12 : 40;
+    const spreadY = first ? 8 : 30;
+
+    if (m >= n) {
+      // more particles than points: spread the pick evenly, fade the rest
+      let next = 0;
+      for (let j = 0; j < m; j++) {
+        const p = alive[j];
+        if (next < n && j >= Math.floor((next * m) / n)) {
+          p.target.x = targets[next].x;
+          p.target.y = targets[next].y;
+          next++;
+        } else p.kill();
       }
-      p.target.x = x;
-      p.target.y = y;
+    } else {
+      // fewer particles than points: each takes an evenly spaced point, the
+      // gaps between them are filled by new particles born on their letter
+      const taken = new Uint8Array(n);
+      for (let j = 0; j < m; j++) {
+        const ti = Math.floor((j * n) / m);
+        alive[j].target.x = targets[ti].x;
+        alive[j].target.y = targets[ti].y;
+        taken[ti] = 1;
+      }
+      for (let i = 0; i < n; i++) if (!taken[i]) spawn(targets[i], spreadX, spreadY);
     }
-    for (let i = idx; i < particles.length; i++) particles[i].kill(W, H);
   };
 
   const tick = (now: number) => {
