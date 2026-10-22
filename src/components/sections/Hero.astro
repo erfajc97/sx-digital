@@ -1,37 +1,17 @@
 ---
 import Icon from '../ui/Icon.astro';
+import SolvyStage from '../hero/SolvyStage.astro';
 import { getDict, defaultLocale, type Locale } from '@/i18n';
 
 const locale = (Astro.currentLocale ?? defaultLocale) as Locale;
-const { hero, heroMedia, brand, ui } = getDict(locale);
+const { hero, brand, ui } = getDict(locale);
 
 const sp = hero.servicePrompt;
 ---
 
 <section id="hero" class="relative min-h-[100svh] overflow-hidden bg-night lg:min-h-[100dvh]">
-  <!-- Background video — full-bleed; autoplay + loop -->
-  <div class="pointer-events-none absolute inset-0 z-0 overflow-hidden">
-    <video
-      id="hero-video"
-      class="size-full object-cover object-[15%_center] md:object-right"
-      autoplay
-      muted
-      loop
-      playsinline
-      preload="auto"
-      poster={heroMedia.poster}
-      data-poster-mobile={heroMedia.posterMobile}
-      data-src-mobile={heroMedia.videoMobile}
-      width="1600"
-      height="896"
-      aria-hidden="true"
-    >
-      {/* Desktop / web (16:9). On small screens the JS swaps to the vertical clip
-          (the <source media> attribute is ignored inside <video>, so we do it in JS). */}
-      {heroMedia.videoWebm && <source src={heroMedia.videoWebm} type="video/webm" />}
-      <source src={heroMedia.video} type="video/mp4" />
-    </video>
-  </div>
+  <!-- Solvy + paneles + FX (sustituye al vídeo del robot) -->
+  <SolvyStage />
 
   <!-- Dark scrim for text contrast (darker where the text is) -->
   <div class="hero-scrim pointer-events-none absolute inset-0 z-[1]"></div>
@@ -116,7 +96,7 @@ const sp = hero.servicePrompt;
           data-cal-link={brand.calLink}
           data-cal-namespace={brand.calNamespace}
           data-cal-config='{"layout":"month_view"}'
-          class="btn-3d inline-flex items-center gap-2 rounded-full bg-brand px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-strong sm:px-7 sm:py-3.5 sm:text-base"
+          class="btn-3d inline-flex items-center gap-2 rounded-full btn-neon px-5 py-2.5 text-sm font-semibold  sm:px-7 sm:py-3.5 sm:text-base"
         >
           {ui.heroUi.cta}
           <Icon name="arrow" class="size-4" />
@@ -205,32 +185,6 @@ const sp = hero.servicePrompt;
 
 <script>
   import '@/scripts/particle-text';
-
-  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  // Hero background video: autoplay/loop, poster on reduced-motion
-  const video = document.getElementById('hero-video') as HTMLVideoElement | null;
-  if (video) {
-    // On small screens, swap to the vertical (9:16) clip + poster.
-    if (window.matchMedia('(max-width: 767px)').matches && video.dataset.srcMobile) {
-      if (video.dataset.posterMobile) video.poster = video.dataset.posterMobile;
-      video.innerHTML = '';
-      const s = document.createElement('source');
-      s.src = video.dataset.srcMobile;
-      s.type = 'video/mp4';
-      video.appendChild(s);
-      video.load();
-    }
-    if (reduce) {
-      video.removeAttribute('autoplay');
-      video.pause();
-    } else {
-      video.muted = true;
-      video.play().catch(() => {
-        /* poster fallback */
-      });
-    }
-  }
 
   // Interactive service pills (multi-select) → inline summary next to the CTA
   const pills = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-service]'));

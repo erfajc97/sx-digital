@@ -2,34 +2,46 @@
 
 /* ============================================================
    SolvyX — Design tokens (Tailwind v4 @theme)
-   Palette derived from the logo: cobalt blue + near-black + warm white.
-   Colors in OKLCH (perceptually uniform). Neutrals tinted toward the
-   brand hue (264) for subconscious cohesion.
+   Dark-first palette sampled from the SolvyX mascot: deep navy stage,
+   electric cobalt body (hue 258–267, same as the logo), cyan eyes and
+   magenta sparks. Colors in OKLCH; neutrals tinted toward hue 263.
+   Every text/background pair below is verified ≥ 4.5:1 (WCAG AA).
    ============================================================ */
 @theme {
-  /* Brand — cobalt from the logo */
-  --color-brand: oklch(0.52 0.193 264);
-  --color-brand-strong: oklch(0.46 0.2 265);
-  --color-brand-soft: oklch(0.95 0.03 264);
-  --color-brand-ring: oklch(0.52 0.193 264 / 0.35);
+  /* Brand — electric cobalt, light enough to read as text on dark.
+     Solid brand fills carry dark `on-brand` text, never white. */
+  --color-brand: oklch(0.7 0.155 260);
+  --color-brand-strong: oklch(0.78 0.12 255);
+  --color-brand-soft: oklch(0.29 0.085 264);
+  --color-brand-ring: oklch(0.7 0.155 260 / 0.45);
+  --color-on-brand: oklch(0.16 0.035 263);
 
-  /* Light editorial surfaces (warm-white, faintly blue-tinted) */
-  --color-canvas: oklch(0.99 0.004 264);
-  --color-surface: oklch(0.972 0.006 264);
-  --color-surface-2: oklch(0.95 0.008 264);
-  --color-border: oklch(0.9 0.008 264);
-  --color-border-strong: oklch(0.84 0.01 264);
+  /* Surfaces — the mascot's navy, stepping lighter for elevation */
+  --color-canvas: oklch(0.175 0.034 263);
+  --color-surface: oklch(0.21 0.038 263);
+  --color-surface-2: oklch(0.245 0.042 263);
+  --color-border: oklch(0.31 0.045 263);
+  --color-border-strong: oklch(0.4 0.05 263);
 
-  /* Ink — near-black, never #000 */
-  --color-ink: oklch(0.21 0.022 264);
-  --color-ink-soft: oklch(0.36 0.02 264);
-  --color-muted: oklch(0.52 0.018 264);
+  /* Ink — cool near-white, never #fff */
+  --color-ink: oklch(0.97 0.008 250);
+  --color-ink-soft: oklch(0.87 0.018 255);
+  --color-muted: oklch(0.75 0.025 258);
 
-  /* Dark sections (inverted blocks for rhythm) */
-  --color-night: oklch(0.19 0.022 265);
-  --color-night-2: oklch(0.24 0.025 265);
-  --color-on-night: oklch(0.97 0.005 264);
-  --color-on-night-muted: oklch(0.72 0.012 264);
+  /* Night — deeper stage for cinematic blocks (hero, process, featured) */
+  --color-night: oklch(0.135 0.03 264);
+  --color-night-2: oklch(0.19 0.04 264);
+  --color-on-night: oklch(0.97 0.008 250);
+  --color-on-night-muted: oklch(0.76 0.022 258);
+
+  /* Mascot accents — cyan (eyes) and magenta (sparks). Neon, so scarce:
+     key numbers, eyebrows, focus states, the CTA gradient. */
+  --color-stage: oklch(0.17 0.035 262);
+  --color-brand-glow: oklch(0.68 0.16 262);
+  --color-signal: oklch(0.86 0.14 200);
+  --color-signal-ink: oklch(0.5 0.1 220);
+  --color-spark: oklch(0.7 0.22 325);
+  --color-spark-ink: oklch(0.53 0.21 335);
 
   /* Typography */
   --font-display: 'Clash Display', 'Satoshi', ui-sans-serif, system-ui, sans-serif;
@@ -47,18 +59,30 @@
   --radius-card: 1.25rem;
   --radius-xl2: 1.75rem;
 
-  /* Tinted shadows (toward brand hue, never a glow) */
-  --shadow-soft: 0 1px 2px oklch(0.21 0.022 264 / 0.04), 0 8px 24px oklch(0.21 0.022 264 / 0.06);
-  --shadow-lift: 0 2px 4px oklch(0.21 0.022 264 / 0.05), 0 18px 40px oklch(0.21 0.022 264 / 0.1);
+  /* Shadows on dark: deep navy drop + a faint top highlight so raised
+     surfaces read as lit from above instead of disappearing. */
+  --shadow-soft: 0 1px 2px oklch(0.05 0.03 264 / 0.3), 0 8px 24px oklch(0.05 0.03 264 / 0.35);
+  --shadow-lift: 0 2px 4px oklch(0.05 0.03 264 / 0.35), 0 18px 40px oklch(0.05 0.03 264 / 0.45);
   /* Layered "raised" depth for the 3D look on cards + buttons */
   --shadow-3d:
-    0 1px 2px oklch(0.21 0.022 264 / 0.06),
-    0 4px 8px oklch(0.21 0.022 264 / 0.08),
-    0 14px 30px oklch(0.21 0.022 264 / 0.1);
+    inset 0 1px 0 oklch(1 0 0 / 0.06),
+    0 1px 2px oklch(0.05 0.03 264 / 0.35),
+    0 4px 8px oklch(0.05 0.03 264 / 0.35),
+    0 14px 30px oklch(0.05 0.03 264 / 0.4);
   --shadow-3d-hover:
-    0 2px 4px oklch(0.21 0.022 264 / 0.08),
-    0 10px 20px oklch(0.21 0.022 264 / 0.12),
-    0 26px 52px oklch(0.21 0.022 264 / 0.16);
+    inset 0 1px 0 oklch(1 0 0 / 0.08),
+    0 2px 4px oklch(0.05 0.03 264 / 0.4),
+    0 10px 20px oklch(0.05 0.03 264 / 0.45),
+    0 26px 52px oklch(0.05 0.03 264 / 0.5),
+    0 0 40px -12px oklch(0.7 0.155 260 / 0.35);
+
+  /* Mascot gradient — cyan eyes → cobalt body → magenta sparks */
+  --gradient-neon: linear-gradient(
+    110deg,
+    var(--color-signal) 0%,
+    var(--color-brand) 52%,
+    var(--color-spark) 100%
+  );
 }
 
 /* ============================================================
@@ -66,6 +90,7 @@
    ============================================================ */
 @layer base {
   html {
+    color-scheme: dark;
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
   }
@@ -83,8 +108,8 @@
   }
 
   ::selection {
-    background-color: var(--color-brand);
-    color: white;
+    background-color: var(--color-signal);
+    color: var(--color-on-brand);
   }
 
   h1, h2, h3, h4 {
@@ -96,7 +121,7 @@
 
   /* Focus visibility — accessible, on-brand */
   :focus-visible {
-    outline: 2px solid var(--color-brand);
+    outline: 2px solid var(--color-signal);
     outline-offset: 3px;
     border-radius: 4px;
   }
@@ -204,7 +229,7 @@
   .scroll-progress__fill {
     display: block;
     height: 100%;
-    background: var(--color-brand);
+    background: var(--gradient-neon);
     transform-origin: left center;
     transform: scaleX(0);
   }
@@ -322,12 +347,49 @@
    cinematic hero. Transform/opacity/box-shadow only (cheap).
    ============================================================ */
 
-/* Brand gradient text — for key numbers and accent words */
+/* Mascot gradient text — for key numbers and accent words.
+   Every stop reads ≥ 6:1 on canvas/night, so the text stays AA. */
 .text-gradient {
-  background-image: linear-gradient(118deg, oklch(0.55 0.2 264), oklch(0.7 0.16 286));
+  background-image: var(--gradient-neon);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+}
+
+/* Primary CTA — mascot gradient with dark on-brand text (≥ 6.5:1 on
+   every stop) and a cobalt/magenta halo. Pairs with .btn-3d for motion. */
+.btn-neon {
+  background-image: var(--gradient-neon);
+  background-size: 160% 100%;
+  background-position: 0% 50%;
+  color: var(--color-on-brand);
+  box-shadow:
+    var(--shadow-3d),
+    0 10px 30px -10px oklch(0.7 0.155 260 / 0.65),
+    0 6px 24px -14px oklch(0.7 0.22 325 / 0.6);
+  transition:
+    transform 0.18s var(--ease-snappy),
+    box-shadow 0.18s var(--ease-snappy),
+    background-position 0.5s var(--ease-snappy);
+}
+.btn-neon:hover {
+  background-position: 100% 50%;
+  box-shadow:
+    var(--shadow-3d-hover),
+    0 14px 40px -10px oklch(0.7 0.155 260 / 0.8),
+    0 8px 30px -12px oklch(0.7 0.22 325 / 0.75);
+}
+
+/* Neon panel — CTA/booking blocks: cobalt→violet field lit by the
+   mascot's cyan and magenta. White text stays ≥ 9:1 on the base. */
+.panel-neon {
+  background:
+    radial-gradient(60% 80% at 100% 0%, oklch(0.7 0.22 325 / 0.35), transparent 70%),
+    radial-gradient(55% 75% at 0% 100%, oklch(0.86 0.14 200 / 0.22), transparent 70%),
+    linear-gradient(135deg, oklch(0.42 0.2 266), oklch(0.33 0.17 290));
+  box-shadow:
+    var(--shadow-3d),
+    0 30px 80px -30px oklch(0.6 0.2 280 / 0.7);
 }
 
 /* Decorative soft glow blob (drop inside a relative + overflow-hidden parent) */
@@ -343,7 +405,9 @@
 .glow-brand {
   box-shadow:
     var(--shadow-3d),
-    0 24px 70px -26px oklch(0.52 0.193 264 / 0.6);
+    0 0 0 1px oklch(0.7 0.155 260 / 0.22),
+    0 24px 70px -26px oklch(0.7 0.155 260 / 0.55),
+    0 30px 90px -40px oklch(0.7 0.22 325 / 0.45);
 }
 
 /* Pointer spotlight — JS sets --mx/--my (%) on hover; fine-pointer only.
@@ -359,7 +423,7 @@
   border-radius: inherit;
   background: radial-gradient(
     260px circle at var(--mx, 50%) var(--my, -10%),
-    oklch(0.52 0.193 264 / 0.12),
+    oklch(0.86 0.14 200 / 0.1),
     transparent 62%
   );
   opacity: 0;
@@ -380,7 +444,13 @@
   inset: 0 0 auto 0;
   height: 1px;
   border-radius: inherit;
-  background: linear-gradient(90deg, transparent, oklch(0.52 0.193 264 / 0.55), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    oklch(0.86 0.14 200 / 0.6) 30%,
+    oklch(0.7 0.22 325 / 0.6) 70%,
+    transparent
+  );
   z-index: 1;
 }
 

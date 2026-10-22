@@ -45,7 +45,7 @@ pnpm build       # build de producción → ./dist
 pnpm preview     # previsualizar el build
 ```
 
-> Requiere Node 20+ y pnpm.
+> Requiere Node 20+. Si `pnpm` no está instalado, usa el de corepack (incluido en Node): `corepack pnpm install` y `corepack pnpm dev`.
 
 ## Editar el contenido
 
@@ -151,12 +151,14 @@ _assets-src/                  # originales pesados (git-ignored, no deploy)
 
 ## Sistema de diseño
 
-- **Paleta** derivada del logo: azul cobalto + casi-negro + blanco cálido, en
-  OKLCH (perceptualmente uniforme), neutros tintados hacia el matiz de marca.
+- **Paleta** dark-first muestreada de la mascota: navy profundo + cobalto
+  eléctrico (mismo hue que el logo) + acentos cian y magenta, en OKLCH.
+  Todos los pares texto/fondo cumplen WCAG AA (≥ 4.5:1). Reglas de uso en
+  `.impeccable.md`.
 - **Tipografías** self-hosted (`.woff2`, sin request externo): **Clash Display**
   para títulos, **Satoshi** para texto. Precargadas en el `<head>`.
-- **Kit premium** (`global.css`): texto en gradiente, spotlight que sigue el
-  cursor, glows tintados, hairlines de borde y sombras 3D en capas.
+- **Kit premium** (`global.css`): gradiente neón (`--gradient-neon`, `.btn-neon`,
+  `.panel-neon`, `.text-gradient`), spotlight que sigue el cursor, glows tintados, hairlines de borde y sombras 3D en capas.
 - **Motion** por CSS con curvas de easing fuertes + `IntersectionObserver` para
   los scroll-reveals. Todo respeta `prefers-reduced-motion`.
 

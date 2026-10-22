@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "solvyx-dev",
-      "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["dev", "--port", "4321"],
+      "runtimeExecutable": "corepack",
+      "runtimeArgs": ["pnpm", "dev", "--port", "4321"],
       "port": 4321
     }
   ]

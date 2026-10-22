@@ -1,0 +1,533 @@
+---
+/* Escenario del hero con Solvy (sustituye al vídeo del robot). Cuatro capas:
+   1 · fondo noche tecnológica (grid de circuito + halos cian/magenta)
+   2 · paneles de cristal con parallax (solo xl, para no pisar el titular)
+   3 · Solvy: el render oficial fundido con la luz del fondo (screen), flota y
+       respira cada 4,8 s, el gel cambia de brillo, los LED laten y parpadean
+       una vez por loop (9,6 s) y un escaneo de luz lo recorre
+   4 · FX: ceros y unos que ascienden + glow en el borde de los paneles
+
+   Solo CSS (transform/opacity); el JS se limita al parallax con ratón.
+   Todo se congela con prefers-reduced-motion. */
+import { getDict, defaultLocale, type Locale } from '@/i18n';
+
+const locale = (Astro.currentLocale ?? defaultLocale) as Locale;
+const { ui } = getDict(locale);
+const st = ui.heroStage;
+
+// Pseudoaleatorio determinista → mismo HTML en cada build
+const rand = (i: number, n: number) => {
+  const v = Math.sin(i * 12.9898 + n * 78.233) * 43758.5453;
+  return Math.round((v - Math.floor(v)) * 1000) / 1000;
+};
+const particles = Array.from({ length: 20 }, (_, i) => ({
+  char: rand(i, 1) > 0.5 ? '1' : '0',
+  left: 38 + rand(i, 2) * 60,
+  size: 10 + Math.round(rand(i, 3) * 7),
+  delay: -(rand(i, 4) * 12).toFixed(2),
+  dur: (8 + rand(i, 5) * 6).toFixed(2),
+  spark: rand(i, 6) > 0.62,
+}));
+---
+
+<div id="solvy-stage" class="stage pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden="true">
+  <!-- Capa 1 · Fondo -->
+  <div class="stage-grid absolute inset-0"></div>
+  <div class="halo halo-signal"></div>
+  <div class="halo halo-spark"></div>
+
+  <!-- Capa 4 · Partículas -->
+  <div class="absolute inset-0">
+    {
+      particles.map((p) => (
+        <span
+          class:list={['bit', p.spark ? 'text-spark' : 'text-signal']}
+          style={`left:${p.left}%;font-size:${p.size}px;animation-duration:${p.dur}s;animation-delay:${p.delay}s;`}
+        >
+          {p.char}
+        </span>
+      ))
+    }
+  </div>
+
+  <div class="stage-box">
+    <!-- Capa 2 · Panel de código (detrás) -->
+    <div class="parallax parallax-back panel-slot panel-code">
+      <div class="panel panel-tilt-l">
+        <div class="panel-head">
+          <span class="truncate">src/pages/index.astro</span>
+          <span class="panel-badge"><i></i>{st.codeBadge}</span>
+        </div>
+        <pre class="panel-code-body"><code><span class="c-mute">{st.codeComment}</span>
+<span class="c-kw">import</span> {'{ Hero, Solvy }'} <span class="c-kw">from</span> <span class="c-str">"@solvyx/ui"</span>;
+
+<span class="c-kw">const</span> launch = <span class="c-kw">await</span> deploy({'{'}
+  stack: <span class="c-str">"astro"</span>,
+  ai: <span class="c-str">"agents-24-7"</span>,
+  eta: <span class="c-str">"{st.eta}"</span>,
+{'}'});</code></pre>
+      </div>
+    </div>
+
+    <!-- Capa 3 · Solvy -->
+    <div class="parallax parallax-mid solvy-slot">
+      <div class="solvy-float">
+        <div class="solvy-breathe">
+          <img
+            class="solvy-img"
+            src="/solvy/solvy.webp"
+            width="720"
+            height="720"
+            alt=""
+            fetchpriority="high"
+            decoding="async"
+          />
+          <!-- el gel sube de brillo con cada respiración -->
+          <img class="solvy-img solvy-gel" src="/solvy/solvy.webp" width="720" height="720" alt="" decoding="async" />
+          <span class="solvy-scan"><span></span></span>
+          <span class="solvy-eye solvy-eye-l"></span>
+          <span class="solvy-eye solvy-eye-r"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Capa 2 · Panel de automatización (delante) -->
+    <div class="parallax parallax-front panel-slot panel-flow">
+      <div class="panel panel-tilt-r">
+        <div class="panel-head">
+          <span>automation.flow</span>
+          <span class="panel-badge"><i></i>{st.flowBadge}</span>
+        </div>
+        <ol class="flow">
+          {
+            st.flow.map((label, i) => (
+              <li style={`--i:${i}`}>
+                <span class="node">{label}</span>
+                {i < st.flow.length - 1 && <span class="arrow">→</span>}
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .stage {
+    --breath: 4.8s;
+    --loop: 9.6s;
+    --solvy-size: min(92vw, 27rem);
+    background: var(--color-night);
+  }
+
+  /* ---------- Capa 1 · Fondo ---------- */
+  .stage-grid {
+    background-image:
+      radial-gradient(circle, oklch(0.86 0.14 200 / 0.32) 1.5px, transparent 2px),
+      linear-gradient(to right, oklch(0.86 0.14 200 / 0.06) 1px, transparent 1px),
+      linear-gradient(to bottom, oklch(0.86 0.14 200 / 0.06) 1px, transparent 1px);
+    background-size: 48px 48px;
+    filter: blur(0.6px);
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 55%, #000 10%, transparent 75%);
+  }
+  .halo {
+    position: absolute;
+    border-radius: 999px;
+    filter: blur(90px);
+    animation: halo-breathe var(--breath) ease-in-out infinite;
+  }
+  .halo-signal {
+    width: 30rem;
+    height: 30rem;
+    left: 50%;
+    top: 52%;
+    translate: -50% -50%;
+    background: oklch(0.86 0.14 200 / 0.22);
+  }
+  .halo-spark {
+    width: 22rem;
+    height: 22rem;
+    left: 62%;
+    top: 66%;
+    translate: -50% -50%;
+    background: oklch(0.7 0.22 325 / 0.18);
+    animation-delay: calc(var(--breath) / -2);
+  }
+
+  /* ---------- Capa 4 · Partículas ---------- */
+  .bit {
+    position: absolute;
+    bottom: -1.5rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    text-shadow: 0 0 8px currentColor;
+    opacity: 0;
+    animation: bit-rise linear infinite;
+  }
+
+  /* ---------- Caja: Solvy + paneles ---------- */
+  .stage-box {
+    position: absolute;
+    left: 50%;
+    top: 56%;
+    width: var(--solvy-size);
+    aspect-ratio: 1;
+    translate: -50% -50%;
+    perspective: 1200px;
+  }
+  .parallax {
+    position: absolute;
+    transition: transform 0.9s var(--ease-snappy);
+  }
+  .solvy-slot {
+    inset: 0;
+  }
+  .panel-slot {
+    display: none;
+  }
+
+  /* ---------- Capa 3 · Solvy ---------- */
+  .solvy-float,
+  .solvy-breathe {
+    position: absolute;
+    inset: 0;
+  }
+  .solvy-float {
+    animation: solvy-float var(--breath) ease-in-out infinite;
+  }
+  .solvy-breathe {
+    animation: solvy-breathe var(--breath) ease-in-out infinite;
+  }
+  .solvy-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    user-select: none;
+    /* fusión de luz: el fondo oscuro del render desaparece sobre el navy */
+    mix-blend-mode: screen;
+    mask-image: radial-gradient(closest-side, #000 72%, transparent 100%);
+  }
+  .solvy-gel {
+    opacity: 0;
+    animation: gel-glow var(--breath) ease-in-out infinite;
+  }
+  /* escaneo: banda de luz que solo se ve donde Solvy brilla (máscara por luminancia) */
+  .solvy-scan {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    mix-blend-mode: screen;
+    mask: url('/solvy/solvy.webp') center / contain no-repeat luminance;
+  }
+  .solvy-scan > span {
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    height: 22%;
+    background: linear-gradient(to bottom, transparent, oklch(0.9 0.12 200 / 0.75), transparent);
+    translate: 0 -100%;
+    animation: solvy-scan var(--loop) ease-in-out infinite;
+  }
+  /* LED: centrados sobre los ojos del render (32,8 % / 50,6 %, y 42 %) */
+  .solvy-eye {
+    position: absolute;
+    top: 42%;
+    width: 13%;
+    height: 9%;
+    translate: -50% -50%;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, oklch(0.97 0.05 200 / 0.95), oklch(0.86 0.14 200 / 0.55) 55%, transparent);
+    mix-blend-mode: screen;
+    animation: led var(--loop) ease-in-out infinite;
+  }
+  .solvy-eye-l {
+    left: 32.8%;
+  }
+  .solvy-eye-r {
+    left: 50.6%;
+  }
+
+  /* ---------- Capa 2 · Paneles ---------- */
+  .panel {
+    position: relative;
+    border-radius: 1rem;
+    border: 1px solid oklch(1 0 0 / 0.1);
+    background: oklch(0.2 0.04 264 / 0.45);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 24px 60px -18px oklch(0.1 0.02 265 / 0.7), inset 0 1px 0 oklch(1 0 0 / 0.08);
+  }
+  /* resplandor de Solvy proyectado sobre el borde, al ritmo de su respiración */
+  .panel::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    border: 1px solid oklch(0.86 0.14 200 / 0.5);
+    box-shadow: 0 0 34px oklch(0.86 0.14 200 / 0.32);
+    opacity: 0;
+    animation: edge-glow var(--breath) ease-in-out infinite;
+  }
+  .panel-tilt-l {
+    transform: rotateY(14deg) rotateX(4deg);
+  }
+  .panel-tilt-r {
+    transform: rotateY(-12deg) rotateX(4deg);
+  }
+  .panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid oklch(1 0 0 / 0.08);
+    font: 500 0.7rem/1.2 ui-monospace, SFMono-Regular, Menlo, monospace;
+    color: var(--color-on-night-muted);
+  }
+  .panel-badge {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--color-signal);
+  }
+  .panel-badge i {
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: var(--color-signal);
+    box-shadow: 0 0 8px var(--color-signal);
+  }
+  .panel-code-body {
+    margin: 0;
+    padding: 0.75rem 1rem 0.9rem;
+    overflow: hidden;
+    font: 0.72rem/1.6 ui-monospace, SFMono-Regular, Menlo, monospace;
+    color: oklch(0.97 0.008 250 / 0.82);
+  }
+  .c-mute {
+    color: oklch(0.76 0.022 258 / 0.7);
+  }
+  .c-kw {
+    color: var(--color-spark);
+  }
+  .c-str {
+    color: var(--color-signal);
+  }
+  .flow {
+    display: flex;
+    gap: 0.4rem;
+    padding: 0.9rem;
+    margin: 0;
+    list-style: none;
+  }
+  .flow li {
+    display: flex;
+    flex: 1;
+    min-width: 0;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .node {
+    position: relative;
+    display: grid;
+    flex: 1;
+    min-height: 2.4rem;
+    place-items: center;
+    padding: 0.3rem;
+    border-radius: 0.6rem;
+    border: 1px solid oklch(1 0 0 / 0.1);
+    background: oklch(1 0 0 / 0.04);
+    font-size: 0.72rem;
+    font-weight: 500;
+    line-height: 1.15;
+    text-align: center;
+    color: var(--color-on-night);
+  }
+  /* nodo encendido: capa que solo anima opacidad, uno tras otro */
+  .node::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    border: 1px solid oklch(0.86 0.14 200 / 0.9);
+    background: oklch(0.86 0.14 200 / 0.16);
+    box-shadow: 0 0 18px oklch(0.86 0.14 200 / 0.55);
+    opacity: 0;
+    animation: node-on var(--loop) ease-out infinite;
+    animation-delay: calc(var(--i) * var(--loop) / 4);
+  }
+  .arrow {
+    flex-shrink: 0;
+    font-size: 0.75rem;
+    color: oklch(0.86 0.14 200 / 0.6);
+  }
+
+  /* ---------- Responsive ---------- */
+  /* Tablet: más pequeño y más abajo, entre el texto y los servicios */
+  @media (min-width: 640px) {
+    .stage {
+      --solvy-size: min(54vw, 24rem);
+    }
+    .stage-box {
+      left: auto;
+      right: 4%;
+      top: 58%;
+      translate: 0 -50%;
+    }
+  }
+  /* Escritorio: Solvy a la derecha, lado izquierdo limpio para el titular */
+  @media (min-width: 1024px) {
+    .stage {
+      --solvy-size: min(44vw, 36rem);
+    }
+    .stage-box {
+      left: auto;
+      right: max(2rem, calc((100vw - 80rem) / 2 + 1rem));
+      top: 52%;
+      translate: 0 -50%;
+    }
+    .stage-grid {
+      mask-image: radial-gradient(ellipse 45% 70% at 74% 50%, #000 10%, transparent 75%);
+    }
+    .halo-signal {
+      left: auto;
+      right: max(4rem, calc((100vw - 80rem) / 2 + 6rem));
+      translate: 0 -50%;
+    }
+    .halo-spark {
+      left: auto;
+      right: max(1rem, calc((100vw - 80rem) / 2));
+      translate: 0 -50%;
+    }
+  }
+  /* Paneles solo en pantallas anchas (≥1280px) */
+  @media (min-width: 1280px) {
+    .stage-box {
+      width: min(46vw, 40rem);
+    }
+    .solvy-slot {
+      inset: 6% 6% 10% 10%;
+    }
+    .panel-slot {
+      display: block;
+    }
+    .panel-code {
+      left: -4%;
+      top: 0;
+      width: 56%;
+      z-index: 0;
+      opacity: 0.85;
+    }
+    .solvy-slot {
+      z-index: 1;
+    }
+    .panel-flow {
+      right: -4%;
+      bottom: 4%;
+      width: 64%;
+      z-index: 2;
+    }
+    .parallax-back {
+      transform: translate3d(calc(var(--mx, 0) * -18px), calc(var(--my, 0) * -12px), 0);
+    }
+    .parallax-mid {
+      transform: translate3d(calc(var(--mx, 0) * 8px), calc(var(--my, 0) * 5px), 0);
+    }
+    .parallax-front {
+      transform: translate3d(calc(var(--mx, 0) * 22px), calc(var(--my, 0) * 14px), 0);
+    }
+  }
+
+  /* ---------- Keyframes ---------- */
+  @keyframes solvy-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+  }
+  @keyframes solvy-breathe {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.025); }
+  }
+  @keyframes gel-glow {
+    0%, 100% { opacity: 0; }
+    50% { opacity: 0.38; }
+  }
+  @keyframes halo-breathe {
+    0%, 100% { opacity: 0.6; transform: scale(0.94); }
+    50% { opacity: 1; transform: scale(1.06); }
+  }
+  @keyframes edge-glow {
+    0%, 100% { opacity: 0.1; }
+    50% { opacity: 1; }
+  }
+  @keyframes solvy-scan {
+    0%, 10% { transform: translateY(0); opacity: 0; }
+    12% { opacity: 1; }
+    26% { transform: translateY(560%); opacity: 1; }
+    28%, 100% { transform: translateY(560%); opacity: 0; }
+  }
+  /* late con la respiración y parpadea una vez por loop */
+  @keyframes led {
+    0%, 100% { opacity: 0.55; transform: scaleY(1); }
+    25% { opacity: 1; transform: scaleY(1); }
+    50% { opacity: 0.6; transform: scaleY(1); }
+    60% { opacity: 0.85; transform: scaleY(1); }
+    62% { opacity: 0.2; transform: scaleY(0.1); }
+    64% { opacity: 1; transform: scaleY(1); }
+    75% { opacity: 1; transform: scaleY(1); }
+  }
+  @keyframes node-on {
+    0% { opacity: 0; }
+    4%, 20% { opacity: 1; }
+    30%, 100% { opacity: 0; }
+  }
+  @keyframes bit-rise {
+    0% { transform: translateY(0); opacity: 0; }
+    15% { opacity: 0.7; }
+    80% { opacity: 0.5; }
+    100% { transform: translateY(-110vh); opacity: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .stage *,
+    .stage *::before,
+    .stage *::after {
+      animation: none !important;
+      transition: none !important;
+    }
+    .bit,
+    .solvy-scan {
+      display: none;
+    }
+    .solvy-eye,
+    .panel::after {
+      opacity: 0.8;
+    }
+  }
+</style>
+
+<script>
+  // Parallax suave con el ratón: solo puntero fino y con movimiento permitido.
+  const stage = document.getElementById('solvy-stage');
+  const hero = stage?.closest('section');
+  const allowed =
+    window.matchMedia('(pointer: fine) and (min-width: 1280px)').matches &&
+    !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (stage && hero && allowed) {
+    let frame = 0;
+    hero.addEventListener('pointermove', (e) => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const r = hero.getBoundingClientRect();
+        stage.style.setProperty('--mx', ((e.clientX - r.left) / r.width - 0.5).toFixed(3));
+        stage.style.setProperty('--my', ((e.clientY - r.top) / r.height - 0.5).toFixed(3));
+      });
+    });
+    hero.addEventListener('pointerleave', () => {
+      stage.style.setProperty('--mx', '0');
+      stage.style.setProperty('--my', '0');
+    });
+  }
+</script>

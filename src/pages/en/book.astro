@@ -70,7 +70,7 @@ const calLink = brand.calLink;
           <div class="grid min-h-[16rem] place-items-center p-6 text-center">
             <a
               href={brand.bookingUrl}
-              class="btn-3d inline-flex items-center gap-2 rounded-full bg-brand px-7 py-3.5 font-semibold text-white"
+              class="btn-3d inline-flex items-center gap-2 rounded-full btn-neon px-7 py-3.5 font-semibold"
             >
               Open the calendar
             </a>
@@ -136,8 +136,8 @@ const calLink = brand.calLink;
       layout: 'month_view',
     });
     Cal('ui', {
-      theme: 'light',
-      cssVarsPerTheme: { light: { 'cal-brand': '#3b5bdb' } },
+      theme: 'dark',
+      cssVarsPerTheme: { dark: { 'cal-brand': '#639dfe' } },
       hideEventTypeDetails: false,
       layout: 'month_view',
     });

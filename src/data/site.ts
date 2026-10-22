@@ -497,6 +497,14 @@ export const ui = {
   nav: { cta: 'Agendar llamada', open: 'Abrir menú', close: 'Cerrar menú', skip: 'Saltar al contenido', home: 'inicio' },
   marquee: 'Equipos que confían en nosotros para construir',
   heroUi: { selectHint: 'selecciona uno o más', cta: 'Agenda tu llamada', selectedPrefix: 'Listo para hablar de:' },
+  // Paneles de cristal junto a Solvy en el hero
+  heroStage: {
+    codeBadge: 'Next.js / Astro',
+    codeComment: '// Desarrollo con Next.js / Astro',
+    eta: 'días, no meses',
+    flowBadge: 'IA activa',
+    flow: ['Ads', 'Agente IA', 'Califica', 'CRM'],
+  },
   servicesSection: {
     eyebrow: 'Lo que hacemos por ti',
     title: 'Marketing con IA que vende por ti — y la ingeniería que lo sostiene',

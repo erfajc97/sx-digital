@@ -11,7 +11,7 @@ const t = ui.showcase;
   <div class="mx-auto max-w-[1240px] px-4 sm:px-6">
     <div
       data-reveal="scale"
-      class="card-3d relative grid overflow-hidden rounded-[var(--radius-xl2)] bg-[#0b1020] md:grid-cols-2"
+      class="card-3d relative grid overflow-hidden rounded-[var(--radius-xl2)] bg-night md:grid-cols-2"
     >
       <!-- 3D brand render -->
       <div class="relative min-h-[18rem] md:min-h-[26rem]">
@@ -29,14 +29,14 @@ const t = ui.showcase;
         </picture>
         <!-- soft seam so the square image blends into the panel on desktop -->
         <div
-          class="pointer-events-none absolute inset-y-0 right-0 hidden w-24 bg-gradient-to-r from-transparent to-[#0b1020] md:block"
+          class="pointer-events-none absolute inset-y-0 right-0 hidden w-24 bg-gradient-to-r from-transparent to-night md:block"
         >
         </div>
       </div>
 
       <!-- copy -->
       <div class="flex flex-col items-start justify-center gap-5 px-6 py-12 sm:px-12 sm:py-16">
-        <span class="text-sm font-semibold uppercase tracking-[0.16em] text-brand-soft">
+        <span class="text-sm font-semibold uppercase tracking-[0.16em] text-signal">
           {t.kicker}
         </span>
         <h2 class="text-[clamp(1.9rem,3.6vw,2.85rem)] leading-[1.08] text-white text-balance">

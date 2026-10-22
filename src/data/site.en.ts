@@ -354,6 +354,14 @@ export const ui = {
   nav: { cta: 'Book a call', open: 'Open menu', close: 'Close menu', skip: 'Skip to content', home: 'home' },
   marquee: 'Teams that trust us to build',
   heroUi: { selectHint: 'pick one or more', cta: 'Book your call', selectedPrefix: 'Ready to talk about:' },
+  // Glass panels next to Solvy in the hero
+  heroStage: {
+    codeBadge: 'Next.js / Astro',
+    codeComment: '// Built with Next.js / Astro',
+    eta: 'days, not months',
+    flowBadge: 'AI live',
+    flow: ['Ads', 'AI agent', 'Qualify', 'CRM'],
+  },
   servicesSection: {
     eyebrow: 'What we do for you',
     title: 'AI marketing that sells for you — and the engineering that backs it',
