@@ -76,13 +76,6 @@ const bits = Array.from({ length: 28 }, (_, i) => ({
 
   <!-- Progress bar -->
   <div class="intro-progress" aria-hidden="true"><span id="intro-bar"></span></div>
-
-  <!-- Banda sonora del intro anterior (6 s: sube 0–1,8 s, pico hasta ~3,2 s,
-       cae). Arranca en 0,8 s (AUDIO_OFFSET) para caer sobre ojos/haz/logo. -->
-  <audio id="intro-audio" preload="auto">
-    <source src="/hero/intro-audio.webm" type="audio/webm" />
-    <source src="/hero/intro-audio.m4a" type="audio/mp4" />
-  </audio>
 </div>
 
 <style>
@@ -391,14 +384,10 @@ const bits = Array.from({ length: 28 }, (_, i) => ({
 <script>
   const DURATION = 4500; // ms — la secuencia completa
   const FADE = 700; // ms — fundido hacia la web (dentro de los 4,5 s)
-  // s — the track builds up for ~1,8 s; starting 0,8 s in lands its peak on
-  // the eyes lighting up (0,9 s) and keeps it through the beam and logo.
-  const AUDIO_OFFSET = 0.8;
 
   const gate = document.getElementById('intro-gate') as HTMLElement | null;
   const solvy = document.getElementById('intro-solvy-img') as HTMLImageElement | null;
   const skipBtn = document.getElementById('intro-skip') as HTMLButtonElement | null;
-  const audio = document.getElementById('intro-audio') as HTMLAudioElement | null;
 
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -422,54 +411,10 @@ const bits = Array.from({ length: 28 }, (_, i) => ({
   }
 
   let timer = 0;
-  let startedAt = 0;
-
-  // Sound: browsers block autoplay WITH audio unless the visitor already
-  // interacted with the site, so we try it and, if refused, start the track
-  // on the first gesture — seeked to the timeline so it stays in sync.
-  const GESTURES = ['pointerdown', 'pointerup', 'touchend', 'keydown'];
-  const opts = { passive: true } as AddEventListenerOptions;
-
-  function playFromTimeline(e: Event) {
-    if (!audio || !gate || gate.classList.contains('is-leaving')) return;
-    // the skip tap (or Escape) is about to dismiss — don't start the sound
-    if ((e.target as Element | null)?.closest?.('#intro-skip')) return;
-    if (e instanceof KeyboardEvent && e.key === 'Escape') return;
-    const elapsed = (performance.now() - startedAt) / 1000;
-    if (elapsed >= (DURATION - FADE) / 1000) return; // intro already closing
-    try {
-      audio.currentTime = AUDIO_OFFSET + elapsed;
-    } catch {
-      /* not seekable yet → plays from 0 */
-    }
-    audio.volume = 1;
-    audio.play().then(disarm, () => {});
-  }
-  function disarm() {
-    GESTURES.forEach((ev) => window.removeEventListener(ev, playFromTimeline, opts));
-  }
-
-  // The sound fades with the gate, on skip and on the natural end (iOS
-  // ignores volume, so it simply pauses at the end).
-  function fadeOutAudio(ms: number) {
-    disarm();
-    if (!audio || audio.paused) return;
-    const from = audio.volume;
-    const t0 = performance.now();
-    const step = (now: number) => {
-      // rAF timestamps can predate t0 by a frame → clamp to [0, 1]
-      const k = Math.min(1, Math.max(0, (now - t0) / ms));
-      audio.volume = from * (1 - k);
-      if (k < 1) requestAnimationFrame(step);
-      else audio.pause();
-    };
-    requestAnimationFrame(step);
-  }
 
   function dismiss() {
     if (!gate || gate.classList.contains('is-leaving')) return;
     window.clearTimeout(timer);
-    fadeOutAudio(FADE);
     gate.classList.add('is-leaving');
     window.scrollTo(0, 0); // reveal the hero, never a mid-page section
     unlock();
@@ -501,20 +446,7 @@ const bits = Array.from({ length: 28 }, (_, i) => ({
       if (started) return;
       started = true;
       gate.classList.add('is-playing');
-      startedAt = performance.now();
       timer = window.setTimeout(dismiss, DURATION - FADE);
-
-      if (audio) {
-        audio.volume = 1;
-        try {
-          audio.currentTime = AUDIO_OFFSET;
-        } catch {
-          /* not seekable yet → plays from 0 */
-        }
-        audio.play().catch(() => {
-          GESTURES.forEach((ev) => window.addEventListener(ev, playFromTimeline, opts));
-        });
-      }
     };
     (solvy?.decode() ?? Promise.resolve()).then(start, start);
     window.setTimeout(start, 800);
