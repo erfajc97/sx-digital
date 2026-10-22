@@ -412,9 +412,17 @@ const bits = Array.from({ length: 28 }, (_, i) => ({
 
   let timer = 0;
 
+  // Tell the hero the stage is clear (the particle headline waits for this so
+  // its first word forms in view instead of behind the gate).
+  function announceDone() {
+    document.documentElement.dataset.intro = 'done';
+    window.dispatchEvent(new Event('solvyx:intro-done'));
+  }
+
   function dismiss() {
     if (!gate || gate.classList.contains('is-leaving')) return;
     window.clearTimeout(timer);
+    announceDone();
     gate.classList.add('is-leaving');
     window.scrollTo(0, 0); // reveal the hero, never a mid-page section
     unlock();
@@ -425,6 +433,7 @@ const bits = Array.from({ length: 28 }, (_, i) => ({
     // Nothing to show — make sure the page is scrollable and the gate is gone.
     if (gate) gate.classList.add('is-done');
     unlock();
+    announceDone();
   } else {
     // The reveal must land on the HERO: stop the browser from restoring the
     // previous scroll position on reload and pin the viewport to the top.

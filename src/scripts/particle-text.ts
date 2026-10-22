@@ -93,10 +93,14 @@ export function initParticleText(canvas: HTMLCanvasElement, words: string[]) {
   const ctx = canvas.getContext('2d')!;
   const particles: Particle[] = [];
   const pixelSteps = 6;
-  let frame = 0;
+  // Time on screen per word, in ms (time-based so 120 Hz screens don't cycle
+  // twice as fast as 60 Hz ones).
+  const WORD_MS = 3700;
+  let wordSince = 0;
   let wordIndex = 0;
   let raf = 0;
   let running = false;
+  let ready = false; // false until the intro gate is out of the way
 
   const off = document.createElement('canvas');
   off.width = W;
@@ -120,7 +124,10 @@ export function initParticleText(canvas: HTMLCanvasElement, words: string[]) {
     return size;
   };
 
-  const setWord = (word: string) => {
+  /** `burst`: new particles spawn around their target and fade in fast, so
+      the first word reads in well under a second instead of flying in from
+      the canvas edges. */
+  const setWord = (word: string, burst = false) => {
     octx.clearRect(0, 0, W, H);
     const size = fitFont(word);
     octx.fillStyle = 'white';
@@ -149,13 +156,21 @@ export function initParticleText(canvas: HTMLCanvasElement, words: string[]) {
         idx++;
       } else {
         p = new Particle();
-        const rp = randomEdge(W / 2, H / 2, (W + H) / 2);
-        p.pos.x = rp.x;
-        p.pos.y = rp.y;
-        p.maxSpeed = Math.random() * 6 + 4;
+        if (burst) {
+          p.pos.x = x + (Math.random() - 0.5) * 160;
+          p.pos.y = y + (Math.random() - 0.5) * 120;
+        } else {
+          const rp = randomEdge(W / 2, H / 2, (W + H) / 2);
+          p.pos.x = rp.x;
+          p.pos.y = rp.y;
+        }
+        // 6–15 px/frame: each word reads in ~1,4 s (first one ~0,8 s) out of
+        // its 3,7 s on screen; slower and the next word starts before this one
+        // has finished forming.
+        p.maxSpeed = Math.random() * 9 + 6;
         p.maxForce = p.maxSpeed * 0.05;
         p.particleSize = Math.random() * 1.5 + 1.5;
-        p.fadeRate = Math.random() * 0.03 + 0.02;
+        p.fadeRate = burst ? Math.random() * 0.04 + 0.06 : Math.random() * 0.03 + 0.02;
         particles.push(p);
       }
       p.target.x = x;
@@ -164,7 +179,7 @@ export function initParticleText(canvas: HTMLCanvasElement, words: string[]) {
     for (let i = idx; i < particles.length; i++) particles[i].kill(W, H);
   };
 
-  const tick = () => {
+  const tick = (now: number) => {
     // Fully clear every frame (no motion-blur trail) so no rectangular haze /
     // "container" ever builds up over the video — only the live particles show.
     ctx.clearRect(0, 0, W, H);
@@ -182,8 +197,9 @@ export function initParticleText(canvas: HTMLCanvasElement, words: string[]) {
       }
     }
 
-    frame++;
-    if (frame % 220 === 0) {
+    if (!wordSince) wordSince = now;
+    else if (now - wordSince >= WORD_MS) {
+      wordSince = now;
       wordIndex = (wordIndex + 1) % words.length;
       setWord(words[wordIndex]);
     }
@@ -191,8 +207,9 @@ export function initParticleText(canvas: HTMLCanvasElement, words: string[]) {
   };
 
   const start = () => {
-    if (running) return;
+    if (running || !ready) return;
     running = true;
+    wordSince = 0; // back in view → current word gets its full time again
     raf = requestAnimationFrame(tick);
   };
   const stop = () => {
@@ -200,13 +217,27 @@ export function initParticleText(canvas: HTMLCanvasElement, words: string[]) {
     if (raf) cancelAnimationFrame(raf);
   };
 
-  setWord(words[0]);
-  start();
+  // Form the first word only once the hero is actually visible, and give it
+  // its full on-screen time before cycling to the next one.
+  const begin = () => {
+    if (ready) return;
+    ready = true;
+    setWord(words[wordIndex], true);
+    start();
+  };
+  const gate = document.getElementById('intro-gate');
+  if (!gate || document.documentElement.dataset.intro === 'done') begin();
+  else {
+    window.addEventListener('solvyx:intro-done', begin, { once: true });
+    window.setTimeout(begin, 6000); // never leave the headline blank
+  }
 
-  // Re-sample the first word once Clash Display is actually loaded, so it
-  // doesn't get drawn in the Arial fallback on the very first paint.
+  // Re-sample the current word once Clash Display is actually loaded, so it
+  // doesn't stay in the Arial fallback if the font arrives late.
   if (document.fonts && 'load' in document.fonts) {
-    document.fonts.load('700 200px "Clash Display"').then(() => setWord(words[wordIndex]));
+    document.fonts
+      .load('700 200px "Clash Display"')
+      .then(() => ready && setWord(words[wordIndex]));
   }
 
   // Pause when off-screen (perf)

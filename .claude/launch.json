@@ -4,8 +4,24 @@
     {
       "name": "solvyx-dev",
       "runtimeExecutable": "corepack",
-      "runtimeArgs": ["pnpm", "dev", "--port", "4321"],
+      "runtimeArgs": [
+        "pnpm",
+        "dev",
+        "--port",
+        "4321"
+      ],
       "port": 4321
+    },
+    {
+      "name": "solvyx-preview",
+      "runtimeExecutable": "corepack",
+      "runtimeArgs": [
+        "pnpm",
+        "preview",
+        "--port",
+        "4322"
+      ],
+      "port": 4322
     }
   ]
 }
