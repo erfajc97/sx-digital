@@ -91,7 +91,7 @@ export function auditReportEmail(args: {
   const wins = report.quick_wins.map((w) => `<li style="margin:0 0 8px">${esc(w)}</li>`).join('');
 
   const inner = `
-<tr><td style="padding:0 4px 8px;font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:${BRAND};font-weight:700">${t('Auditoría IA gratuita', 'Free AI audit')}</td></tr>
+<tr><td style="padding:0 4px 8px;font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:${BRAND};font-weight:700">${t('Auditoría IA Gratis', 'Free AI Audit')}</td></tr>
 <tr><td style="padding:0 4px 8px;font-size:26px;line-height:1.2;font-weight:700;color:${INK}">${t('Tu informe para', 'Your report for')} ${esc(report.negocio_detectado)}</td></tr>
 <tr><td style="padding:0 4px 22px;font-size:15px;line-height:1.6;color:${MUTED}">${name ? `${t('Hola', 'Hi')} ${esc(name)}, ` : ''}${t('hemos analizado', 'we analysed')} <a href="${esc(url)}" style="color:${BRAND}">${esc(url)}</a>. ${t('Esto es lo que más está frenando tu captación de clientes:', 'Here is what is holding back your lead generation the most:')}</td></tr>
 <tr><td style="padding:0 0 22px;">

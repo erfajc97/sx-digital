@@ -3,13 +3,13 @@ import type { Locale } from '@/i18n';
 
 const es = {
   meta: {
-    title: 'Auditoría IA gratis de tu web | SolvyX',
+    title: 'Auditoría IA Gratis de tu web | SolvyX',
     description:
       'Analizamos tu web con IA en segundos: contacto, reservas y pagos, SEO, contenido y automatización. Recibe los 3 problemas que más te están costando clientes y un informe completo por email.',
     resultTitle: 'Resultado de tu auditoría IA | SolvyX',
   },
   hero: {
-    eyebrow: 'Auditoría IA gratis',
+    eyebrow: 'Auditoría IA Gratis',
     title: '¿Cuántos clientes se te escapan por tu web?',
     lead: 'Pega tu URL y en menos de 30 segundos te decimos qué está frenando tu captación — contacto, reservas, SEO y automatización — con soluciones concretas.',
     bullets: ['3 hallazgos clave al instante', 'Informe completo en tu email', 'Sin compromiso · 100 % gratis'],
@@ -69,7 +69,7 @@ const es = {
     multimedia_ia: 'Contenido multimedia con IA',
   } as Record<string, string>,
   homeCta: {
-    eyebrow: 'Nuevo · Auditoría IA gratis',
+    eyebrow: 'Nuevo · Auditoría IA Gratis',
     title: 'Descubre en 30 segundos qué le falta a tu web para vender más',
     text: 'Nuestra IA revisa tu contacto, reservas y pagos, SEO y contenido, y te da 3 mejoras concretas. Gratis.',
     cta: 'Auditar mi web',
@@ -86,7 +86,7 @@ const en: AuditCopy = {
     resultTitle: 'Your AI audit result | SolvyX',
   },
   hero: {
-    eyebrow: 'Free AI audit',
+    eyebrow: 'Free AI Audit',
     title: 'How many customers is your website losing?',
     lead: "Paste your URL and in under 30 seconds we'll show you what's holding back your lead generation — contact, booking, SEO and automation — with concrete fixes.",
     bullets: ['3 key findings instantly', 'Full report in your inbox', 'No strings attached · 100% free'],
@@ -146,7 +146,7 @@ const en: AuditCopy = {
     multimedia_ia: 'AI multimedia content',
   },
   homeCta: {
-    eyebrow: 'New · Free AI audit',
+    eyebrow: 'New · Free AI Audit',
     title: 'Find out in 30 seconds what your website needs to sell more',
     text: 'Our AI reviews your contact options, booking & payments, SEO and content, and gives you 3 concrete fixes. Free.',
     cta: 'Audit my website',

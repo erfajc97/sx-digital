@@ -4,6 +4,7 @@ import IntroGate from '@/components/IntroGate.astro';
 import Navbar from '@/components/Navbar.astro';
 import Footer from '@/components/Footer.astro';
 import ContactModal from '@/components/ContactModal.astro';
+import WhatsAppButton from '@/components/WhatsAppButton.astro';
 import { brand } from '@/data/site';
 
 interface Props {
@@ -30,6 +31,7 @@ const calNs = brand.calNamespace;
   </main>
   <Footer />
   <ContactModal />
+  <WhatsAppButton />
 
   <!-- Scroll reveal: toggles .is-visible on [data-reveal] elements -->
   <script>

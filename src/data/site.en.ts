@@ -25,7 +25,7 @@ export const brand = {
   ...esBrand,
   tagline:
     'Specialists in AI automation and custom software development. More leads, less manual work, and launches in days — not months. Get ahead of your competition.',
-  location: 'Barcelona, Spain · Remote worldwide',
+  location: 'Madrid, Spain · Guayaquil, Ecuador',
 };
 
 export const founder = {
@@ -46,7 +46,7 @@ export const nav: NavLink[] = [
   { label: 'Pricing', href: '/en/#planes' },
   { label: 'About', href: '/en/about' },
   { label: 'FAQ', href: '/en/faq' },
-  { label: 'Free audit', href: '/en/audit' },
+  { label: 'Free Audit', href: '/en/audit' },
 ];
 
 export const hero = {
@@ -352,7 +352,7 @@ export const footer = {
 
 export const ui = {
   defaultTitle: 'AI Automation and Custom Software Development | SolvyX',
-  nav: { cta: 'Book a call', open: 'Open menu', close: 'Close menu', skip: 'Skip to content', home: 'home' },
+  nav: { cta: 'Book a call', ctaShort: 'Book a call', open: 'Open menu', close: 'Close menu', skip: 'Skip to content', home: 'home' },
   marquee: 'Teams that trust us to build',
   heroUi: { selectHint: 'pick one or more', cta: 'Book your call', selectedPrefix: 'Ready to talk about:' },
   // Glass panels next to Solvy in the hero
@@ -443,6 +443,9 @@ export const ui = {
 };
 
 export const seo = {
+  homeTitle: 'AI Automation & Software · Madrid & Guayaquil | SolvyX',
+  homeDescription:
+    'AI automation and custom software in days, not months. Teams in Madrid and Guayaquil serving Spain, Latin America and beyond. Free AI Audit or 30-min call.',
   slogan: 'AI automation and custom software — in days, not months.',
   orgDescription:
     'Specialists in AI automation and custom software development. We automate business and marketing processes with artificial intelligence (ads integration, lead generation and nurturing), create AI multimedia, and build custom software, mobile apps, fintech wallets and blockchain — delivered in days, not months.',

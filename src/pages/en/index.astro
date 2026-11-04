@@ -9,11 +9,12 @@ import Packages from '@/components/sections/Packages.astro';
 import Testimonials from '@/components/sections/Testimonials.astro';
 import Booking from '@/components/sections/Booking.astro';
 import AuditCta from '@/components/sections/AuditCta.astro';
+import { seo } from '@/data/site.en';
 
 /* English landing — every section self-localizes via Astro.currentLocale. */
 ---
 
-<PublicLayout>
+<PublicLayout title={seo.homeTitle} description={seo.homeDescription}>
   <Hero />
   <TrustMarquee />
   <Services />

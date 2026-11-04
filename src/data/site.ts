@@ -108,7 +108,7 @@ export const brand = {
   domain: 'solvyxdigital.com',
   email: 'contact@solvyxdigital.com',
   phone: '+34 645 42 55 82',
-  location: 'Barcelona, España · Remote worldwide',
+  location: 'Madrid, España · Guayaquil, Ecuador',
   // Link público de Cal.com (página de reserva). Cámbialo si renombras el usuario.
   bookingUrl: 'https://cal.com/solvyxdigital/30min',
   // Solo el "handle/evento" de Cal.com (lo que va después de cal.com/).
@@ -146,7 +146,7 @@ export const nav: NavLink[] = [
   { label: 'Planes', href: '/#planes' },
   { label: 'Nosotros', href: '/nosotros' },
   { label: 'Preguntas', href: '/preguntas' },
-  { label: 'Auditoría gratis', href: '/auditoria' },
+  { label: 'Auditoría Gratis', href: '/auditoria' },
 ];
 
 /* Hero background video (optional). Leave `video` empty to keep the animated
@@ -495,7 +495,7 @@ export const finalCta = {
 /* UI strings de componentes compartidos (se traducen por idioma). */
 export const ui = {
   defaultTitle: 'Automatización con IA y Desarrollo de Software a Medida | SolvyX',
-  nav: { cta: 'Agendar llamada', open: 'Abrir menú', close: 'Cerrar menú', skip: 'Saltar al contenido', home: 'inicio' },
+  nav: { cta: 'Agendar llamada', ctaShort: 'Agendar', open: 'Abrir menú', close: 'Cerrar menú', skip: 'Saltar al contenido', home: 'inicio' },
   marquee: 'Equipos que confían en nosotros para construir',
   heroUi: { selectHint: 'selecciona uno o más', cta: 'Agenda tu llamada', selectedPrefix: 'Listo para hablar de:' },
   // Paneles de cristal junto a Solvy en el hero
@@ -588,6 +588,10 @@ export const ui = {
 
 /* Textos para datos estructurados / meta (por idioma). */
 export const seo = {
+  // Home <title> (≤60 chars) and meta description (≤155 chars, ends with a CTA).
+  homeTitle: 'Automatización con IA y Software · Madrid y Guayaquil | SolvyX',
+  homeDescription:
+    'Automatización con IA y software a medida en días, no meses. Equipo en Madrid y Guayaquil para España y Latinoamérica. Auditoría IA Gratis o llamada de 30 min.',
   slogan: 'Automatización con IA y software a medida — en días, no en meses.',
   orgDescription:
     'Especialistas en automatización con IA y desarrollo de software a medida. Automatizamos procesos de negocio y marketing con inteligencia artificial (conexión de ads, generación y nurturing de leads), creamos multimedia con IA, y construimos software a medida, apps móviles, wallets fintech y blockchain — entregado en días, no en meses.',

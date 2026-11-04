@@ -55,16 +55,24 @@ const jsonLd = {
         contactType: 'sales',
         email: brand.email,
         telephone: brand.phone,
-        areaServed: 'Worldwide',
+        areaServed: ['ES', 'EC', 'Latin America', 'Worldwide'],
         availableLanguage: ['es', 'en'],
       },
-      address: {
-        '@type': 'PostalAddress',
-        addressLocality: 'Barcelona',
-        addressRegion: 'Cataluña',
-        addressCountry: 'ES',
-      },
-      foundingLocation: { '@type': 'Place', name: 'Barcelona, España' },
+      // Two offices: Madrid (Spain) and Guayaquil (Ecuador).
+      address: [
+        {
+          '@type': 'PostalAddress',
+          addressLocality: 'Madrid',
+          addressRegion: 'Comunidad de Madrid',
+          addressCountry: 'ES',
+        },
+        {
+          '@type': 'PostalAddress',
+          addressLocality: 'Guayaquil',
+          addressRegion: 'Guayas',
+          addressCountry: 'EC',
+        },
+      ],
       founder: { '@id': `${origin}/#founder` },
     },
     {

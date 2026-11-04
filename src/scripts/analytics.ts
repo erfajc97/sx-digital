@@ -130,7 +130,7 @@ function wireClicks() {
         href: el.getAttribute('href'),
         data: { ...el.dataset },
         text: (el.textContent ?? '').replace(/\s+/g, ' ').trim(),
-        section: el.closest('section[id], header, footer, dialog')?.id || el.closest('header, footer, dialog')?.tagName.toLowerCase() || null,
+        section: el.closest('section[id], aside[id], header, footer, dialog')?.id || el.closest('header, footer, dialog')?.tagName.toLowerCase() || null,
         inNav: Boolean(el.closest('#site-header')),
         // Hero pills toggle on click; report the state they switch to.
         pressed: el.dataset.service !== undefined ? el.getAttribute('aria-pressed') !== 'true' : undefined,
