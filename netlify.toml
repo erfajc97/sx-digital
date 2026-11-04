@@ -6,3 +6,6 @@
 
 [build.environment]
   NODE_VERSION = "20"
+  # PostHog EU project token: public by design (it ships in the browser JS).
+  PUBLIC_POSTHOG_KEY = "phc_mCzyFYYg5ConXaiF7bxRxQkHGSNnApSiMiGags2TfiVX"
+  PUBLIC_POSTHOG_HOST = "https://eu.i.posthog.com"
