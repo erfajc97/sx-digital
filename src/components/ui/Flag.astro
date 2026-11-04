@@ -1,0 +1,47 @@
+---
+/* Small inline SVG flags for the language switcher. SVG (not emoji) because
+   Windows renders flag emoji as plain letters. Decorative: the switcher
+   already carries the language name / aria-label. */
+interface Props {
+  code: 'es' | 'en';
+  class?: string;
+}
+const { code, class: className = '' } = Astro.props;
+---
+
+{
+  code === 'es' ? (
+    <svg viewBox="0 0 30 20" class:list={['flag', className]} aria-hidden="true" focusable="false">
+      <rect width="30" height="20" fill="#AA151B" />
+      <rect y="5" width="30" height="10" fill="#F1BF00" />
+    </svg>
+  ) : (
+    <svg viewBox="0 0 60 30" preserveAspectRatio="xMidYMid slice" class:list={['flag', className]} aria-hidden="true" focusable="false">
+      <clipPath id="flag-uk-clip">
+        <path d="M0 0v30h60V0z" />
+      </clipPath>
+      <clipPath id="flag-uk-diag">
+        <path d="M30 15h30v15zv15H0zH0V0zV0h30z" />
+      </clipPath>
+      <g clip-path="url(#flag-uk-clip)">
+        <path d="M0 0v30h60V0z" fill="#012169" />
+        <path d="M0 0l60 30m0-30L0 30" stroke="#fff" stroke-width="6" />
+        <path d="M0 0l60 30m0-30L0 30" clip-path="url(#flag-uk-diag)" stroke="#C8102E" stroke-width="4" />
+        <path d="M30 0v30M0 15h60" stroke="#fff" stroke-width="10" />
+        <path d="M30 0v30M0 15h60" stroke="#C8102E" stroke-width="6" />
+      </g>
+    </svg>
+  )
+}
+
+<style>
+  .flag {
+    display: inline-block;
+    width: 1.25rem;
+    height: auto;
+    aspect-ratio: 3 / 2;
+    border-radius: 3px;
+    box-shadow: 0 0 0 1px oklch(1 0 0 / 0.25);
+    flex-shrink: 0;
+  }
+</style>

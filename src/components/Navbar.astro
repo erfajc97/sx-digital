@@ -1,5 +1,6 @@
 ---
 import Button from './ui/Button.astro';
+import Flag from './ui/Flag.astro';
 import { getDict, altPathFor, defaultLocale, type Locale } from '@/i18n';
 
 interface Props {
@@ -61,10 +62,7 @@ const switchLabel = otherLocale.toUpperCase();
         class="lang-pill press inline-flex items-center gap-1.5 rounded-full border px-3.5 py-2 text-sm font-semibold transition-colors duration-200"
         aria-label={otherLocale === 'en' ? 'Switch to English' : 'Cambiar a español'}
       >
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" class="size-4" aria-hidden="true">
-          <circle cx="12" cy="12" r="9" />
-          <path d="M3.5 12h17M12 3c2.5 2.4 3.8 5.5 3.8 9S14.5 18.6 12 21c-2.5-2.4-3.8-5.5-3.8-9S9.5 5.4 12 3Z" />
-        </svg>
+        <Flag code={otherLocale} />
         {switchLabel}
       </a>
       <Button href="#agenda" cal size="md" icon="arrow">{ui.nav.cta}</Button>
@@ -118,10 +116,7 @@ const switchLabel = otherLocale.toUpperCase();
           data-lang-switch={otherLocale}
           class="mobile-link flex items-center gap-2 rounded-xl px-4 py-3 text-lg text-ink transition-colors hover:bg-surface-2"
         >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" class="size-5 text-brand" aria-hidden="true">
-            <circle cx="12" cy="12" r="9" />
-            <path d="M3.5 12h17M12 3c2.5 2.4 3.8 5.5 3.8 9S14.5 18.6 12 21c-2.5-2.4-3.8-5.5-3.8-9S9.5 5.4 12 3Z" />
-          </svg>
+          <Flag code={otherLocale} class="!w-6" />
           {otherLocale === 'en' ? 'English' : 'Español'}
         </a>
       </li>
