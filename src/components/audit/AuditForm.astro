@@ -160,6 +160,8 @@ const paths = auditPaths[locale];
 </style>
 
 <script>
+  import { getAttribution, identify, track } from '@/scripts/analytics';
+
   const form = document.getElementById('audit-form') as HTMLFormElement | null;
   const errorBox = document.getElementById('audit-error');
   const submit = document.getElementById('audit-submit') as HTMLButtonElement | null;
@@ -216,15 +218,26 @@ const paths = auditPaths[locale];
     if (!form.reportValidity()) return;
 
     const data = Object.fromEntries(new FormData(form).entries());
+    track('audit_submitted', { sector: String(data.sector ?? '') });
     setBusy(true);
     try {
       const res = await fetch('/api/audit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({ ...data, consent: (form.elements.namedItem('consent') as HTMLInputElement).checked }),
+        body: JSON.stringify({
+          ...data,
+          consent: (form.elements.namedItem('consent') as HTMLInputElement).checked,
+          attribution: getAttribution(),
+        }),
       });
       const body = await res.json().catch(() => null);
       if (!body || !body.status) throw new Error('bad_response');
+      track('audit_result', {
+        status: String(body.status),
+        score: body.result?.puntuacion_web ?? -1,
+        field: String(body.field ?? ''),
+      });
+      if (body.status === 'ok' || body.status === 'partial') identify(String(data.email ?? ''), { source: 'audit' });
 
       if (body.status === 'ok' || body.status === 'partial') {
         try {

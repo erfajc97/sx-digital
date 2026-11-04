@@ -2,6 +2,7 @@
    same notification email the old Netlify Function sent. */
 import type { APIRoute } from 'astro';
 import { z } from 'zod';
+import { sanitizeAttribution } from '@/lib/analytics/attribution';
 import { hashIp } from '@/lib/leads/audit-pipeline';
 import { internalEmail } from '@/lib/leads/email-templates';
 import { config } from '@/lib/leads/env';
@@ -17,6 +18,7 @@ const ContactSchema = z.object({
   proyecto: z.string().trim().max(120).optional().default(''),
   mensaje: z.string().trim().max(4000).optional().default(''),
   company_site: z.string().max(500).optional().default(''), // honeypot
+  attribution: z.string().max(4000).optional(),
 });
 
 export const POST: APIRoute = async ({ request, clientAddress, site, currentLocale }) => {
@@ -46,7 +48,7 @@ export const POST: APIRoute = async ({ request, clientAddress, site, currentLoca
       company: d.empresa || null,
       message: d.mensaje || null,
       locale: currentLocale === 'en' ? 'en' : 'es',
-      meta: { proyecto: d.proyecto || null },
+      meta: { proyecto: d.proyecto || null, attribution: sanitizeAttribution(d.attribution) ?? null },
     });
   } catch (e) {
     console.error('[api/contact] saveLead failed', e);

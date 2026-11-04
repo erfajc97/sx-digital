@@ -5,9 +5,11 @@ import { defaultLocale, type Locale } from '@/i18n';
 /* Privacy policy (RGPD / LOPDGDD). Review with your legal advisor and add the
    controller's legal name + tax ID (NIF) before relying on it. */
 const locale = (Astro.currentLocale ?? defaultLocale) as Locale;
-const updated = '2026-11-04';
+const updated = '2026-11-05';
 
-const es = {
+type Section = { id?: string; h: string; p: string[] };
+
+const es: { eyebrow: string; title: string; updated: string; sections: Section[] } = {
   eyebrow: 'Legal',
   title: 'Política de privacidad',
   updated: `Última actualización: ${updated}`,
@@ -35,7 +37,16 @@ const es = {
     {
       h: 'Proveedores (encargados del tratamiento)',
       p: [
-        'Netlify (alojamiento web), Supabase (base de datos, UE), Anthropic (análisis con IA del contenido público de tu web), Resend (envío de emails), Slack (avisos internos al equipo) y Cal.com (reservas). Algunos pueden tratar datos fuera del EEE con las garantías adecuadas (cláusulas contractuales tipo / Data Privacy Framework).',
+        'Netlify (alojamiento web), Supabase (base de datos, UE), Anthropic (análisis con IA del contenido público de tu web), Resend (envío de emails), Slack (avisos internos al equipo), Cal.com (reservas) y PostHog (analítica web, servidores en la UE). Algunos pueden tratar datos fuera del EEE con las garantías adecuadas (cláusulas contractuales tipo / Data Privacy Framework).',
+      ],
+    },
+    {
+      id: 'cookies',
+      h: 'Cookies y analítica',
+      p: [
+        'Sin tu permiso solo medimos visitas de forma anónima, sin guardar nada en tu dispositivo: páginas vistas, clics en botones y hasta dónde haces scroll, para saber qué funciona.',
+        'Si aceptas en el aviso de cookies, PostHog guarda un identificador en tu navegador (cookie y localStorage, prefijo "ph_", hasta 12 meses) para reconocer tu visita y graba sesiones anonimizadas en las que los campos de los formularios siempre se ocultan. Si después envías un formulario, podemos asociar esa visita a tu solicitud.',
+        'También guardamos durante la visita (sessionStorage, se borra al cerrar la pestaña) de dónde llegaste —campaña o web de origen— y lo adjuntamos a tus solicitudes. Puedes cambiar tu elección en cualquier momento desde el enlace "Cookies" del pie de página.',
       ],
     },
     {
@@ -76,7 +87,16 @@ const en: typeof es = {
     {
       h: 'Service providers (processors)',
       p: [
-        'Netlify (hosting), Supabase (database, EU), Anthropic (AI analysis of your public website content), Resend (email delivery), Slack (internal team alerts) and Cal.com (bookings). Some may process data outside the EEA under appropriate safeguards (Standard Contractual Clauses / Data Privacy Framework).',
+        'Netlify (hosting), Supabase (database, EU), Anthropic (AI analysis of your public website content), Resend (email delivery), Slack (internal team alerts), Cal.com (bookings) and PostHog (web analytics, EU servers). Some may process data outside the EEA under appropriate safeguards (Standard Contractual Clauses / Data Privacy Framework).',
+      ],
+    },
+    {
+      id: 'cookies',
+      h: 'Cookies & analytics',
+      p: [
+        'Without your permission we only measure visits anonymously, storing nothing on your device: pages viewed, button clicks and scroll depth, so we know what works.',
+        'If you accept in the cookie notice, PostHog stores an identifier in your browser (cookie and localStorage, prefix "ph_", up to 12 months) to recognise your visit and records anonymised sessions in which form fields are always hidden. If you then submit a form, we may link that visit to your request.',
+        'During your visit we also keep (sessionStorage, cleared when you close the tab) where you came from — campaign or referring site — and attach it to your requests. You can change your choice at any time from the "Cookies" link in the footer.',
       ],
     },
     { h: 'Retention', p: ['For as long as the business relationship lasts or until you withdraw consent, and at most 24 months after our last contact. Anti-abuse records are deleted after 30 days.'] },
@@ -103,7 +123,7 @@ const c = locale === 'en' ? en : es;
     <div class="mt-10 flex flex-col gap-9">
       {
         c.sections.map((s) => (
-          <section class="flex flex-col gap-3">
+          <section id={s.id} class="flex scroll-mt-28 flex-col gap-3">
             <h2 class="font-display text-xl text-ink sm:text-2xl">{s.h}</h2>
             {s.p.map((para) => (
               <p class="leading-relaxed text-muted" style="max-width: 70ch;">

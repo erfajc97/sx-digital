@@ -169,6 +169,7 @@ const f = ui.modalUi;
 
 <script>
   import { contact } from '@/data/site';
+  import { getAttribution } from '@/scripts/analytics';
 
   const modal = document.getElementById('contact-modal') as HTMLDialogElement | null;
   const form = document.getElementById('contact-form') as HTMLFormElement | null;
@@ -209,6 +210,7 @@ const f = ui.modalUi;
   form?.addEventListener('submit', (e) => {
     e.preventDefault();
     const data = new FormData(form);
+    data.append('attribution', JSON.stringify(getAttribution()));
     const showSuccess = () => {
       form.classList.add('hidden');
       success?.classList.remove('hidden');

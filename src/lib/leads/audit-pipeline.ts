@@ -3,6 +3,7 @@
    saved still answers with a friendly message offering the call. */
 import { createHash } from 'node:crypto';
 import { z } from 'zod';
+import { sanitizeAttribution } from '../analytics/attribution';
 import { config } from './env';
 import { auditReportEmail, bookingLink } from './email-templates';
 import { LlmError } from './llm';
@@ -36,6 +37,8 @@ export const AuditInputSchema = z.object({
   locale: z.enum(['es', 'en']).default('es'),
   /** Honeypot — must stay empty. */
   company_site: z.string().max(500).optional().default(''),
+  /** UTM / referrer of the visit (see src/lib/analytics/attribution.ts). */
+  attribution: z.unknown().optional(),
 });
 export type AuditInput = z.infer<typeof AuditInputSchema>;
 
@@ -132,6 +135,7 @@ export async function runAudit(rawInput: unknown, deps: RunAuditDeps): Promise<A
       sector: input.sector,
       locale,
       consent: true,
+      meta: { attribution: sanitizeAttribution(input.attribution) ?? null },
     });
   } catch (e) {
     console.error('[audit] saveLead failed', e);

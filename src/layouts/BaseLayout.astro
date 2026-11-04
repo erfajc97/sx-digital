@@ -2,6 +2,7 @@
 import '@/styles/fonts.css';
 import '@/styles/global.css';
 import LangSuggest from '@/components/LangSuggest.astro';
+import CookieConsent from '@/components/CookieConsent.astro';
 import { getDict, altPathFor, defaultLocale, type Locale } from '@/i18n';
 
 interface Props {
@@ -161,5 +162,6 @@ const jsonLd = {
     </a>
     <slot />
     <LangSuggest />
+    <CookieConsent />
   </body>
 </html>

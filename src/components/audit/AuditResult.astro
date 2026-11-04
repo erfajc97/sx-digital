@@ -96,6 +96,8 @@ const copy = { result: c.result, services: c.services, bookingUrl: brand.booking
 <script type="application/json" id="audit-copy" set:html={JSON.stringify(copy)} />
 
 <script>
+  import { track } from '@/scripts/analytics';
+
   type Finding = { titulo: string; problema: string; impacto: string; solucion: string; servicio_solvyx: string };
   type Stored = {
     status: 'ok' | 'partial';
@@ -124,6 +126,9 @@ const copy = { result: c.result, services: c.services, bookingUrl: brand.booking
   const bookingHref = (stored: Stored) => {
     // Only ever link to cal.com, whatever is in storage.
     const u = new URL(copy.bookingUrl);
+    // Lets the Cal.com webhook attribute the booking to the audit.
+    u.searchParams.set('utm_source', 'solvyx_audit');
+    u.searchParams.set('utm_medium', 'audit_result');
     if (stored.email) u.searchParams.set('email', stored.email);
     if (stored.name) u.searchParams.set('name', stored.name);
     return u.toString();
@@ -135,6 +140,12 @@ const copy = { result: c.result, services: c.services, bookingUrl: brand.booking
     if (text !== undefined) n.textContent = text;
     return n;
   };
+
+  track('audit_result_view', {
+    status: data?.status ?? 'empty',
+    score: data?.result?.puntuacion_web ?? -1,
+    top_service: data?.result?.hallazgos?.[0]?.servicio_solvyx ?? '',
+  });
 
   if (data && (data.status === 'ok' || data.status === 'partial')) {
     $('audit-empty')?.classList.add('hidden');

@@ -19,6 +19,7 @@ hero en video, SEO/GEO completo y un único archivo de contenido.
 - [Editar el contenido](#editar-el-contenido)
 - [Imágenes y media](#imágenes-y-media)
 - [Captación de leads · Auditoría IA](#captación-de-leads--auditoría-ia)
+- [Medición y analítica](#medición-y-analítica)
 - [Deploy](#deploy)
 - [Estructura del proyecto](#estructura-del-proyecto)
 - [Sistema de diseño](#sistema-de-diseño)
@@ -36,6 +37,7 @@ hero en video, SEO/GEO completo y un único archivo de contenido.
 | Email | [Resend](https://resend.com) (dominio verificado + relay SMTP) |
 | Sitemap | `@astrojs/sitemap` |
 | Leads | Supabase · Claude (`@anthropic-ai/sdk`) · Slack · zod · vitest |
+| Analítica | PostHog (UE) con banner de consentimiento |
 
 ## Inicio rápido
 
@@ -187,6 +189,57 @@ equipo recibe un aviso para revisarlo a mano.
 En Supabase: tablas `leads` y `audits`, o la vista `hot_leads` (auditorías
 ordenadas por `lead_score`). Los avisos de Slack/email enlazan a la fila de la
 auditoría en Supabase Studio.
+
+## Medición y analítica
+
+Para saber qué hacen las visitas y qué canal trae clientes.
+
+| Pieza | Qué hace | Dónde |
+| --- | --- | --- |
+| PostHog (UE) | visitas, clics, embudos, mapas de calor, grabaciones | `src/scripts/analytics.ts` |
+| Banner de cookies | Aceptar / Rechazar con el mismo peso; se reabre desde "Cookies" en el pie | `src/components/CookieConsent.astro` |
+| Atribución | UTM, gclid/fbclid y web de origen de la visita → `leads.meta.attribution` | `src/lib/analytics/attribution.ts` |
+| Informes | vistas SQL por semana, canal y embudo de la auditoría | `supabase/migrations/20261105000000_lead_reporting.sql` |
+
+**Privacidad**: sin consentimiento PostHog funciona *sin cookies* (id en
+memoria, sin grabación de sesiones). Si aceptan, guarda un id persistente y graba
+sesiones con todos los campos de formulario ocultos; al rechazar se borran las
+cookies `ph_*`. Sin `PUBLIC_POSTHOG_KEY` no se carga nada y no aparece el banner.
+Se carga cuando el navegador está libre, así no frena la carga de la página.
+
+**Eventos** (además de páginas vistas y autocapture):
+
+| Evento | Cuándo |
+| --- | --- |
+| `audit_cta_click` | clic en cualquier enlace a la auditoría (con la sección) |
+| `audit_form_start` → `audit_submitted` → `audit_result` → `audit_result_view` | embudo de la auditoría (`status`, `score`, `top_service`) |
+| `booking_click` / `booking_completed` | clic en un CTA de Cal.com / reserva confirmada en el embed |
+| `contact_open` / `contact_submitted` | modal de contacto |
+| `whatsapp_click`, `phone_click`, `email_click`, `social_click` | métodos de contacto |
+| `service_selected` | pills de servicios del hero |
+| `scroll_depth` | 25 / 50 / 75 / 100 % |
+| `nav_click`, `lang_switch` | navegación |
+
+En desarrollo cada evento sale en la consola del navegador como `[track]`.
+Desde cualquier script: `import { track } from '@/scripts/analytics'` o
+`window.dispatchEvent(new CustomEvent('sx:track', { detail: { name, props } }))`.
+
+**Activarlo**
+1. Crea un proyecto en [PostHog](https://eu.posthog.com) (**región EU**).
+2. En Netlify añade `PUBLIC_POSTHOG_KEY` (`phc_…`) y, si hace falta,
+   `PUBLIC_POSTHOG_HOST`. Son variables de *build*: vuelve a desplegar.
+3. En PostHog crea el embudo `audit_cta_click → audit_submitted → audit_result →
+   booking_click` y activa *Heatmaps* y *Session replay*.
+4. Ejecuta la segunda migración de Supabase para las vistas
+   `leads_weekly`, `audit_funnel_weekly` (tasa de reserva tras la auditoría) y
+   `channel_performance` (qué canal trae leads que reservan).
+
+**Campañas**: etiqueta los enlaces con UTM
+(`?utm_source=instagram&utm_medium=social&utm_campaign=auditoria-nov`). Cada
+lead guarda el canal (`paid_search`, `paid_social`, `organic_search`,
+`ai_search`, `social`, `referral`, `email`, `direct`…). El CTA de reserva de los
+resultados lleva `utm_source=solvyx_audit`, así las reservas que vienen de la
+auditoría se identifican en el webhook de Cal.com.
 
 ## Deploy
 

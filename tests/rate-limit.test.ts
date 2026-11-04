@@ -80,6 +80,15 @@ describe('runAudit rate limits', () => {
     expect(store.audits[0].status).toBe('fetch_failed');
   });
 
+  it('stores the visit attribution with the lead (and drops junk keys)', async () => {
+    const s = services();
+    await runAudit(
+      { ...input('attr.example'), attribution: { utm_source: 'meta', channel: 'paid_social', evil: 'x' } },
+      { services: s, ip: '5.6.7.8', fetchOptions },
+    );
+    expect((s.store as MemoryLeadStore).leads[0].meta).toEqual({ attribution: { utm_source: 'meta', channel: 'paid_social' } });
+  });
+
   it('honeypot submissions store nothing', async () => {
     const s = services();
     await runAudit({ ...input('bot.example'), company_site: 'spam' }, { services: s, ip: '1.2.3.4', fetchOptions });

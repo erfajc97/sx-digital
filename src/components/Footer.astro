@@ -59,6 +59,18 @@ const { brand, footer, ui } = getDict(locale);
     >
       <p>© {new Date().getFullYear()} {brand.name}. {ui.footerUi.rights}</p>
       <ul class="flex flex-wrap gap-5">
+        <li>
+          <a href={locale === 'en' ? '/en/privacy' : '/privacidad'} class="transition-colors hover:text-ink">
+            {locale === 'en' ? 'Privacy' : 'Privacidad'}
+          </a>
+        </li>
+        {import.meta.env.PUBLIC_POSTHOG_KEY && (
+          <li>
+            <a href="#cookies" data-open-consent class="transition-colors hover:text-ink">
+              Cookies
+            </a>
+          </li>
+        )}
         {
           brand.social.map((s) => (
             <li>

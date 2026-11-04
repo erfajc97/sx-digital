@@ -1,6 +1,7 @@
 /* Cal.com webhook: signature check (HMAC-SHA256 of the raw body, hex, in the
    `x-cal-signature-256` header) and BOOKING_CREATED → LeadInput mapping. */
 import { createHmac, timingSafeEqual } from 'node:crypto';
+import { channelFor, sanitizeAttribution } from '../analytics/attribution';
 import type { LeadInput } from './types';
 
 export function signCalPayload(rawBody: string, secret: string) {
@@ -31,6 +32,12 @@ export function bookingToLead(body: unknown): LeadInput | null {
   const email = String(attendee.email ?? responses.email?.value ?? '').trim();
   if (!email) return null;
   const notes = responses.notes?.value ?? p.additionalNotes ?? p.description;
+  // Cal.com forwards booking-link query params (utm_*) as `metadata`/`tracking`.
+  const tracking = { ...((p.metadata as object) ?? {}), ...((p.tracking as object) ?? {}) };
+  const attribution = sanitizeAttribution(
+    Object.fromEntries(Object.entries(tracking).filter(([k, v]) => /^utm_|^gclid$|^fbclid$/.test(k) && typeof v === 'string')),
+  );
+  if (attribution) attribution.channel = channelFor(attribution);
   return {
     source: 'calcom',
     email,
@@ -45,6 +52,7 @@ export function bookingToLead(body: unknown): LeadInput | null {
       endTime: p.endTime ?? null,
       timeZone: attendee.timeZone ?? null,
       eventType: (p.type as string) ?? null,
+      attribution: attribution ?? null,
     },
   };
 }

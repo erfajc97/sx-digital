@@ -1,0 +1,111 @@
+---
+import { defaultLocale, type Locale } from '@/i18n';
+
+/* Boots analytics on every page and, when analytics is configured, asks for
+   consent (AEPD guidance: accept and reject equally prominent, no pre-ticked
+   choice, reopenable from the footer). */
+const locale = (Astro.currentLocale ?? defaultLocale) as Locale;
+const enabled = Boolean(import.meta.env.PUBLIC_POSTHOG_KEY);
+const c =
+  locale === 'en'
+    ? {
+        title: 'Cookies & analytics',
+        text: 'We measure visits anonymously to improve the site. With your permission we also use analytics cookies and record anonymised sessions (form fields are always hidden).',
+        accept: 'Accept',
+        reject: 'Reject',
+        more: 'Privacy policy',
+        href: '/en/privacy#cookies',
+      }
+    : {
+        title: 'Cookies y analítica',
+        text: 'Medimos las visitas de forma anónima para mejorar la web. Con tu permiso, además usamos cookies de analítica y grabamos sesiones anonimizadas (los campos de los formularios siempre se ocultan).',
+        accept: 'Aceptar',
+        reject: 'Rechazar',
+        more: 'Política de privacidad',
+        href: '/privacidad#cookies',
+      };
+---
+
+{
+  enabled && (
+    <div
+      id="cookie-consent"
+      class="cookie-consent fixed inset-x-3 bottom-3 z-[70] hidden sm:inset-x-auto sm:bottom-5 sm:right-5 sm:w-[25rem]"
+      role="dialog"
+      aria-live="polite"
+      aria-labelledby="cookie-title"
+    >
+      <div class="card-3d rounded-[var(--radius-xl2)] border border-border bg-canvas/95 p-5 backdrop-blur-md">
+        <p id="cookie-title" class="font-display text-base font-semibold text-ink">
+          {c.title}
+        </p>
+        <p class="mt-1.5 text-sm leading-relaxed text-muted">
+          {c.text}{' '}
+          <a href={c.href} class="font-medium text-brand underline-offset-2 hover:underline">
+            {c.more}
+          </a>
+        </p>
+        <div class="mt-4 grid grid-cols-2 gap-2">
+          <button
+            type="button"
+            data-consent="denied"
+            class="press rounded-full border border-border-strong px-4 py-2.5 text-sm font-semibold text-ink hover:bg-surface-2"
+          >
+            {c.reject}
+          </button>
+          <button
+            type="button"
+            data-consent="granted"
+            class="press rounded-full border border-border-strong px-4 py-2.5 text-sm font-semibold text-ink hover:bg-surface-2"
+          >
+            {c.accept}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+<script>
+  import { analyticsEnabled, getConsent, initAnalytics, setConsent } from '@/scripts/analytics';
+
+  initAnalytics();
+
+  const box = document.getElementById('cookie-consent');
+  const show = () => box?.classList.remove('hidden');
+  const hide = () => box?.classList.add('hidden');
+
+  if (analyticsEnabled && box) {
+    if (getConsent() === null) show();
+    box.querySelectorAll<HTMLButtonElement>('[data-consent]').forEach((b) =>
+      b.addEventListener('click', () => {
+        setConsent(b.dataset.consent === 'granted' ? 'granted' : 'denied');
+        hide();
+      }),
+    );
+    // Footer "Cookies" link reopens the choice.
+    document.addEventListener('click', (e) => {
+      const t = (e.target as Element | null)?.closest?.('[data-open-consent]');
+      if (!t) return;
+      e.preventDefault();
+      show();
+    });
+  }
+</script>
+
+<style>
+  .cookie-consent:not(.hidden) {
+    animation: consent-in 0.35s var(--ease-snappy, ease-out);
+  }
+  @keyframes consent-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cookie-consent:not(.hidden) {
+      animation: none;
+    }
+  }
+</style>
