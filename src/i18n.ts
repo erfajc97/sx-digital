@@ -18,6 +18,9 @@ export const routePairs: Record<string, string> = {
   '/nosotros': '/en/about',
   '/preguntas': '/en/faq',
   '/agendar': '/en/book',
+  '/auditoria': '/en/audit',
+  '/auditoria/resultado': '/en/audit/result',
+  '/privacidad': '/en/privacy',
 };
 
 const normalize = (p: string) => (p !== '/' && p.endsWith('/') ? p.slice(0, -1) : p);

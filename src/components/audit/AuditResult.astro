@@ -1,0 +1,187 @@
+---
+import Icon from '@/components/ui/Icon.astro';
+import { getAuditCopy, auditPaths } from '@/data/audit';
+import { brand } from '@/data/site';
+import { defaultLocale, type Locale } from '@/i18n';
+
+/* Static page; the result comes from sessionStorage (set by AuditForm), so
+   nothing personal is ever in the URL or cached HTML. All model text is
+   inserted with textContent. */
+const locale = (Astro.currentLocale ?? defaultLocale) as Locale;
+const c = getAuditCopy(locale);
+const paths = auditPaths[locale];
+const copy = { result: c.result, services: c.services, bookingUrl: brand.bookingUrl };
+---
+
+<section class="relative overflow-hidden bg-surface pb-[var(--spacing-section)] pt-32 sm:pt-36">
+  <div class="bg-grid pointer-events-none absolute inset-0 opacity-60" aria-hidden="true"></div>
+  <div class="relative mx-auto max-w-[960px] px-4 sm:px-6">
+    <!-- Full result -->
+    <div id="audit-ok" class="hidden flex-col gap-10">
+      <div class="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+        <div class="flex max-w-xl flex-col gap-3">
+          <span class="inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.18em] text-brand">
+            <span class="h-px w-6 bg-brand"></span>
+            {c.result.eyebrow}
+          </span>
+          <h1 id="audit-business" class="text-[clamp(2rem,4.6vw,3.2rem)] leading-[1.05] text-ink"></h1>
+          <p id="audit-url" class="break-all text-muted"></p>
+        </div>
+        <div class="card-3d flex items-center gap-4 rounded-[var(--radius-xl2)] border border-border bg-canvas px-6 py-5">
+          <div class="relative size-20 shrink-0">
+            <svg viewBox="0 0 36 36" class="size-20 -rotate-90" aria-hidden="true">
+              <circle cx="18" cy="18" r="15.9" fill="none" stroke="var(--color-border)" stroke-width="3"></circle>
+              <circle id="audit-ring" cx="18" cy="18" r="15.9" fill="none" stroke="var(--color-brand)" stroke-width="3" stroke-linecap="round" stroke-dasharray="0 100"></circle>
+            </svg>
+            <span id="audit-score" class="absolute inset-0 grid place-items-center font-display text-2xl font-semibold text-ink"></span>
+          </div>
+          <div>
+            <p class="text-sm text-muted">{c.result.score}</p>
+            <p class="font-display text-lg text-ink"><span id="audit-score-text"></span>/100</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-4">
+        <h2 class="font-display text-xl text-ink sm:text-2xl">{c.result.top}</h2>
+        <ol id="audit-findings" class="grid gap-4"></ol>
+      </div>
+
+      <p id="audit-email-note" class="flex items-center gap-2 text-sm text-muted">
+        <Icon name="mail" class="size-4 shrink-0 text-brand" />
+        <span></span>
+      </p>
+    </div>
+
+    <!-- Partial: lead saved, analysis unavailable -->
+    <div id="audit-partial" class="hidden max-w-2xl flex-col gap-4">
+      <span class="inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.18em] text-brand">
+        <span class="h-px w-6 bg-brand"></span>
+        {c.result.eyebrow}
+      </span>
+      <h1 class="text-[clamp(2rem,4.6vw,3.2rem)] leading-[1.05] text-ink">{c.result.partialTitle}</h1>
+      <p id="audit-partial-msg" class="text-lg leading-relaxed text-muted"></p>
+    </div>
+
+    <!-- Nothing stored -->
+    <div id="audit-empty" class="flex max-w-xl flex-col gap-5">
+      <h1 class="text-[clamp(1.8rem,4vw,2.6rem)] leading-[1.1] text-ink">{c.result.empty}</h1>
+      <a href={paths.form} class="btn-3d inline-flex w-fit items-center gap-2 rounded-full btn-neon px-6 py-3 font-semibold">
+        {c.result.emptyCta}
+        <Icon name="arrow" class="size-4" />
+      </a>
+    </div>
+
+    <!-- CTA (shown for ok + partial) -->
+    <div id="audit-cta" class="mt-12 hidden">
+      <div class="relative overflow-hidden rounded-[var(--radius-xl2)] panel-neon px-6 py-12 sm:px-12">
+        <div class="relative flex flex-col items-start gap-5 sm:flex-row sm:items-center sm:justify-between">
+          <div class="max-w-lg">
+            <h2 class="text-[clamp(1.6rem,3.4vw,2.3rem)] leading-[1.1] text-white">{c.result.ctaTitle}</h2>
+            <p class="mt-2 leading-relaxed text-white/85">{c.result.ctaText}</p>
+          </div>
+          <a id="audit-book" href={brand.bookingUrl} class="btn-3d inline-flex shrink-0 items-center gap-2 rounded-full bg-ink px-7 py-3.5 font-semibold text-canvas hover:bg-ink-soft">
+            {c.result.cta}
+            <Icon name="arrow" class="size-4" />
+          </a>
+        </div>
+      </div>
+      <p class="mt-6 text-center text-sm">
+        <a href={paths.form} class="text-muted underline-offset-2 hover:text-ink hover:underline">{c.result.again}</a>
+      </p>
+    </div>
+  </div>
+</section>
+
+<script type="application/json" id="audit-copy" set:html={JSON.stringify(copy)} />
+
+<script>
+  type Finding = { titulo: string; problema: string; impacto: string; solucion: string; servicio_solvyx: string };
+  type Stored = {
+    status: 'ok' | 'partial';
+    message?: string;
+    bookingUrl?: string;
+    email?: string;
+    name?: string;
+    url?: string;
+    result?: { negocio_detectado: string; puntuacion_web: number; hallazgos: Finding[] };
+  };
+
+  const copy = JSON.parse(document.getElementById('audit-copy')?.textContent || '{}');
+  let data: Stored | null = null;
+  try {
+    data = JSON.parse(sessionStorage.getItem('sx-audit-result') || 'null');
+  } catch {
+    data = null;
+  }
+
+  const $ = (id: string) => document.getElementById(id);
+  const show = (id: string) => {
+    $(id)?.classList.remove('hidden');
+    $(id)?.classList.add('flex');
+  };
+
+  const bookingHref = (stored: Stored) => {
+    // Only ever link to cal.com, whatever is in storage.
+    const u = new URL(copy.bookingUrl);
+    if (stored.email) u.searchParams.set('email', stored.email);
+    if (stored.name) u.searchParams.set('name', stored.name);
+    return u.toString();
+  };
+
+  const el = (tag: string, cls: string, text?: string) => {
+    const n = document.createElement(tag);
+    n.className = cls;
+    if (text !== undefined) n.textContent = text;
+    return n;
+  };
+
+  if (data && (data.status === 'ok' || data.status === 'partial')) {
+    $('audit-empty')?.classList.add('hidden');
+    $('audit-empty')?.classList.remove('flex');
+    const book = $('audit-book') as HTMLAnchorElement | null;
+    if (book) book.href = bookingHref(data);
+    $('audit-cta')?.classList.remove('hidden');
+
+    if (data.status === 'ok' && data.result) {
+      const r = data.result;
+      show('audit-ok');
+      $('audit-business')!.textContent = r.negocio_detectado;
+      $('audit-url')!.textContent = data.url ?? '';
+      const score = Math.max(0, Math.min(100, Math.round(Number(r.puntuacion_web) || 0)));
+      $('audit-score')!.textContent = String(score);
+      $('audit-score-text')!.textContent = String(score);
+      const ring = $('audit-ring');
+      ring?.setAttribute('stroke-dasharray', `${score} 100`);
+      if (score < 50) ring?.setAttribute('stroke', 'var(--color-spark)');
+      else if (score >= 75) ring?.setAttribute('stroke', 'var(--color-signal)');
+
+      const list = $('audit-findings');
+      r.hallazgos.slice(0, 3).forEach((h, i) => {
+        const li = el('li', 'card-3d flex flex-col gap-3 rounded-[var(--radius-xl2)] border border-border bg-canvas p-6');
+        const head = el('div', 'flex flex-wrap items-center gap-3');
+        head.append(
+          el('span', 'grid size-8 place-items-center rounded-full bg-brand-soft font-display text-sm font-semibold text-brand', String(i + 1)),
+          el('span', 'rounded-full border border-border px-3 py-1 text-xs font-medium uppercase tracking-[0.12em] text-muted', copy.services[h.servicio_solvyx] ?? h.servicio_solvyx),
+        );
+        li.append(head, el('h3', 'font-display text-lg text-ink sm:text-xl', h.titulo));
+        for (const [label, value] of [
+          [copy.result.problem, h.problema],
+          [copy.result.impact, h.impacto],
+          [copy.result.solution, h.solucion],
+        ]) {
+          const p = el('p', 'leading-relaxed text-muted');
+          p.append(el('strong', 'font-medium text-ink', `${label}: `), document.createTextNode(value));
+          li.append(p);
+        }
+        list?.append(li);
+      });
+
+      const note = $('audit-email-note')?.querySelector('span');
+      if (note) note.textContent = `${copy.result.emailNote} ${data.email ?? ''}`;
+    } else {
+      show('audit-partial');
+      $('audit-partial-msg')!.textContent = data.message ?? '';
+    }
+  }
+</script>

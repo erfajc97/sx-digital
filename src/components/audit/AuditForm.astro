@@ -1,0 +1,245 @@
+---
+import Icon from '@/components/ui/Icon.astro';
+import { getAuditCopy, auditPaths } from '@/data/audit';
+import { SECTORES } from '@/lib/leads/audit-pipeline';
+import { defaultLocale, type Locale } from '@/i18n';
+
+const locale = (Astro.currentLocale ?? defaultLocale) as Locale;
+const c = getAuditCopy(locale);
+const paths = auditPaths[locale];
+---
+
+<section class="relative overflow-hidden bg-surface pb-[var(--spacing-section)] pt-32 sm:pt-36">
+  <div class="bg-grid pointer-events-none absolute inset-0 opacity-60" aria-hidden="true"></div>
+  <div class="relative mx-auto grid max-w-[1240px] gap-12 px-4 sm:px-6 lg:grid-cols-[1fr_minmax(0,32rem)] lg:items-center">
+    <!-- Copy -->
+    <div data-reveal class="flex max-w-xl flex-col gap-5">
+      <span class="inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.18em] text-brand">
+        <span class="h-px w-6 bg-brand"></span>
+        {c.hero.eyebrow}
+      </span>
+      <h1 class="text-[clamp(2.2rem,5vw,3.6rem)] leading-[1.04] text-ink">{c.hero.title}</h1>
+      <p class="text-lg leading-relaxed text-muted" style="max-width: 54ch;">{c.hero.lead}</p>
+      <ul class="mt-2 flex flex-col gap-3">
+        {
+          c.hero.bullets.map((b) => (
+            <li class="flex items-center gap-3 text-ink-soft">
+              <span class="grid size-7 shrink-0 place-items-center rounded-full bg-brand-soft text-brand">
+                <Icon name="check" class="size-4" />
+              </span>
+              {b}
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <!-- Form card -->
+    <div data-reveal class="card-3d relative rounded-[var(--radius-xl2)] border border-border bg-canvas p-6 sm:p-8">
+      <form id="audit-form" class="flex flex-col gap-4" novalidate data-result-path={paths.result} data-locale={locale}>
+        <input type="hidden" name="locale" value={locale} />
+
+        <label class="flex flex-col gap-1.5">
+          <span class="text-sm font-medium text-ink">{c.form.url}</span>
+          <input name="url" type="text" inputmode="url" autocomplete="url" required placeholder={c.form.urlPh} class="audit-field" maxlength="2048" />
+        </label>
+
+        <div class="grid gap-4 sm:grid-cols-2">
+          <label class="flex flex-col gap-1.5">
+            <span class="text-sm font-medium text-ink">{c.form.name}</span>
+            <input name="name" type="text" autocomplete="name" required minlength="2" maxlength="100" placeholder={c.form.namePh} class="audit-field" />
+          </label>
+          <label class="flex flex-col gap-1.5">
+            <span class="text-sm font-medium text-ink">{c.form.email}</span>
+            <input name="email" type="email" autocomplete="email" required maxlength="254" placeholder={c.form.emailPh} class="audit-field" />
+          </label>
+        </div>
+
+        <label class="flex flex-col gap-1.5">
+          <span class="text-sm font-medium text-ink">{c.form.sector}</span>
+          <select name="sector" required class="audit-field">
+            <option value="" disabled selected>{c.form.sectorPh}</option>
+            {SECTORES.map((s) => <option value={s}>{c.sectors[s]}</option>)}
+          </select>
+        </label>
+
+        <!-- Honeypot: hidden from people, tempting for bots -->
+        <div class="audit-hp" aria-hidden="true">
+          <label>
+            {c.form.honeypot}
+            <input name="company_site" type="text" tabindex="-1" autocomplete="off" />
+          </label>
+        </div>
+
+        <label class="flex items-start gap-3 text-sm leading-relaxed text-muted">
+          <input name="consent" type="checkbox" required aria-labelledby="audit-consent-text" class="mt-1 size-4 shrink-0 accent-[var(--color-brand)]" />
+          <span id="audit-consent-text">
+            {c.form.consentPre}
+            <a href={paths.privacy} target="_blank" class="font-medium text-brand underline-offset-2 hover:underline">{c.form.consentLink}</a>.
+          </span>
+        </label>
+
+        <p id="audit-error" class="hidden rounded-xl border border-[var(--color-spark)]/40 bg-[var(--color-spark)]/10 px-4 py-3 text-sm text-ink" role="alert"></p>
+
+        <button
+          type="submit"
+          id="audit-submit"
+          class="btn-3d mt-1 inline-flex items-center justify-center gap-2 rounded-full btn-neon px-6 py-3.5 text-base font-semibold disabled:cursor-wait disabled:opacity-80"
+        >
+          <span data-label>{c.form.submit}</span>
+          <Icon name="arrow" class="size-4" />
+        </button>
+
+        <ol id="audit-progress" class="hidden flex-col gap-2 pt-1 text-sm text-muted" aria-live="polite">
+          {
+            c.form.steps.map((s, i) => (
+              <li class="audit-step flex items-center gap-2" data-step={i}>
+                <span class="audit-dot size-2 rounded-full bg-border-strong" />
+                {s}
+              </li>
+            ))
+          }
+        </ol>
+      </form>
+    </div>
+  </div>
+</section>
+
+<style>
+  .audit-field {
+    width: 100%;
+    border-radius: 0.75rem;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    padding: 0.7rem 0.9rem;
+    font-size: 1rem;
+    color: var(--color-ink);
+    transition:
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+  .audit-field::placeholder {
+    color: var(--color-muted);
+  }
+  .audit-field:focus {
+    outline: none;
+    border-color: var(--color-brand);
+    box-shadow: 0 0 0 3px var(--color-brand-ring);
+  }
+  .audit-field[aria-invalid='true'] {
+    border-color: var(--color-spark);
+  }
+  .audit-hp {
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+  .audit-step.is-active {
+    color: var(--color-ink);
+  }
+  .audit-step.is-active .audit-dot {
+    background: var(--color-brand);
+    box-shadow: 0 0 0 4px var(--color-brand-ring);
+    animation: audit-pulse 1s ease-in-out infinite;
+  }
+  .audit-step.is-done .audit-dot {
+    background: var(--color-signal);
+  }
+  @keyframes audit-pulse {
+    50% {
+      box-shadow: 0 0 0 1px var(--color-brand-ring);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .audit-step.is-active .audit-dot {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  const form = document.getElementById('audit-form') as HTMLFormElement | null;
+  const errorBox = document.getElementById('audit-error');
+  const submit = document.getElementById('audit-submit') as HTMLButtonElement | null;
+  const progress = document.getElementById('audit-progress');
+
+  const KEY = 'sx-audit-result';
+  const loadingLabel = form?.dataset.locale === 'en' ? 'Analysing your website…' : 'Analizando tu web…';
+
+  const showError = (msg: string, field?: string) => {
+    if (!errorBox) return;
+    errorBox.textContent = msg;
+    errorBox.classList.remove('hidden');
+    form?.querySelectorAll('[aria-invalid]').forEach((el) => el.removeAttribute('aria-invalid'));
+    if (field) {
+      const el = form?.querySelector<HTMLElement>(`[name="${field}"]`);
+      el?.setAttribute('aria-invalid', 'true');
+      el?.focus();
+    }
+  };
+
+  let timer: number | undefined;
+  const setBusy = (busy: boolean) => {
+    if (!submit || !progress) return;
+    submit.disabled = busy;
+    const label = submit.querySelector('[data-label]');
+    if (label) {
+      if (busy) {
+        label.setAttribute('data-original', label.textContent ?? '');
+        label.textContent = loadingLabel;
+      } else if (label.getAttribute('data-original')) {
+        label.textContent = label.getAttribute('data-original');
+      }
+    }
+    progress.classList.toggle('hidden', !busy);
+    progress.classList.toggle('flex', busy);
+    const steps = [...progress.querySelectorAll<HTMLElement>('.audit-step')];
+    window.clearInterval(timer);
+    steps.forEach((s) => s.classList.remove('is-active', 'is-done'));
+    if (!busy) return;
+    let i = 0;
+    steps[0]?.classList.add('is-active');
+    // Rough pacing of the real pipeline: fetch (≤8 s) → signals → AI → email.
+    timer = window.setInterval(() => {
+      if (i >= steps.length - 1) return;
+      steps[i].classList.replace('is-active', 'is-done');
+      i++;
+      steps[i].classList.add('is-active');
+    }, 4500);
+  };
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    errorBox?.classList.add('hidden');
+    if (!form.reportValidity()) return;
+
+    const data = Object.fromEntries(new FormData(form).entries());
+    setBusy(true);
+    try {
+      const res = await fetch('/api/audit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({ ...data, consent: (form.elements.namedItem('consent') as HTMLInputElement).checked }),
+      });
+      const body = await res.json().catch(() => null);
+      if (!body || !body.status) throw new Error('bad_response');
+
+      if (body.status === 'ok' || body.status === 'partial') {
+        try {
+          sessionStorage.setItem(KEY, JSON.stringify({ ...body, email: data.email, name: data.name, url: data.url }));
+        } catch {
+          /* private mode: the result page shows the fallback */
+        }
+        window.location.href = form.dataset.resultPath ?? '/auditoria/resultado';
+        return;
+      }
+      setBusy(false);
+      showError(body.message, body.field || undefined);
+    } catch {
+      setBusy(false);
+      showError(form.dataset.locale === 'en' ? "We couldn't send your request. Check your connection and try again." : 'No hemos podido enviar la solicitud. Revisa tu conexión e inténtalo de nuevo.');
+    }
+  });
+</script>

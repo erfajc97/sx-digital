@@ -31,3 +31,5 @@ _assets-src/
 
 # windows bash crash dumps
 *.stackdump
+.netlify/
+.env.local

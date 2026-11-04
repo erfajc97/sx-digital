@@ -7,12 +7,14 @@ import { getDict, altPathFor, defaultLocale, type Locale } from '@/i18n';
 interface Props {
   title?: string;
   description?: string;
+  /** Keep the page out of search results (e.g. per-visitor result pages). */
+  noindex?: boolean;
 }
 
 const locale = (Astro.currentLocale ?? defaultLocale) as Locale;
 const { brand, services, founder, ui, seo } = getDict(locale);
 
-const { title = ui.defaultTitle, description = brand.tagline } = Astro.props;
+const { title = ui.defaultTitle, description = brand.tagline, noindex = false } = Astro.props;
 
 const origin = Astro.site ? Astro.site.origin : `https://${brand.domain}`;
 const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : Astro.url.pathname;
@@ -119,7 +121,7 @@ const jsonLd = {
     {enHref && <link rel="alternate" hreflang="en" href={enHref} />}
     {esHref && <link rel="alternate" hreflang="x-default" href={esHref} />}
     <meta name="generator" content={Astro.generator} />
-    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="robots" content={noindex ? 'noindex, follow' : 'index, follow, max-image-preview:large'} />
 
     <title>{title}</title>
     <meta name="description" content={description} />

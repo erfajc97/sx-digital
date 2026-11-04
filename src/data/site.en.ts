@@ -46,6 +46,7 @@ export const nav: NavLink[] = [
   { label: 'Pricing', href: '/en/#planes' },
   { label: 'About', href: '/en/about' },
   { label: 'FAQ', href: '/en/faq' },
+  { label: 'Free audit', href: '/en/audit' },
 ];
 
 export const hero = {
@@ -72,7 +73,7 @@ export const hero = {
 };
 
 export const contact = {
-  formEndpoint: '/.netlify/functions/contact',
+  formEndpoint: '/api/contact',
   projectTypes: ['AI Automation', 'Marketing & Ads', 'Web / App', 'Fintech / Blockchain', 'AI Multimedia', 'Other'],
   modal: {
     title: "Let's talk about your project",

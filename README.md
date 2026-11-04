@@ -18,7 +18,7 @@ hero en video, SEO/GEO completo y un único archivo de contenido.
 - [Inicio rápido](#inicio-rápido)
 - [Editar el contenido](#editar-el-contenido)
 - [Imágenes y media](#imágenes-y-media)
-- [Formulario de contacto](#formulario-de-contacto)
+- [Captación de leads · Auditoría IA](#captación-de-leads--auditoría-ia)
 - [Deploy](#deploy)
 - [Estructura del proyecto](#estructura-del-proyecto)
 - [Sistema de diseño](#sistema-de-diseño)
@@ -32,9 +32,10 @@ hero en video, SEO/GEO completo y un único archivo de contenido.
 | Estilos | [Tailwind CSS v4](https://tailwindcss.com) (tokens en OKLCH vía `@theme`) |
 | Lenguaje | TypeScript |
 | Gestor de paquetes | pnpm |
-| Hosting | Netlify (build + Functions v2) |
+| Hosting | Netlify (estático + `/api/*` como Function vía `@astrojs/netlify`) |
 | Email | [Resend](https://resend.com) (dominio verificado + relay SMTP) |
 | Sitemap | `@astrojs/sitemap` |
+| Leads | Supabase · Claude (`@anthropic-ai/sdk`) · Slack · zod · vitest |
 
 ## Inicio rápido
 
@@ -98,28 +99,100 @@ En `/public`: `logo-3d.png` (marca), `favicon-16x16/32x32.png` y
 `apple-touch-icon.png`. Al reemplazarlos, sube el parámetro de caché
 (`?v=N`) en `src/layouts/BaseLayout.astro` para forzar la actualización.
 
-## Formulario de contacto
+## Captación de leads · Auditoría IA
 
-El modal de contacto hace POST a una **Netlify Function** que reenvía el lead
-por Resend:
-
-```
-netlify/functions/contact.mjs   → api.resend.com/emails → bandeja del negocio
-```
-
-Variable de entorno requerida en Netlify:
+Herramienta "Auditoría IA gratis" (`/auditoria` · `/en/audit`) + pipeline único
+de leads para la auditoría, el formulario de contacto y las reservas de Cal.com.
 
 ```
-RESEND_API_KEY=re_********************
+Formulario /auditoria ──► POST /api/audit
+                            ├─ zod + honeypot + rate limit (3/h por IP · 5/día por dominio)
+                            ├─ guarda lead (Supabase · leads, source=audit)
+                            ├─ safeFetch (SSRF-safe, 8 s, 2 MB, ≤3 redirecciones)
+                            ├─ extractSignals (sin IA: SEO, contacto, reservas/pagos, schema, OG…)
+                            ├─ Claude → JSON validado con zod
+                            ├─ guarda auditoría (audits)
+                            ├─ email del informe completo (Resend)
+                            └─ lead_score ≥ 70 → Slack + contact@solvyxdigital.com
+                         ◄── solo los 3 hallazgos principales + puntuación
+ContactModal ───────────► POST /api/contact        (leads, source=contact + email al buzón)
+Cal.com BOOKING_CREATED ► POST /api/webhooks/cal   (firma HMAC, leads, source=calcom)
 ```
 
-Sin la key, la función responde `500` (no se filtra ningún secreto al cliente).
+Si la web no carga o la IA falla, el lead **se guarda igualmente** y el usuario
+ve un mensaje amable con el CTA a la llamada.
+
+### Arquitectura
+
+- `output: 'static'` + adaptador `@astrojs/netlify`: todas las páginas siguen
+  siendo HTML estático; solo `src/pages/api/**` (`prerender = false`) se
+  despliega como Netlify Function.
+- `src/lib/leads/` — lógica de servidor, cada servicio detrás de una interfaz
+  (`ILLM`, `IEmail`, `INotifier`, `ILeadStore`, `IRateLimiter` en `types.ts`).
+  `services.ts` usa la implementación real si existe la clave y un **mock**
+  (consola / memoria / informe basado en reglas) si no.
+- `src/components/audit/` — formulario y página de resultados (el resultado
+  viaja en `sessionStorage`, nunca en la URL).
+- `supabase/migrations/` — tablas `leads`, `audits`, `rate_limit_hits` con RLS
+  activado y sin políticas: solo la `service_role` del servidor accede.
+
+### Probar en local
+
+```bash
+pnpm install
+cp .env.example .env     # opcional: sin claves todo funciona en modo mock
+pnpm dev                 # http://localhost:4321/auditoria
+pnpm test                # vitest: señales, SSRF, JSON de la IA, rate limit, Cal.com
+```
+
+En modo mock los emails, avisos y leads se imprimen en la consola de `pnpm dev`
+y el informe lo genera un analizador por reglas (marcado `[MOCK]`). Añade solo
+`ANTHROPIC_API_KEY` para probar el análisis real con Claude.
+
+Prueba rápida del endpoint:
+
+```bash
+curl -X POST http://localhost:4321/api/audit -H "Content-Type: application/json" \
+  -d '{"url":"example.com","name":"Ana","email":"ana@example.com","sector":"otro","consent":true}'
+```
+
+> En Windows, `pnpm build` termina con `EPERM: operation not permitted, symlink`
+> al empaquetar la función: Windows no deja crear symlinks sin el *Modo
+> desarrollador* (Configuración → Sistema → Para programadores). Las páginas se
+> generan bien y en Netlify (Linux) el build completo funciona.
+
+### Desplegar en Netlify
+
+1. **Supabase**: crea el proyecto (región UE), abre *SQL Editor* y ejecuta
+   `supabase/migrations/20261104000000_leads_audits.sql` (o `supabase db push`).
+   Activa la extensión `pg_cron` antes si quieres el borrado automático de los
+   registros anti-abuso a los 30 días (lo indica la política de privacidad).
+2. **Netlify → Site configuration → Environment variables** (ver `.env.example`):
+   `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL`, `SUPABASE_URL`, `SUPABASE_SERVICE_KEY`,
+   `RESEND_API_KEY`, `SLACK_WEBHOOK_URL`, `CALCOM_WEBHOOK_SECRET`, `IP_HASH_SALT`.
+3. **Cal.com → Settings → Developer → Webhooks**: URL
+   `https://solvyxdigital.com/api/webhooks/cal`, evento `BOOKING_CREATED` y el
+   mismo secreto que `CALCOM_WEBHOOK_SECRET`.
+4. Push a `main` → Netlify construye y publica.
+
+**Tiempo límite**: las funciones síncronas de Netlify cortan a ~10–30 s según el
+plan. `/api/audit` trabaja con un presupuesto (`AUDIT_BUDGET_MS`, 24 s por
+defecto): descarga ≤ 8 s y la IA usa el resto menos un margen. Si tu plan corta
+a 10 s, baja `AUDIT_BUDGET_MS` a `9000` y usa `ANTHROPIC_MODEL=claude-haiku-5-5`.
+Si la IA no llega a tiempo, el lead queda guardado (`status = llm_failed`) y el
+equipo recibe un aviso para revisarlo a mano.
+
+### Ver los leads
+
+En Supabase: tablas `leads` y `audits`, o la vista `hot_leads` (auditorías
+ordenadas por `lead_score`). Los avisos de Slack/email enlazan a la fila de la
+auditoría en Supabase Studio.
 
 ## Deploy
 
 `netlify.toml` ya define el build (`pnpm build` → `dist`) y la carpeta de
-funciones. Cada push a `main` despliega automáticamente. Variables a configurar
-en el panel de Netlify: `RESEND_API_KEY` (y `NODE_VERSION=20`).
+adaptador `@astrojs/netlify`. Cada push a `main` despliega automáticamente.
+Variables: ver [Desplegar en Netlify](#desplegar-en-netlify) y `.env.example`.
 
 ## Estructura del proyecto
 

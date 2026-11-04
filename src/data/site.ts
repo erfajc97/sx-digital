@@ -146,6 +146,7 @@ export const nav: NavLink[] = [
   { label: 'Planes', href: '/#planes' },
   { label: 'Nosotros', href: '/nosotros' },
   { label: 'Preguntas', href: '/preguntas' },
+  { label: 'Auditoría gratis', href: '/auditoria' },
 ];
 
 /* Hero background video (optional). Leave `video` empty to keep the animated
@@ -208,7 +209,7 @@ export const hero = {
    leads de verdad, pon aquí un endpoint de Formspree (https://formspree.io)
    o tu propia API y el formulario hará POST ahí. */
 export const contact = {
-  formEndpoint: '/.netlify/functions/contact',
+  formEndpoint: '/api/contact',
   projectTypes: ['Automatización con IA', 'Marketing & Ads', 'Web / App', 'Fintech / Blockchain', 'Multimedia con IA', 'Otro'],
   modal: {
     title: 'Hablemos de tu proyecto',
