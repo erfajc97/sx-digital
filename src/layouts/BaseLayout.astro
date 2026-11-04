@@ -13,7 +13,7 @@ interface Props {
 }
 
 const locale = (Astro.currentLocale ?? defaultLocale) as Locale;
-const { brand, services, founder, ui, seo } = getDict(locale);
+const { brand, services, team, ui, seo } = getDict(locale);
 
 const { title = ui.defaultTitle, description = brand.tagline, noindex = false } = Astro.props;
 
@@ -21,6 +21,7 @@ const origin = Astro.site ? Astro.site.origin : `https://${brand.domain}`;
 const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : Astro.url.pathname;
 const ogImage = `${origin}/og-cover.jpg`;
 const logoImage = `${origin}/solvyxX-3D.jpg`;
+const personId = (id: string) => `${origin}/#person-${id}`;
 
 /* hreflang pair: this page in the other language (when a counterpart exists). */
 const otherLocale: Locale = locale === 'en' ? 'es' : 'en';
@@ -73,18 +74,20 @@ const jsonLd = {
           addressCountry: 'EC',
         },
       ],
-      founder: { '@id': `${origin}/#founder` },
+      founder: team.filter((m) => m.founder).map((m) => ({ '@id': personId(m.id) })),
+      employee: team.map((m) => ({ '@id': personId(m.id) })),
     },
-    {
+    ...team.map((m) => ({
       '@type': 'Person',
-      '@id': `${origin}/#founder`,
-      name: founder.name,
-      jobTitle: founder.role,
-      description: founder.bio,
+      '@id': personId(m.id),
+      name: m.name,
+      jobTitle: m.role,
+      description: m.bio,
+      image: `${origin}${m.avatar}`,
       worksFor: { '@id': `${origin}/#organization` },
-      knowsAbout: seo.founderKnows,
-      sameAs: [founder.linkedin, founder.github],
-    },
+      knowsAbout: m.knowsAbout,
+      sameAs: [m.linkedin, m.github].filter(Boolean),
+    })),
     {
       '@type': 'WebSite',
       '@id': `${origin}/#website`,

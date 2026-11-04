@@ -19,6 +19,10 @@ SolvyX se especializa en dos cosas y las hace excepcionalmente bien: (1) automat
 - Crecimiento: a medida, el más elegido — marketing con IA + automatización + producto.
 - Escala: a medida, partner continuo con equipo dedicado, fintech/blockchain, SLA y soporte 24/7.
 
+## Equipo
+- Miguel Ángel Brito — Fundador & CEO. Ingeniero de Telecomunicación con más de 7 años en evaluación técnica de proyectos, desarrollo de negocio, estrategia comercial y de producto.
+- Erick Jiménez Cruz — CTO & Arquitecto de Software. Ingeniero full-stack senior con más de 5 años en plataformas fintech y sistemas de alto rendimiento; creador de Eranpay.
+
 ## Datos clave
 - Automatizaciones y contenido con IA en días; producto a medida en ~2 semanas.
 - +213% más leads reportados para clientes; ROI promedio 8.4×.
@@ -27,7 +31,7 @@ SolvyX se especializa en dos cosas y las hace excepcionalmente bien: (1) automat
 ## Enlaces
 - Sitio: https://solvyxdigital.com
 - Planes: https://solvyxdigital.com/#planes
-- Quiénes somos (fundador y proceso): https://solvyxdigital.com/nosotros
+- Quiénes somos (equipo y proceso): https://solvyxdigital.com/nosotros
 - Preguntas frecuentes (precios y tiempos): https://solvyxdigital.com/preguntas
 - Agendar una llamada de 30 min: https://solvyxdigital.com/agendar
 - English version: https://solvyxdigital.com/en/ (About: /en/about · FAQ: /en/faq · Book a call: /en/book)

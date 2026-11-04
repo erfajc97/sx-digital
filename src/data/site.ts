@@ -121,22 +121,57 @@ export const brand = {
   ],
 };
 
-/* Founder — real person behind SolvyX (E-E-A-T: experience + authority). */
-export const founder = {
-  name: 'Erick Jiménez Cruz',
-  role: 'Fundador & Ingeniero principal',
-  bio: 'Ingeniero full-stack senior con más de 5 años construyendo plataformas fintech y sistemas de alto rendimiento. Creó Eranpay —una wallet fintech con core bancario, KYC y servicios en tiempo real— y lideró apps premiadas (1.er lugar y $50K en una ronda de inversores en Madrid). En SolvyX une ese rigor de ingeniería con IA de punta para entregar automatización y software a medida que mueve la aguja de verdad.',
-  highlights: [
-    '+5 años de ingeniería',
-    'Fintech, IA y blockchain',
-    'Creador de Eranpay',
-    'App premiada · $50K en Madrid',
-  ],
-  linkedin: 'https://www.linkedin.com/in/erickjimenezcruz/',
-  github: 'https://github.com/erfajc97',
-  // Foto del fundador (reemplázala cuando quieras en /public).
-  avatar: '/avatar-solvyx-ej.png',
-};
+/* Team — real people behind SolvyX (E-E-A-T: experience + authority).
+   Order = order on /nosotros. `founder: true` marks them as founder in the
+   structured data. Links are optional (a button renders only when set). */
+export interface TeamMember {
+  /** Stable id for structured data (#person-<id>). */
+  id: string;
+  name: string;
+  role: string;
+  bio: string;
+  highlights: string[];
+  avatar: string;
+  founder?: boolean;
+  linkedin?: string;
+  github?: string;
+  knowsAbout?: string[];
+}
+
+export const team: TeamMember[] = [
+  {
+    id: 'miguel-angel-brito',
+    name: 'Miguel Ángel Brito',
+    role: 'Fundador & CEO',
+    bio: 'Ingeniero de Telecomunicación con más de 7 años de experiencia liderando la evaluación técnica de proyectos, desarrollo de negocio y estrategias comerciales. Ha dirigido la elaboración de propuestas técnico-económicas, captación de clientes y optimización de soluciones energéticas y tecnológicas adaptadas al mercado. En SolvyX une su visión estratégica de negocio y liderazgo de producto para impulsar el crecimiento, cerrar alianzas clave y transformar ideas en soluciones tecnológicas de alto impacto.',
+    highlights: [
+      'Ingeniero de Telecomunicación',
+      'Desarrollo de negocio y ventas',
+      'Estrategia de producto',
+      '+7 años de experiencia',
+    ],
+    avatar: '/team/miguel-angel-brito.webp',
+    founder: true,
+    linkedin: 'https://www.linkedin.com/in/miguel-angel-brito-chamorro-4a0659171/',
+    knowsAbout: ['Desarrollo de negocio', 'Estrategia de producto', 'Ingeniería de telecomunicación', 'Ventas B2B', 'Soluciones energéticas'],
+  },
+  {
+    id: 'erick-jimenez-cruz',
+    name: 'Erick Jiménez Cruz',
+    role: 'CTO & Arquitecto de Software',
+    bio: 'Ingeniero full-stack senior con más de 5 años construyendo plataformas fintech y sistemas de alto rendimiento. Creó Eranpay —una wallet fintech con core bancario, KYC y servicios en tiempo real— y lideró apps premiadas (1.er lugar y $50K en una ronda de inversores en Madrid). En SolvyX une ese rigor de ingeniería con IA de punta para entregar automatización y software a medida que mueve la aguja de verdad.',
+    highlights: [
+      '+5 años de ingeniería',
+      'Fintech, IA y blockchain',
+      'Creador de Eranpay',
+      'App premiada · $50K en Madrid',
+    ],
+    linkedin: 'https://www.linkedin.com/in/erickjimenezcruz/',
+    github: 'https://github.com/erfajc97',
+    avatar: '/avatar-solvyx-ej.png',
+    knowsAbout: ['Automatización con IA', 'Desarrollo de software a medida', 'Fintech', 'Blockchain', 'React', 'Node.js', 'Rust'],
+  },
+];
 
 /* Rutas absolutas ("/#...") para que el nav funcione también desde las
    páginas internas (/nosotros, /agendar), no solo desde la landing. */
@@ -480,7 +515,7 @@ export const faqs: Faq[] = [
   },
   {
     q: '¿Quiénes están detrás de SolvyX?',
-    a: 'SolvyX la lidera Erick Jiménez Cruz, ingeniero full-stack senior con más de 5 años construyendo fintech y sistemas de alto rendimiento (creador de Eranpay). Conoce al equipo y cómo trabajamos en la página "Nosotros".',
+    a: 'SolvyX la lideran Miguel Ángel Brito, fundador y CEO (ingeniero de Telecomunicación con más de 7 años en desarrollo de negocio y estrategia de producto), y Erick Jiménez Cruz, CTO y arquitecto de software (más de 5 años construyendo fintech y sistemas de alto rendimiento, creador de Eranpay). Conoce al equipo y cómo trabajamos en la página "Nosotros".',
   },
 ];
 
@@ -561,7 +596,7 @@ export const ui = {
     dotAria: 'Ir al plan',
   },
   bookingUi: { fallback: '¿Prefieres que te escribamos? Déjanos un mensaje' },
-  founderUi: { eyebrow: 'Quién está detrás' },
+  founderUi: { eyebrow: 'Quiénes están detrás' },
   footerUi: { rights: 'Todos los derechos reservados.' },
   introUi: { skip: 'Saltar intro', aria: 'Intro SolvyX' },
   langBanner: {
@@ -616,15 +651,6 @@ export const seo = {
     'Marketing con IA',
     'Aplicaciones móviles',
     'Fintech y blockchain',
-  ],
-  founderKnows: [
-    'Automatización con IA',
-    'Desarrollo de software a medida',
-    'Fintech',
-    'Blockchain',
-    'React',
-    'Node.js',
-    'Rust',
   ],
 };
 

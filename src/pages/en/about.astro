@@ -6,10 +6,10 @@ import BrandShowcase from '@/components/sections/BrandShowcase.astro';
 import CtaBanner from '@/components/sections/CtaBanner.astro';
 import { getDict } from '@/i18n';
 
-const { brand, founder } = getDict('en');
+const { brand, team } = getDict('en');
 
 const title = `About us — the team behind ${brand.name} | AI automation and custom software`;
-const description = `Meet ${founder.name}, founder of ${brand.name}: senior full-stack engineer in fintech, AI and blockchain (creator of Eranpay). How we work: live demos, delivery in days and code under your name.`;
+const description = `Meet the ${brand.name} team: Miguel Ángel Brito (Founder & CEO) and Erick Jiménez Cruz (CTO & Software Architect). How we work: live demos, delivery in days and code under your name.`;
 
 const origin = Astro.site ? Astro.site.origin : `https://${brand.domain}`;
 const aboutLd = {
@@ -21,7 +21,7 @@ const aboutLd = {
   inLanguage: 'en',
   isPartOf: { '@id': `${origin}/#website` },
   about: { '@id': `${origin}/#organization` },
-  mainEntity: { '@id': `${origin}/#founder` },
+  mainEntity: team.map((m) => ({ '@id': `${origin}/#person-${m.id}` })),
 };
 ---
 

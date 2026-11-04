@@ -64,7 +64,7 @@ objeto o array exportado:
 | Export | Controla |
 | --- | --- |
 | `brand` | nombre, logo, email, teléfono, dominio, link de agenda, redes |
-| `founder` | bio del fundador (E-E-A-T), enlaces y avatar |
+| `team` | equipo (nombre, cargo, bio, badges, foto, enlaces) — orden = orden en /nosotros |
 | `heroMedia` | video de fondo del hero (desktop + mobile + poster) |
 | `hero` | titular, palabras animadas, lead, selector de servicios |
 | `services` · `work` · `process` · `stats` | bloques de cada sección |

@@ -4,10 +4,10 @@ import Founder from '@/components/sections/Founder.astro';
 import Process from '@/components/sections/Process.astro';
 import BrandShowcase from '@/components/sections/BrandShowcase.astro';
 import CtaBanner from '@/components/sections/CtaBanner.astro';
-import { brand, founder } from '@/data/site';
+import { brand, team } from '@/data/site';
 
 const title = `Quiénes somos — el equipo detrás de ${brand.name} | Automatización con IA y software a medida`;
-const description = `Conoce a ${founder.name}, fundador de ${brand.name}: ingeniero full-stack senior en fintech, IA y blockchain (creador de Eranpay). Así trabajamos: demos en vivo, entregas en días y código a tu nombre.`;
+const description = `Conoce al equipo de ${brand.name}: Miguel Ángel Brito (fundador y CEO) y Erick Jiménez Cruz (CTO y arquitecto de software). Así trabajamos: demos en vivo, entregas en días y código a tu nombre.`;
 
 const origin = Astro.site ? Astro.site.origin : `https://${brand.domain}`;
 const aboutLd = {
@@ -19,7 +19,7 @@ const aboutLd = {
   inLanguage: 'es',
   isPartOf: { '@id': `${origin}/#website` },
   about: { '@id': `${origin}/#organization` },
-  mainEntity: { '@id': `${origin}/#founder` },
+  mainEntity: team.map((m) => ({ '@id': `${origin}/#person-${m.id}` })),
 };
 ---
 

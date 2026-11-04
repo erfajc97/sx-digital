@@ -6,7 +6,8 @@
    ===================================================================== */
 import {
   brand as esBrand,
-  founder as esFounder,
+  team as esTeam,
+  type TeamMember,
   type NavLink,
   type Service,
   type WorkItem,
@@ -28,17 +29,23 @@ export const brand = {
   location: 'Madrid, Spain · Guayaquil, Ecuador',
 };
 
-export const founder = {
-  ...esFounder,
-  role: 'Founder & Lead Engineer',
-  bio: 'Senior full-stack engineer with 5+ years building fintech platforms and high-performance systems. He created Eranpay — a fintech wallet with a banking core, KYC and real-time services — and led award-winning apps (1st place and $50K at an investor round in Madrid). At SolvyX he combines that engineering rigor with cutting-edge AI to deliver automation and custom software that actually moves the needle.',
-  highlights: [
-    '5+ years of engineering',
-    'Fintech, AI & blockchain',
-    'Creator of Eranpay',
-    'Award-winning app · $50K in Madrid',
-  ],
+/* Same people and links as site.ts; only role, bio, badges and topics are translated. */
+const teamEn: Record<string, Pick<TeamMember, 'role' | 'bio' | 'highlights' | 'knowsAbout'>> = {
+  'miguel-angel-brito': {
+    role: 'Founder & CEO',
+    bio: 'Telecommunications engineer with 7+ years of experience leading technical project assessment, business development and commercial strategy. He has led the preparation of technical and financial proposals, client acquisition and the optimisation of energy and technology solutions tailored to the market. At SolvyX he brings his strategic business vision and product leadership to drive growth, close key partnerships and turn ideas into high-impact technology solutions.',
+    highlights: ['Telecommunications engineer', 'Business development & sales', 'Product strategy', '7+ years of experience'],
+    knowsAbout: ['Business development', 'Product strategy', 'Telecommunications engineering', 'B2B sales', 'Energy solutions'],
+  },
+  'erick-jimenez-cruz': {
+    role: 'CTO & Software Architect',
+    bio: 'Senior full-stack engineer with 5+ years building fintech platforms and high-performance systems. He created Eranpay — a fintech wallet with a banking core, KYC and real-time services — and led award-winning apps (1st place and $50K at an investor round in Madrid). At SolvyX he combines that engineering rigor with cutting-edge AI to deliver automation and custom software that actually moves the needle.',
+    highlights: ['5+ years of engineering', 'Fintech, AI & blockchain', 'Creator of Eranpay', 'Award-winning app · $50K in Madrid'],
+    knowsAbout: ['AI automation', 'Custom software development', 'Fintech', 'Blockchain', 'React', 'Node.js', 'Rust'],
+  },
 };
+
+export const team: TeamMember[] = esTeam.map((m) => ({ ...m, ...teamEn[m.id] }));
 
 export const nav: NavLink[] = [
   { label: 'Services', href: '/en/#servicios' },
@@ -311,7 +318,7 @@ export const faqs: Faq[] = [
   },
   {
     q: 'Who is behind SolvyX?',
-    a: 'SolvyX is led by Erick Jiménez Cruz, a senior full-stack engineer with 5+ years building fintech and high-performance systems (creator of Eranpay). Meet the team and how we work on the About page.',
+    a: 'SolvyX is led by Miguel Ángel Brito, Founder & CEO (telecommunications engineer with 7+ years in business development and product strategy), and Erick Jiménez Cruz, CTO & Software Architect (5+ years building fintech and high-performance systems, creator of Eranpay). Meet the team and how we work on the About page.',
   },
 ];
 
@@ -417,7 +424,7 @@ export const ui = {
     dotAria: 'Go to plan',
   },
   bookingUi: { fallback: 'Prefer that we write first? Leave us a message' },
-  founderUi: { eyebrow: 'Who is behind it' },
+  founderUi: { eyebrow: 'The team behind it' },
   footerUi: { rights: 'All rights reserved.' },
   introUi: { skip: 'Skip intro', aria: 'SolvyX intro' },
   langBanner: {
@@ -465,5 +472,4 @@ export const seo = {
     'API integration',
   ],
   serviceTypes: ['AI automation', 'Custom software development', 'AI marketing', 'Mobile apps', 'Fintech & blockchain'],
-  founderKnows: ['AI automation', 'Custom software development', 'Fintech', 'Blockchain', 'React', 'Node.js', 'Rust'],
 };
