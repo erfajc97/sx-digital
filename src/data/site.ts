@@ -272,17 +272,19 @@ export const contact = {
   },
 };
 
-/* Marquee of "trusted by" names — replace with real client wordmarks or
-   logos in /public/clients when available. */
+/* Marquee: the stack we build with (real tools, no invented client logos).
+   Swap for real client wordmarks once there are several to show. */
 export const clients: string[] = [
-  'Verdant Growth',
-  'NovaPay',
-  'Lumio Health',
-  'Northbeam Capital',
-  'Cobalt Chain',
-  'Pulsar Studio',
-  'Aria Mobility',
-  'Habitat Labs',
+  'Astro',
+  'Next.js',
+  'React Native',
+  'Expo',
+  'Tailwind CSS',
+  'Supabase',
+  'Claude AI',
+  'Netlify',
+  'Cal.com',
+  'PostHog',
 ];
 
 /* Order here = display order. The bento tiles as: row1 IA + marketing
@@ -340,48 +342,15 @@ export const services: Service[] = [
 
 export const work: WorkItem[] = [
   {
-    slug: 'novapay-wallet',
-    title: 'NovaPay Wallet',
-    category: 'Fintech · App móvil',
+    slug: 'escapadas-madrid',
+    title: 'Escapadas Madrid',
+    category: 'Turismo · Web a medida',
     blurb:
-      'Wallet tipo fintech con envíos instantáneos, KYC y on/off-ramp cripto. De cero a stores en semanas.',
-    image: '/work/novapay.jpg',
-    tags: ['Fintech', 'Wallet', 'iOS + Android'],
-    href: 'https://example.com/casos/novapay',
-    result: '120k usuarios',
-  },
-  {
-    slug: 'verdant-growth',
-    title: 'Verdant Growth',
-    category: 'Marketing IA · Automatización',
-    blurb:
-      'Conectamos Meta y Google Ads a un motor de IA que califica y nutre leads solo. Más ventas, menos gasto.',
-    image: '/work/verdant.jpg',
-    tags: ['Ads', 'IA', 'Leads'],
-    href: 'https://example.com/casos/verdant-growth',
-    result: '+213% leads',
-  },
-  {
-    slug: 'pulsar-studio',
-    title: 'Pulsar Studio',
-    category: 'Multimedia IA · Redes',
-    blurb:
-      'Producción de videos e imágenes para redes con IA: 300+ piezas al mes con el mismo branding.',
-    image: '/work/pulsar.jpg',
-    tags: ['Video IA', 'Contenido', 'Redes'],
-    href: 'https://example.com/casos/pulsar',
-    result: '318 piezas/mes',
-  },
-  {
-    slug: 'cobalt-chain',
-    title: 'Cobalt Chain',
-    category: 'Blockchain · Web3',
-    blurb:
-      'Plataforma de pagos web3 con smart contracts auditados y un panel de control en tiempo real.',
-    image: '/work/cobalt.jpg',
-    tags: ['Web3', 'Smart contracts', 'Dashboard'],
-    href: 'https://example.com/casos/cobalt',
-    result: '−71% costos',
+      'Web para un club de escapadas y experiencias cerca de Madrid: destinos, membresías, área de socios, blog y versión en inglés.',
+    image: '/work/escapadas-madrid.jpg',
+    tags: ['Web a medida', 'Membresías', 'ES / EN'],
+    href: 'https://www.escapadasmadrid.com',
+    result: 'Web en vivo',
   },
 ];
 
@@ -415,8 +384,8 @@ export const process: ProcessStep[] = [
 export const stats: Stat[] = [
   { value: 'En días', label: 'lanzamos automatizaciones e IA' },
   { value: '2 sem.', label: 'al primer producto en vivo' },
-  { value: '+213%', label: 'más leads para nuestros clientes' },
-  { value: '8.4×', label: 'ROI promedio reportado' },
+  { value: '100%', label: 'del código y los datos a tu nombre' },
+  { value: 'Mismo día', label: 'respondemos tu consulta' },
 ];
 
 export const differentiators = [
@@ -440,29 +409,8 @@ export const differentiators = [
   },
 ];
 
-export const testimonials: Testimonial[] = [
-  {
-    quote:
-      'Sus automatizaciones de marketing nos triplicaron los leads en dos meses. Y el contenido con IA salió mejor que con nuestra agencia anterior.',
-    name: 'Mariana Vélez',
-    role: 'CEO · Northbeam Capital',
-    avatar: 'https://picsum.photos/seed/solvyx-mariana/200/200',
-  },
-  {
-    quote:
-      'Conectaron nuestros ads con un motor de IA que califica leads solo. Cerramos más vendiendo menos.',
-    name: 'Tomás Rensch',
-    role: 'COO · Verdant Growth',
-    avatar: 'https://picsum.photos/seed/solvyx-tomas/200/200',
-  },
-  {
-    quote:
-      'Lanzaron nuestra wallet fintech en dos semanas. Rápido, seguro y sin dramas. Justo lo que necesitábamos.',
-    name: 'Priya Naidoo',
-    role: 'Head of Product · NovaPay',
-    avatar: 'https://picsum.photos/seed/solvyx-priya/200/200',
-  },
-];
+/* Only real quotes, with the client's permission. Empty = section hidden. */
+export const testimonials: Testimonial[] = [];
 
 export const packages: Package[] = [
   {
@@ -542,7 +490,7 @@ export const finalCta = {
 export const ui = {
   defaultTitle: 'Automatización con IA y Desarrollo de Software a Medida | SolvyX',
   nav: { cta: 'Agendar llamada', ctaShort: 'Agendar', open: 'Abrir menú', close: 'Cerrar menú', skip: 'Saltar al contenido', home: 'inicio' },
-  marquee: 'Equipos que confían en nosotros para construir',
+  marquee: 'La tecnología con la que construimos',
   heroUi: { selectHint: 'selecciona uno o más', cta: 'Agenda tu llamada', selectedPrefix: 'Listo para hablar de:' },
   // Paneles de cristal junto a Solvy en el hero
   heroStage: {
@@ -561,7 +509,7 @@ export const ui = {
     spotTitle: 'Más clientes en piloto automático',
     spotText:
       'Conectamos tus ads de Meta y Google a una IA que captura, califica y nutre leads sola — y producimos los videos e imágenes que alimentan tus campañas.',
-    spotChips: ['+213% leads', 'Campañas 24/7', 'Contenido en días'],
+    spotChips: ['Más leads', 'Campañas 24/7', 'Contenido en días'],
     spotCta: 'Quiero más clientes',
     spotPlans: 'Ver planes',
     reelKicker: 'Todo lo que hacemos, en un vistazo',
@@ -577,7 +525,7 @@ export const ui = {
   workSection: {
     eyebrow: 'Trabajo seleccionado',
     title: 'Productos en producción, no maquetas',
-    description: 'Una muestra de lo que hemos construido. Desliza para recorrer los proyectos.',
+    description: 'Proyectos reales que puedes visitar hoy mismo.',
     dotAria: 'Ir al proyecto',
   },
   statsSection: {
