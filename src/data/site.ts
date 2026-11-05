@@ -56,8 +56,8 @@ export interface WorkItem {
   /** Swap for "/work/your-image.jpg" after placing the file in /public/work */
   image: string;
   tags: string[];
-  /** Swap for the real case-study or live-site URL */
-  href: string;
+  /** Live site or case study. Omit for concepts (no link is shown). */
+  href?: string;
   result: string;
 }
 
@@ -352,6 +352,36 @@ export const work: WorkItem[] = [
     href: 'https://www.escapadasmadrid.com',
     result: 'Web en vivo',
   },
+  {
+    slug: 'concepto-wallet',
+    title: 'Wallet fintech',
+    category: 'Concepto · App móvil',
+    blurb:
+      'Concepto de app de pagos: tarjeta virtual, envíos y recepciones al instante e historial de movimientos.',
+    image: '/work/concept-wallet.jpg',
+    tags: ['Fintech', 'iOS + Android', 'Concepto'],
+    result: 'Concepto',
+  },
+  {
+    slug: 'concepto-leads',
+    title: 'Panel de leads con IA',
+    category: 'Concepto · Automatización',
+    blurb:
+      'Concepto de panel que reúne los leads de tus anuncios, los califica con IA y muestra el embudo en tiempo real.',
+    image: '/work/concept-leads.jpg',
+    tags: ['IA', 'Leads', 'Concepto'],
+    result: 'Concepto',
+  },
+  {
+    slug: 'concepto-blockchain',
+    title: 'Pagos blockchain',
+    category: 'Concepto · Web3',
+    blurb:
+      'Concepto de plataforma de pagos con smart contracts y un panel de control para seguir cada transacción.',
+    image: '/work/concept-blockchain.jpg',
+    tags: ['Web3', 'Dashboard', 'Concepto'],
+    result: 'Concepto',
+  },
 ];
 
 export const process: ProcessStep[] = [
@@ -524,8 +554,8 @@ export const ui = {
   },
   workSection: {
     eyebrow: 'Trabajo seleccionado',
-    title: 'Productos en producción, no maquetas',
-    description: 'Proyectos reales que puedes visitar hoy mismo.',
+    title: 'Lo que construimos',
+    description: 'Un proyecto real que puedes visitar hoy y conceptos de lo que podemos construir para ti.',
     dotAria: 'Ir al proyecto',
   },
   statsSection: {

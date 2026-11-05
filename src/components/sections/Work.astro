@@ -47,14 +47,16 @@ const trackVh = 100 + (work.length - 1) * 58; // scroll length for the pinned fa
                 </span>
                 <h3 class="font-display text-2xl font-semibold text-white">{item.title}</h3>
                 <p class="line-clamp-2 max-w-md text-left text-sm text-white/85">{item.blurb}</p>
-                <a
-                  href={item.href}
-                  target="_blank"
-                  rel="noopener"
-                  class="mt-1 inline-flex w-fit items-center gap-1 text-sm font-semibold text-white underline-offset-4 hover:underline"
-                >
-                  {visitLabel} ↗
-                </a>
+                {item.href && (
+                  <a
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener"
+                    class="mt-1 inline-flex w-fit items-center gap-1 text-sm font-semibold text-white underline-offset-4 hover:underline"
+                  >
+                    {visitLabel} ↗
+                  </a>
+                )}
               </div>
             </article>
           ))
@@ -115,14 +117,16 @@ const trackVh = 100 + (work.length - 1) * 58; // scroll length for the pinned fa
                   <li class="rounded-full bg-surface-2 px-2.5 py-1 text-xs text-ink-soft">{t}</li>
                 ))}
               </ul>
-              <a
-                href={item.href}
-                target="_blank"
-                rel="noopener"
-                class="inline-flex w-fit items-center gap-1 pt-1 text-sm font-semibold text-brand underline-offset-4 hover:underline"
-              >
-                {visitLabel} ↗
-              </a>
+              {item.href && (
+                <a
+                  href={item.href}
+                  target="_blank"
+                  rel="noopener"
+                  class="inline-flex w-fit items-center gap-1 pt-1 text-sm font-semibold text-brand underline-offset-4 hover:underline"
+                >
+                  {visitLabel} ↗
+                </a>
+              )}
             </div>
           </article>
         ))

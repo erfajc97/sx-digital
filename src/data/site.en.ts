@@ -158,6 +158,36 @@ export const work: WorkItem[] = [
     href: 'https://www.escapadasmadrid.com',
     result: 'Live site',
   },
+  {
+    slug: 'concept-wallet',
+    title: 'Fintech wallet',
+    category: 'Concept · Mobile app',
+    blurb:
+      'Concept for a payments app: virtual card, instant send and receive, and a full transaction history.',
+    image: '/work/concept-wallet.jpg',
+    tags: ['Fintech', 'iOS + Android', 'Concept'],
+    result: 'Concept',
+  },
+  {
+    slug: 'concept-leads',
+    title: 'AI lead dashboard',
+    category: 'Concept · Automation',
+    blurb:
+      'Concept for a dashboard that gathers the leads from your ads, scores them with AI and shows the funnel live.',
+    image: '/work/concept-leads.jpg',
+    tags: ['AI', 'Leads', 'Concept'],
+    result: 'Concept',
+  },
+  {
+    slug: 'concept-blockchain',
+    title: 'Blockchain payments',
+    category: 'Concept · Web3',
+    blurb:
+      'Concept for a payments platform with smart contracts and a control panel to follow every transaction.',
+    image: '/work/concept-blockchain.jpg',
+    tags: ['Web3', 'Dashboard', 'Concept'],
+    result: 'Concept',
+  },
 ];
 
 export const process: ProcessStep[] = [
@@ -346,8 +376,8 @@ export const ui = {
   },
   workSection: {
     eyebrow: 'Selected work',
-    title: 'Products in production, not mockups',
-    description: 'Real projects you can visit today.',
+    title: 'What we build',
+    description: 'A real project you can visit today, plus concepts of what we can build for you.',
     dotAria: 'Go to project',
   },
   statsSection: {
