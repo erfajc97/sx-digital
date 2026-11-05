@@ -14,6 +14,7 @@ import {
   type ProcessStep,
   type Stat,
   type Testimonial,
+  type Commitment,
   type Package,
   type Faq,
   type IconName,
@@ -243,6 +244,29 @@ export const differentiators = [
 /* Only real quotes, with the client's permission. Empty = section hidden. */
 export const testimonials: Testimonial[] = [];
 
+export const commitments: Commitment[] = [
+  {
+    icon: 'chart',
+    title: 'A clear estimate from the first call',
+    description: 'You leave the call knowing what we will build, what it costs and how long it takes.',
+  },
+  {
+    icon: 'spark',
+    title: 'Progress you see every week',
+    description: 'Live demos and continuous delivery. No months of silence.',
+  },
+  {
+    icon: 'code',
+    title: 'Everything in your name',
+    description: 'We hand over the repository, the documentation and the accounts in your name. No black boxes, no lock-in.',
+  },
+  {
+    icon: 'mail',
+    title: 'Same-day reply',
+    description: 'Write to us by email or WhatsApp and we will get back to you the same day.',
+  },
+];
+
 export const packages: Package[] = [
   {
     name: 'Express AI',
@@ -398,6 +422,7 @@ export const ui = {
     alt: 'SolvyX — 3D brand render',
   },
   testimonialsSection: { eyebrow: 'In our clients’ words', title: 'What the people who hired us say' },
+  commitmentsSection: { eyebrow: 'Our commitment', title: 'What you can expect when you work with us' },
   packagesSection: {
     eyebrow: 'Ways to work together',
     title: 'Pick the pace your project needs',
