@@ -1,13 +1,42 @@
 ---
 import SectionHeading from '../ui/SectionHeading.astro';
+import Icon from '../ui/Icon.astro';
 import { getDict, defaultLocale, type Locale } from '@/i18n';
 
 const locale = (Astro.currentLocale ?? defaultLocale) as Locale;
-const { testimonials, ui } = getDict(locale);
+const { testimonials, commitments, ui } = getDict(locale);
 const t = ui.testimonialsSection;
-// Only real client quotes are published; with none yet, the section is hidden.
+const c = ui.commitmentsSection;
+// Only real client quotes are published. Until there are some, the same slot
+// shows our commitments (promises the site already makes elsewhere).
 const show = testimonials.length > 0;
 ---
+
+{!show && (
+<section class="bg-surface py-[var(--spacing-section)]">
+  <div class="mx-auto max-w-[1240px] px-4 sm:px-6">
+    <SectionHeading align="center" eyebrow={c.eyebrow} title={c.title} />
+
+    <div class="mt-10 grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
+      {
+        commitments.map((item, i) => (
+          <div
+            data-reveal
+            style={`--reveal-delay: ${i * 80}ms;`}
+            class="card-3d edge-top relative flex flex-col gap-3 overflow-hidden rounded-[var(--radius-card)] border border-border bg-canvas p-5"
+          >
+            <span class="grid size-10 shrink-0 place-items-center rounded-2xl bg-brand-soft text-brand">
+              <Icon name={item.icon} class="size-5" />
+            </span>
+            <h3 class="font-display text-base font-semibold text-ink">{item.title}</h3>
+            <p class="text-left text-sm leading-relaxed text-muted">{item.description}</p>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+)}
 
 {show && (
 <section class="bg-surface py-[var(--spacing-section)]">

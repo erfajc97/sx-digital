@@ -442,6 +442,37 @@ export const differentiators = [
 /* Only real quotes, with the client's permission. Empty = section hidden. */
 export const testimonials: Testimonial[] = [];
 
+/* Shown in place of testimonials while there are none. Every line restates a
+   promise already made elsewhere on the site (FAQ, process, contact). */
+export interface Commitment {
+  icon: IconName;
+  title: string;
+  description: string;
+}
+
+export const commitments: Commitment[] = [
+  {
+    icon: 'chart',
+    title: 'Estimado claro desde la primera llamada',
+    description: 'Sales de la llamada sabiendo qué vamos a hacer, cuánto cuesta y cuánto tarda.',
+  },
+  {
+    icon: 'spark',
+    title: 'Avance que ves cada semana',
+    description: 'Demos en vivo y entregas continuas. Nada de meses de silencio.',
+  },
+  {
+    icon: 'code',
+    title: 'Todo a tu nombre',
+    description: 'Te entregamos el repositorio, la documentación y los accesos a tu nombre. Sin cajas negras ni amarres.',
+  },
+  {
+    icon: 'mail',
+    title: 'Respuesta el mismo día',
+    description: 'Escríbenos por email o WhatsApp y te respondemos el mismo día.',
+  },
+];
+
 export const packages: Package[] = [
   {
     name: 'Express IA',
@@ -577,6 +608,7 @@ export const ui = {
     alt: 'SolvyX — render 3D de la marca',
   },
   testimonialsSection: { eyebrow: 'En palabras de clientes', title: 'Lo que dicen quienes ya nos contrataron' },
+  commitmentsSection: { eyebrow: 'Nuestro compromiso', title: 'Lo que puedes esperar al trabajar con nosotros' },
   packagesSection: {
     eyebrow: 'Formas de trabajar juntos',
     title: 'Elige el ritmo que tu proyecto necesita',
