@@ -245,7 +245,7 @@ const paths = auditPaths[locale];
         } catch {
           /* private mode: the result page shows the fallback */
         }
-        window.location.href = form.dataset.resultPath ?? '/auditoria/resultado';
+        window.location.href = form.dataset.resultPath ?? '/auditoria/resultado/';
         return;
       }
       setBusy(false);

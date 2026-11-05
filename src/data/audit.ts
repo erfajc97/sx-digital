@@ -7,6 +7,7 @@ const es = {
     description:
       'Analizamos tu web con IA en segundos: contacto, reservas y pagos, SEO, contenido y automatización. Recibe los 3 problemas que más te están costando clientes y un informe completo por email.',
     resultTitle: 'Resultado de tu auditoría IA | SolvyX',
+    resultDescription: 'Los 3 puntos que más clientes le están costando a tu web, tu puntuación y cómo resolverlos. Informe completo en tu email.',
   },
   hero: {
     eyebrow: 'Auditoría IA Gratis',
@@ -84,6 +85,7 @@ const en: AuditCopy = {
     description:
       'We analyse your website with AI in seconds: contact, booking & payments, SEO, content and automation. Get the 3 issues costing you the most customers plus a full report by email.',
     resultTitle: 'Your AI audit result | SolvyX',
+    resultDescription: 'The 3 issues costing your website the most customers, your score and how to fix them. Full report in your inbox.',
   },
   hero: {
     eyebrow: 'Free AI Audit',
@@ -158,6 +160,6 @@ export function getAuditCopy(locale: Locale | string | undefined): AuditCopy {
 }
 
 export const auditPaths = {
-  es: { form: '/auditoria', result: '/auditoria/resultado', privacy: '/privacidad' },
-  en: { form: '/en/audit', result: '/en/audit/result', privacy: '/en/privacy' },
+  es: { form: '/auditoria/', result: '/auditoria/resultado/', privacy: '/privacidad/' },
+  en: { form: '/en/audit/', result: '/en/audit/result/', privacy: '/en/privacy/' },
 } as const;

@@ -51,9 +51,9 @@ export const nav: NavLink[] = [
   { label: 'Services', href: '/en/#servicios' },
   { label: 'Work', href: '/en/#trabajo' },
   { label: 'Pricing', href: '/en/#planes' },
-  { label: 'About', href: '/en/about' },
-  { label: 'FAQ', href: '/en/faq' },
-  { label: 'Free Audit', href: '/en/audit' },
+  { label: 'About', href: '/en/about/' },
+  { label: 'FAQ', href: '/en/faq/' },
+  { label: 'Free Audit', href: '/en/audit/' },
 ];
 
 export const hero = {
@@ -347,11 +347,11 @@ export const footer = {
     {
       title: 'Studio',
       links: [
-        { label: 'About us', href: '/en/about' },
+        { label: 'About us', href: '/en/about/' },
         { label: 'Work', href: '/en/#trabajo' },
         { label: 'Pricing', href: '/en/#planes' },
-        { label: 'Book a call', href: '/en/book' },
-        { label: 'FAQ', href: '/en/faq' },
+        { label: 'Book a call', href: '/en/book/' },
+        { label: 'FAQ', href: '/en/faq/' },
       ],
     },
   ],

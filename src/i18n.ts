@@ -25,12 +25,18 @@ export const routePairs: Record<string, string> = {
 
 const normalize = (p: string) => (p !== '/' && p.endsWith('/') ? p.slice(0, -1) : p);
 
+/* Pages are built as folders (/nosotros/index.html), so the canonical URL ends
+   in "/". Links and hreflang must use that form: "/nosotros" 301-redirects,
+   and Google ignores hreflang that points at a redirect. */
+export const withSlash = (p: string) => (p.endsWith('/') ? p : `${p}/`);
+
 /** The same page in the other locale (used by hreflang + language switcher). */
 export function altPathFor(pathname: string, target: Locale): string | undefined {
   const path = normalize(pathname);
   if (target === 'en') {
-    return routePairs[path === '' ? '/' : path];
+    const hit = routePairs[path === '' ? '/' : path];
+    return hit ? withSlash(hit) : undefined;
   }
   const hit = Object.entries(routePairs).find(([, enPath]) => normalize(enPath) === path);
-  return hit?.[0];
+  return hit ? withSlash(hit[0]) : undefined;
 }

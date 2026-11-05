@@ -186,9 +186,9 @@ export const nav: NavLink[] = [
   { label: 'Servicios', href: '/#servicios' },
   { label: 'Trabajo', href: '/#trabajo' },
   { label: 'Planes', href: '/#planes' },
-  { label: 'Nosotros', href: '/nosotros' },
-  { label: 'Preguntas', href: '/preguntas' },
-  { label: 'Auditoría Gratis', href: '/auditoria' },
+  { label: 'Nosotros', href: '/nosotros/' },
+  { label: 'Preguntas', href: '/preguntas/' },
+  { label: 'Auditoría Gratis', href: '/auditoria/' },
 ];
 
 /* Hero background video (optional). Leave `video` empty to keep the animated
@@ -678,11 +678,11 @@ export const footer = {
     {
       title: 'Estudio',
       links: [
-        { label: 'Quiénes somos', href: '/nosotros' },
+        { label: 'Quiénes somos', href: '/nosotros/' },
         { label: 'Trabajo', href: '/#trabajo' },
         { label: 'Planes', href: '/#planes' },
-        { label: 'Agenda una llamada', href: '/agendar' },
-        { label: 'Preguntas frecuentes', href: '/preguntas' },
+        { label: 'Agenda una llamada', href: '/agendar/' },
+        { label: 'Preguntas frecuentes', href: '/preguntas/' },
       ],
     },
   ],
