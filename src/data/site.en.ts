@@ -26,7 +26,7 @@ export const brand = {
   ...esBrand,
   tagline:
     'Specialists in AI automation and custom software development. More leads, less manual work, and launches in days — not months. Get ahead of your competition.',
-  location: 'Madrid, Spain · Guayaquil, Ecuador',
+  locations: ['Madrid, Spain', 'Guayaquil, Ecuador'],
 };
 
 /* Same people and links as site.ts; only role, bio, badges and topics are translated. */

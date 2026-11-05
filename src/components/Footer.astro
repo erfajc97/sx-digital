@@ -25,10 +25,14 @@ const { brand, footer, ui } = getDict(locale);
             <Icon name="mail" class="size-4" />
             {brand.email}
           </a>
-          <span class="inline-flex items-center gap-2">
-            <Icon name="pin" class="size-4 text-muted" />
-            {brand.location}
-          </span>
+          {
+            brand.locations.map((loc) => (
+              <span class="inline-flex items-center gap-2">
+                <Icon name="pin" class="size-4 text-muted" />
+                {loc}
+              </span>
+            ))
+          }
         </div>
       </div>
 

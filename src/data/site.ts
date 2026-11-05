@@ -110,7 +110,8 @@ export const brand = {
   phone: '+34 610 70 27 98',
   // Opcional: número distinto para el botón de WhatsApp (si falta, usa `phone`).
   whatsapp: undefined as string | undefined,
-  location: 'Madrid, España · Guayaquil, Ecuador',
+  // Oficinas (una línea cada una en el pie). La primera es la sede legal.
+  locations: ['Madrid, España', 'Guayaquil, Ecuador'],
   // Link público de Cal.com (página de reserva). Cámbialo si renombras el usuario.
   bookingUrl: 'https://cal.com/solvyxdigital/30min',
   // Solo el "handle/evento" de Cal.com (lo que va después de cal.com/).
