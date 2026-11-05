@@ -118,6 +118,9 @@ export const brand = {
   calLink: 'solvyxdigital/30min',
   // Namespace del embed Cal (una sola instancia precargada, sin fugas).
   calNamespace: 'solvyx',
+  // Google Search Console → "Etiqueta HTML": pega solo el valor de content="…".
+  // Es público (va en el HTML de todas las páginas). Vacío = no se añade.
+  googleSiteVerification: 'xzoqRblyzWvNmE_E7VQYGSdYFvWLNDL3avcRwKno2Ds',
   // Redes sociales: botones redondos del pie + `sameAs` para Google.
   // Las que tengan `href` vacío no se muestran. Orden = orden en el pie.
   social: [
