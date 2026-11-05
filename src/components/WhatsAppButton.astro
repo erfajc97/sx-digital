@@ -8,7 +8,7 @@ import { getDict, defaultLocale, type Locale } from '@/i18n';
 const locale = (Astro.currentLocale ?? defaultLocale) as Locale;
 const { brand } = getDict(locale);
 
-const number = brand.phone.replace(/\D/g, '');
+const number = (brand.whatsapp ?? brand.phone).replace(/\D/g, '');
 const c =
   locale === 'en'
     ? { label: 'Chat on WhatsApp', text: 'Hi SolvyX! I’d like to know more about how you can help my business.' }

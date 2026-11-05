@@ -70,7 +70,7 @@ describe('classifyClick', () => {
 
   it.each([
     [{ href: 'https://wa.me/34600000000' }, 'whatsapp_click'],
-    [{ href: 'tel:+34645425582' }, 'phone_click'],
+    [{ href: 'tel:+34610702798' }, 'phone_click'],
     [{ href: 'mailto:contact@solvyxdigital.com' }, 'email_click'],
     [{ href: 'https://cal.com/solvyxdigital/30min' }, 'booking_click'],
     [{ href: '/agendar' }, 'booking_click'],

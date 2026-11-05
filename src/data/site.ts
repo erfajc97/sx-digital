@@ -107,7 +107,9 @@ export const brand = {
     'Especialistas en automatización con IA y desarrollo de software a medida. Más leads, menos trabajo manual y lanzamientos en días, no en meses. Adelántate a tu competencia.',
   domain: 'solvyxdigital.com',
   email: 'contact@solvyxdigital.com',
-  phone: '+34 645 42 55 82',
+  phone: '+34 610 70 27 98',
+  // Opcional: número distinto para el botón de WhatsApp (si falta, usa `phone`).
+  whatsapp: undefined as string | undefined,
   location: 'Madrid, España · Guayaquil, Ecuador',
   // Link público de Cal.com (página de reserva). Cámbialo si renombras el usuario.
   bookingUrl: 'https://cal.com/solvyxdigital/30min',
