@@ -119,25 +119,35 @@
     text-wrap: balance;
   }
 
-  /* Body copy: balanced line breaks, never words split with hyphens. */
+  /* Body copy: never split words with hyphens; balanced line breaks. */
   main p,
   footer p,
   dialog p {
     text-wrap: pretty;
     -webkit-hyphens: manual;
     hyphens: manual;
+    overflow-wrap: normal;
+    word-break: normal;
   }
-}
 
-/* Long-form reading text (bios, FAQ answers, legal, page intros): justified
-   from 1024px up, where these blocks get 60+ characters per line. Opt-in on
-   purpose: without hyphenation, justifying short card copy (25–40 characters
-   per line) opens wide gaps between words — same reason phones and tablets
-   stay left-aligned. */
-@media (min-width: 1024px) {
-  .prose-justify,
-  .prose-justify p {
-    text-align: justify;
+  /* All body copy justified on laptops/desktops (≥1280px), spacing only
+     between words. Phones, tablets and small laptops stay left-aligned:
+     without hyphenation their 25–45-character lines can only be justified by
+     opening wide holes between words or stretching letters apart, and both
+     read worse. Narrow cards (process steps, plans, project cards) opt out
+     with `text-left`. The last line of each paragraph stays left-aligned. */
+  @media (min-width: 1280px) {
+    main p,
+    footer p,
+    dialog p {
+      text-align: justify;
+      text-align-last: start;
+      text-justify: inter-word;
+    }
+    /* Blocks that are deliberately centered / right-aligned keep it. */
+    :is(.text-center, .text-right) p {
+      text-align: inherit;
+    }
   }
 }
 
