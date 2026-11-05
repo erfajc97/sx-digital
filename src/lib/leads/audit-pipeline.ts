@@ -68,10 +68,10 @@ const MSG = {
   },
   en: {
     invalid: 'Please check the form fields.',
-    badUrl: "That URL isn't valid or can't be analysed. Use your website's public address (https://…).",
+    badUrl: "That URL isn't valid or can't be analyzed. Use your website's public address (https://…).",
     rate: "You've reached the audit limit for now. Try again later, or book a call and we'll do it together.",
     fetch: "We couldn't load your website from our server (it may be down, blocking bots or too slow). We've saved your request — book a 30-min call and we'll review it with you live.",
-    llm: "We analysed your website, but the report took longer than usual. We'll review it manually and email you; to go faster, book a 30-min call.",
+    llm: "We analyzed your website, but the report took longer than usual. We'll review it manually and email you; to go faster, book a 30-min call.",
   },
 } satisfies Record<Locale, Record<string, string>>;
 

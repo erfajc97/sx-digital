@@ -119,6 +119,31 @@
     text-wrap: balance;
   }
 
+  /* Body copy. Phones: left-aligned (justifying ~35-character lines opens
+     wide gaps between words) with balanced breaks. From 640px up: justified
+     with language-aware hyphenation (needs <html lang>), so paragraphs read
+     as a clean block. Base layer, so utilities like `text-center` still win;
+     a paragraph's last line always stays left-aligned. */
+  main p,
+  footer p,
+  dialog p {
+    text-wrap: pretty;
+  }
+  @media (min-width: 640px) {
+    main p,
+    footer p,
+    dialog p {
+      text-align: justify;
+      -webkit-hyphens: auto;
+      hyphens: auto;
+      hyphenate-limit-chars: 7 3 3;
+    }
+    /* …except inside blocks that are deliberately centered / right-aligned. */
+    :is(.text-center, .text-right) p {
+      text-align: inherit;
+    }
+  }
+
   /* Focus visibility — accessible, on-brand */
   :focus-visible {
     outline: 2px solid var(--color-signal);

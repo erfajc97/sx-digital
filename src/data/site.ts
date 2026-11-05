@@ -407,7 +407,7 @@ export const process: ProcessStep[] = [
     step: '04',
     title: 'Lanzamos y escalamos',
     description:
-      'Deploy, medición y mejora continua. El launch es el inicio: seguimos optimizando resultados.',
+      'Despliegue, medición y mejora continua. El lanzamiento es solo el inicio: seguimos optimizando resultados.',
   },
 ];
 
@@ -491,7 +491,7 @@ export const packages: Package[] = [
     name: 'Escala',
     price: 'a medida',
     cadence: 'partner continuo',
-    description: 'Equipo dedicado para empresas que necesitan ingeniería e IA constante.',
+    description: 'Equipo dedicado para empresas que necesitan ingeniería e IA constantes.',
     features: ['Equipo dedicado', 'Fintech / blockchain', 'SLA y soporte 24/7'],
     cta: 'Hablemos',
     featured: false,

@@ -83,7 +83,7 @@ const en: AuditCopy = {
   meta: {
     title: 'Free AI website audit | SolvyX',
     description:
-      'We analyse your website with AI in seconds: contact, booking & payments, SEO, content and automation. Get the 3 issues costing you the most customers plus a full report by email.',
+      'We analyze your website with AI in seconds: contact, booking & payments, SEO, content and automation. Get the 3 issues costing you the most customers plus a full report by email.',
     resultTitle: 'Your AI audit result | SolvyX',
     resultDescription: 'The 3 issues costing your website the most customers, your score and how to fix them. Full report in your inbox.',
   },
@@ -105,8 +105,8 @@ const en: AuditCopy = {
     consentPre: 'I agree that SolvyX may process my data to send me the audit and contact me about it, as described in the',
     consentLink: 'privacy policy',
     submit: 'Audit my website for free',
-    loading: 'Analysing your website…',
-    steps: ['Loading your website', 'Extracting signals', 'Analysing with AI', 'Preparing your report'],
+    loading: 'Analyzing your website…',
+    steps: ['Loading your website', 'Extracting signals', 'Analyzing with AI', 'Preparing your report'],
     error: "We couldn't send your request. Check your connection and try again.",
     honeypot: 'Leave this field empty',
   },

@@ -5,14 +5,16 @@ import { defaultLocale, type Locale } from '@/i18n';
 /* Privacy policy (RGPD / LOPDGDD). Review with your legal advisor and add the
    controller's legal name + tax ID (NIF) before relying on it. */
 const locale = (Astro.currentLocale ?? defaultLocale) as Locale;
-const updated = '2026-11-05';
+// Fecha de la última revisión (texto mostrado en cada idioma).
+const updatedEs = '5 de noviembre de 2026';
+const updatedEn = 'November 5, 2026';
 
 type Section = { id?: string; h: string; p: string[] };
 
 const es: { eyebrow: string; title: string; updated: string; sections: Section[] } = {
   eyebrow: 'Legal',
   title: 'Política de privacidad',
-  updated: `Última actualización: ${updated}`,
+  updated: `Última actualización: ${updatedEs}`,
   sections: [
     {
       h: 'Responsable del tratamiento',
@@ -65,13 +67,13 @@ const es: { eyebrow: string; title: string; updated: string; sections: Section[]
 const en: typeof es = {
   eyebrow: 'Legal',
   title: 'Privacy policy',
-  updated: `Last updated: ${updated}`,
+  updated: `Last updated: ${updatedEn}`,
   sections: [
     { h: 'Data controller', p: [`${brand.name} (Madrid, Spain). Privacy contact: ${brand.email}.`] },
     {
       h: 'What data we process',
       p: [
-        'Free AI Audit: your business URL, name, email, industry, the public content of your website that we analyse, and a hashed identifier of your IP address to prevent abuse.',
+        'Free AI Audit: your business URL, name, email, industry, the public content of your website that we analyze, and a hashed identifier of your IP address to prevent abuse.',
         'Contact form: name, email, company, project type and message.',
         'Call bookings (Cal.com): name, email, booking time and notes.',
       ],
@@ -95,7 +97,7 @@ const en: typeof es = {
       h: 'Cookies & Analytics',
       p: [
         'Without your permission we only measure visits anonymously, storing nothing on your device: pages viewed, button clicks and scroll depth, so we know what works.',
-        'If you accept in the cookie notice, PostHog stores an identifier in your browser (cookie and localStorage, prefix "ph_", up to 12 months) to recognise your visit and records anonymised sessions in which form fields are always hidden. If you then submit a form, we may link that visit to your request.',
+        'If you accept in the cookie notice, PostHog stores an identifier in your browser (cookie and localStorage, prefix "ph_", up to 12 months) to recognize your visit and records anonymized sessions in which form fields are always hidden. If you then submit a form, we may link that visit to your request.',
         'During your visit we also keep (sessionStorage, cleared when you close the tab) where you came from — campaign or referring site — and attach it to your requests. You can change your choice at any time from the "Cookies" link in the footer.',
       ],
     },

@@ -33,7 +33,7 @@ export const brand = {
 const teamEn: Record<string, Pick<TeamMember, 'role' | 'bio' | 'highlights' | 'knowsAbout'>> = {
   'miguel-angel-brito': {
     role: 'Founder & CEO',
-    bio: 'Telecommunications engineer with 7+ years of experience leading technical project assessment, business development and commercial strategy. He has led the preparation of technical and financial proposals, client acquisition and the optimisation of energy and technology solutions tailored to the market. At SolvyX he brings his strategic business vision and product leadership to drive growth, close key partnerships and turn ideas into high-impact technology solutions.',
+    bio: 'Telecommunications engineer with 7+ years of experience leading technical project assessment, business development and commercial strategy. He has led the preparation of technical and financial proposals, client acquisition and the optimization of energy and technology solutions tailored to the market. At SolvyX he brings his strategic business vision and product leadership to drive growth, close key partnerships and turn ideas into high-impact technology solutions.',
     highlights: ['Telecommunications engineer', 'Business development & sales', 'Product strategy', '7+ years of experience'],
     knowsAbout: ['Business development', 'Product strategy', 'Telecommunications engineering', 'B2B sales', 'Energy solutions'],
   },
@@ -242,7 +242,7 @@ export const differentiators = [
 export const testimonials: Testimonial[] = [
   {
     quote:
-      'Their marketing automations tripled our leads in two months. And the AI content came out better than our previous agency.',
+      'Their marketing automations tripled our leads in two months. And the AI content turned out better than our previous agency’s.',
     name: 'Mariana Vélez',
     role: 'CEO · Northbeam Capital',
     avatar: 'https://picsum.photos/seed/solvyx-mariana/200/200',
@@ -423,7 +423,7 @@ export const ui = {
     badge: 'Recommended',
     dotAria: 'Go to plan',
   },
-  bookingUi: { fallback: 'Prefer that we write first? Leave us a message' },
+  bookingUi: { fallback: 'Prefer us to write to you? Leave us a message' },
   founderUi: { eyebrow: 'The team behind it' },
   footerUi: { rights: 'All rights reserved.' },
   introUi: { skip: 'Skip intro', aria: 'SolvyX intro' },
