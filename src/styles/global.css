@@ -119,30 +119,29 @@
     text-wrap: balance;
   }
 
-  /* Body copy. Phones: left-aligned (justifying ~35-character lines opens
-     wide gaps between words) with balanced breaks. From 640px up: justified
-     with language-aware hyphenation (needs <html lang>), so paragraphs read
-     as a clean block. Base layer, so utilities like `text-center` still win;
-     a paragraph's last line always stays left-aligned. */
+  /* Body copy: balanced line breaks, never words split with hyphens. */
   main p,
   footer p,
   dialog p {
     text-wrap: pretty;
+    -webkit-hyphens: manual;
+    hyphens: manual;
   }
-  @media (min-width: 640px) {
-    main p,
-    footer p,
-    dialog p {
-      text-align: justify;
-      -webkit-hyphens: auto;
-      hyphens: auto;
-      hyphenate-limit-chars: 7 3 3;
-    }
-    /* …except inside blocks that are deliberately centered / right-aligned. */
-    :is(.text-center, .text-right) p {
-      text-align: inherit;
-    }
+}
+
+/* Long-form reading text (bios, FAQ answers, legal, page intros): justified
+   from 1024px up, where these blocks get 60+ characters per line. Opt-in on
+   purpose: without hyphenation, justifying short card copy (25–40 characters
+   per line) opens wide gaps between words — same reason phones and tablets
+   stay left-aligned. */
+@media (min-width: 1024px) {
+  .prose-justify,
+  .prose-justify p {
+    text-align: justify;
   }
+}
+
+@layer base {
 
   /* Focus visibility — accessible, on-brand */
   :focus-visible {

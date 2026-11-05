@@ -128,7 +128,7 @@ const c = locale === 'en' ? en : es;
           <section id={s.id} class="flex scroll-mt-28 flex-col gap-3">
             <h2 class="font-display text-xl text-ink sm:text-2xl">{s.h}</h2>
             {s.p.map((para) => (
-              <p class="leading-relaxed text-muted" style="max-width: 70ch;">
+              <p class="prose-justify leading-relaxed text-muted" style="max-width: 70ch;">
                 {para}
               </p>
             ))}
