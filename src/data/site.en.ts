@@ -148,44 +148,15 @@ export const services: Service[] = [
 
 export const work: WorkItem[] = [
   {
-    slug: 'novapay-wallet',
-    title: 'NovaPay Wallet',
-    category: 'Fintech · Mobile app',
-    blurb: 'Fintech wallet with instant transfers, KYC and crypto on/off-ramp. From zero to the app stores in weeks.',
-    image: '/work/novapay.jpg',
-    tags: ['Fintech', 'Wallet', 'iOS + Android'],
-    href: 'https://example.com/casos/novapay',
-    result: '120k users',
-  },
-  {
-    slug: 'verdant-growth',
-    title: 'Verdant Growth',
-    category: 'AI marketing · Automation',
-    blurb: 'We wired Meta and Google Ads into an AI engine that qualifies and nurtures leads on its own. More sales, less spend.',
-    image: '/work/verdant.jpg',
-    tags: ['Ads', 'AI', 'Leads'],
-    href: 'https://example.com/casos/verdant-growth',
-    result: '+213% leads',
-  },
-  {
-    slug: 'pulsar-studio',
-    title: 'Pulsar Studio',
-    category: 'AI multimedia · Social',
-    blurb: 'AI-powered video and image production for social media: 300+ on-brand pieces per month.',
-    image: '/work/pulsar.jpg',
-    tags: ['AI video', 'Content', 'Social'],
-    href: 'https://example.com/casos/pulsar',
-    result: '318 pieces/mo',
-  },
-  {
-    slug: 'cobalt-chain',
-    title: 'Cobalt Chain',
-    category: 'Blockchain · Web3',
-    blurb: 'Web3 payments platform with audited smart contracts and a real-time control panel.',
-    image: '/work/cobalt.jpg',
-    tags: ['Web3', 'Smart contracts', 'Dashboard'],
-    href: 'https://example.com/casos/cobalt',
-    result: '−71% costs',
+    slug: 'escapadas-madrid',
+    title: 'Escapadas Madrid',
+    category: 'Travel · Custom website',
+    blurb:
+      'Website for a club of curated getaways and experiences near Madrid: destinations, memberships, members area, blog and an English version.',
+    image: '/work/escapadas-madrid.jpg',
+    tags: ['Custom website', 'Memberships', 'ES / EN'],
+    href: 'https://www.escapadasmadrid.com',
+    result: 'Live site',
   },
 ];
 
@@ -217,8 +188,8 @@ export const process: ProcessStep[] = [
 export const stats: Stat[] = [
   { value: 'Days', label: 'to launch automations & AI' },
   { value: '2 wks', label: 'to your first live product' },
-  { value: '+213%', label: 'more leads for our clients' },
-  { value: '8.4×', label: 'average reported ROI' },
+  { value: '100%', label: 'of the code & data in your name' },
+  { value: 'Same day', label: 'reply to your enquiry' },
 ];
 
 export const differentiators = [
@@ -239,27 +210,8 @@ export const differentiators = [
   },
 ];
 
-export const testimonials: Testimonial[] = [
-  {
-    quote:
-      'Their marketing automations tripled our leads in two months. And the AI content turned out better than our previous agency’s.',
-    name: 'Mariana Vélez',
-    role: 'CEO · Northbeam Capital',
-    avatar: 'https://picsum.photos/seed/solvyx-mariana/200/200',
-  },
-  {
-    quote: 'They wired our ads into an AI engine that qualifies leads on its own. We close more while selling less.',
-    name: 'Tomás Rensch',
-    role: 'COO · Verdant Growth',
-    avatar: 'https://picsum.photos/seed/solvyx-tomas/200/200',
-  },
-  {
-    quote: 'They launched our fintech wallet in two weeks. Fast, secure, no drama. Exactly what we needed.',
-    name: 'Priya Naidoo',
-    role: 'Head of Product · NovaPay',
-    avatar: 'https://picsum.photos/seed/solvyx-priya/200/200',
-  },
-];
+/* Only real quotes, with the client's permission. Empty = section hidden. */
+export const testimonials: Testimonial[] = [];
 
 export const packages: Package[] = [
   {
@@ -360,7 +312,7 @@ export const footer = {
 export const ui = {
   defaultTitle: 'AI Automation and Custom Software Development | SolvyX',
   nav: { cta: 'Book a call', ctaShort: 'Book a call', open: 'Open menu', close: 'Close menu', skip: 'Skip to content', home: 'home' },
-  marquee: 'Teams that trust us to build',
+  marquee: 'The stack we build with',
   heroUi: { selectHint: 'pick one or more', cta: 'Book your call', selectedPrefix: 'Ready to talk about:' },
   // Glass panels next to Solvy in the hero
   heroStage: {
@@ -379,7 +331,7 @@ export const ui = {
     spotTitle: 'More customers on autopilot',
     spotText:
       'We connect your Meta and Google ads to an AI that captures, qualifies and nurtures leads on its own — and we produce the videos and images that feed your campaigns.',
-    spotChips: ['+213% leads', '24/7 campaigns', 'Content in days'],
+    spotChips: ['More leads', '24/7 campaigns', 'Content in days'],
     spotCta: 'I want more customers',
     spotPlans: 'See pricing',
     reelKicker: 'Everything we do, at a glance',
@@ -395,7 +347,7 @@ export const ui = {
   workSection: {
     eyebrow: 'Selected work',
     title: 'Products in production, not mockups',
-    description: 'A sample of what we have built. Swipe through the projects.',
+    description: 'Real projects you can visit today.',
     dotAria: 'Go to project',
   },
   statsSection: {
