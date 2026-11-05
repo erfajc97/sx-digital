@@ -30,5 +30,10 @@
     "tailwindcss": "^4.1.4",
     "typescript": "^6.0.3",
     "vitest": "^5.1.0"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "@astrojs/netlify@6.6.5": "patches/@astrojs__netlify@6.6.5.patch"
+    }
   }
 }

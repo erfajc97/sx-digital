@@ -1,0 +1,15 @@
+diff --git a/dist/index.js b/dist/index.js
+index 5b157cb9de3f1f21aef85d65876dae414d3f6b2c..7f4d9f3f0ce731e4ec7a8880122c1019df9d5435 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -409,6 +409,10 @@ ${printAsRedirects(redirects)}
+           environmentVariables: integrationConfig?.devFeatures?.environmentVariables ?? false
+         };
+         const vitePluginOptions = {
++          // SolvyX patch: the site ships no Edge Functions, and their local
++          // emulation needs a Deno version compatible with --allow-scripts
++          // (newer Deno releases reject it), so skip it in `astro dev`.
++          edgeFunctions: { enabled: false },
+           images: {
+             // If features is an object, use the `images` property
+             // Otherwise, use the boolean value of `features`, defaulting to true
