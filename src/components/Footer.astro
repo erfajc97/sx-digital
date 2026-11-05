@@ -1,5 +1,6 @@
 ---
 import Icon from './ui/Icon.astro';
+import SocialLinks from './ui/SocialLinks.astro';
 import { getDict, defaultLocale, type Locale } from '@/i18n';
 
 const locale = (Astro.currentLocale ?? defaultLocale) as Locale;
@@ -58,6 +59,7 @@ const { brand, footer, ui } = getDict(locale);
       class="mt-14 flex flex-col gap-4 border-t border-border pt-6 text-sm text-muted sm:flex-row sm:items-center sm:justify-between"
     >
       <p>© {new Date().getFullYear()} {brand.name}. {ui.footerUi.rights}</p>
+      <div class="flex flex-wrap items-center gap-x-6 gap-y-4">
       <ul class="flex flex-wrap gap-5">
         <li>
           <a href={locale === 'en' ? '/en/privacy' : '/privacidad'} class="transition-colors hover:text-ink">
@@ -71,21 +73,9 @@ const { brand, footer, ui } = getDict(locale);
             </a>
           </li>
         )}
-        {
-          brand.social.map((s) => (
-            <li>
-              <a
-                href={s.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="transition-colors hover:text-ink"
-              >
-                {s.label}
-              </a>
-            </li>
-          ))
-        }
       </ul>
+      <SocialLinks variant="inline" />
+      </div>
     </div>
   </div>
 </footer>

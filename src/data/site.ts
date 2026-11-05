@@ -118,9 +118,14 @@ export const brand = {
   calLink: 'solvyxdigital/30min',
   // Namespace del embed Cal (una sola instancia precargada, sin fugas).
   calNamespace: 'solvyx',
+  // Redes sociales: botones redondos del pie + `sameAs` para Google.
+  // Las que tengan `href` vacío no se muestran. Orden = orden en el pie.
   social: [
-    { label: 'LinkedIn', href: 'https://www.linkedin.com/company/solvyx-digital/' },
-  ],
+    { network: 'instagram', label: 'Instagram', href: 'https://www.instagram.com/solvyx.digital/' },
+    { network: 'facebook', label: 'Facebook', href: 'https://www.facebook.com/p/SolvyX-Digital-61596073448848/' },
+    { network: 'tiktok', label: 'TikTok', href: 'https://www.tiktok.com/@solvyxdigital' },
+    { network: 'linkedin', label: 'LinkedIn', href: 'https://www.linkedin.com/company/solvyx-digital/' },
+  ] as { network: 'instagram' | 'facebook' | 'tiktok' | 'linkedin'; label: string; href: string }[],
 };
 
 /* Team — real people behind SolvyX (E-E-A-T: experience + authority).

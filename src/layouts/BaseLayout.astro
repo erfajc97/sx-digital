@@ -50,7 +50,7 @@ const jsonLd = {
       slogan: seo.slogan,
       description: seo.orgDescription,
       knowsAbout: seo.knowsAbout,
-      sameAs: brand.social.map((s) => s.href),
+      sameAs: brand.social.map((s) => s.href).filter(Boolean),
       contactPoint: {
         '@type': 'ContactPoint',
         contactType: 'sales',
