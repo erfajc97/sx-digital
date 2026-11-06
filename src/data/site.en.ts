@@ -270,7 +270,7 @@ export const commitments: Commitment[] = [
 export const packages: Package[] = [
   {
     name: 'Express AI',
-    price: 'from $1,200 USD',
+    price: 'Quote in 24 h',
     cadence: 'in days',
     description: 'One automation, agent or AI content piece, ready in days.',
     features: ['Delivery in days', 'Automation or AI content', 'Connected to your tools'],
@@ -300,7 +300,7 @@ export const packages: Package[] = [
 export const faqs: Faq[] = [
   {
     q: 'How much does it cost?',
-    a: 'Projects start from $1,200 USD. Automations and AI pieces ship in days; a custom product (web, app or wallet) usually takes ~2 weeks. From there we scale with scope — always with a clear estimate from the first call.',
+    a: 'It depends on the scope: how many automations or screens, which tools it has to connect to and when you need it. After a 30-minute call we send you a fixed quote within 24 h — no commitment and no surprises later. If you are not sure yet what you need, start with the free website audit.',
   },
   {
     q: 'How fast do you deliver?',
@@ -426,7 +426,9 @@ export const ui = {
   packagesSection: {
     eyebrow: 'Ways to work together',
     title: 'Pick the pace your project needs',
-    description: 'From a single piece to a dedicated team. Honest pricing from the first call.',
+    description: 'From a single piece to a dedicated team. After the call, a fixed quote within 24 h, no commitment.',
+    auditHint: 'Not sure which plan you need? Start with the free audit: in 30 seconds you see what your website needs to sell more.',
+    auditCta: 'Audit my website for free',
     badge: 'Recommended',
     dotAria: 'Go to plan',
   },

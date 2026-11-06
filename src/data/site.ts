@@ -476,7 +476,7 @@ export const commitments: Commitment[] = [
 export const packages: Package[] = [
   {
     name: 'Express IA',
-    price: 'desde $1,200 USD',
+    price: 'Presupuesto en 24 h',
     cadence: 'en días',
     description: 'Una automatización, agente o pieza de contenido con IA, lista en días.',
     features: ['Entrega en días', 'Automatización o contenido con IA', 'Conexión con tus herramientas'],
@@ -511,7 +511,7 @@ export const packages: Package[] = [
 export const faqs: Faq[] = [
   {
     q: '¿Cuánto cuesta?',
-    a: 'Los proyectos arrancan desde $1,200 USD. Las automatizaciones y piezas con IA salen en días; un producto a medida (web, app o wallet) suele tomar ~2 semanas. De ahí escalamos a medida según el alcance, siempre con un estimado claro desde la primera llamada.',
+    a: 'Depende del alcance: cuántas automatizaciones o pantallas, con qué herramientas hay que conectarlo y para cuándo lo necesitas. Tras una llamada de 30 minutos te enviamos un presupuesto cerrado en 24 h, sin compromiso y sin sorpresas después. Si aún no sabes qué necesitas, empieza por la auditoría gratis de tu web.',
   },
   {
     q: '¿Qué tan rápido entregan?',
@@ -612,7 +612,9 @@ export const ui = {
   packagesSection: {
     eyebrow: 'Formas de trabajar juntos',
     title: 'Elige el ritmo que tu proyecto necesita',
-    description: 'Desde una pieza puntual hasta un equipo dedicado. Precios honestos desde la primera llamada.',
+    description: 'Desde una pieza puntual hasta un equipo dedicado. Tras la llamada, presupuesto cerrado en 24 h y sin compromiso.',
+    auditHint: '¿No sabes qué plan necesitas? Empieza por la auditoría gratis: en 30 segundos ves qué le falta a tu web para vender más.',
+    auditCta: 'Auditar mi web gratis',
     badge: 'Recomendado',
     dotAria: 'Ir al plan',
   },
