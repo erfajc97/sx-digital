@@ -14,8 +14,8 @@ SolvyX se especializa en dos cosas y las hace excepcionalmente bien: (1) automat
 - Apps móviles a medida: iOS y Android (React Native / Expo).
 - Software y plataformas web: webs que convierten, SaaS, dashboards, APIs y backends escalables (Next.js / Astro, cloud, DevOps).
 
-## Formas de trabajar (precios en USD)
-- Express IA: desde $1,200 USD, entrega en días (una automatización, agente o pieza de contenido con IA).
+## Formas de trabajar
+- Express IA: entrega en días (una automatización, agente o pieza de contenido con IA). Presupuesto cerrado en 24 h tras una llamada de 30 min.
 - Crecimiento: a medida, el más elegido — marketing con IA + automatización + producto.
 - Escala: a medida, partner continuo con equipo dedicado, fintech/blockchain, SLA y soporte 24/7.
 

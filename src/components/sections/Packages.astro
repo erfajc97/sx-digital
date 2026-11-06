@@ -3,10 +3,12 @@ import SectionHeading from '../ui/SectionHeading.astro';
 import Button from '../ui/Button.astro';
 import Icon from '../ui/Icon.astro';
 import { getDict, defaultLocale, type Locale } from '@/i18n';
+import { auditPaths } from '@/data/audit';
 
 const locale = (Astro.currentLocale ?? defaultLocale) as Locale;
 const { packages, ui } = getDict(locale);
 const t = ui.packagesSection;
+const auditHref = auditPaths[locale].form;
 ---
 
 <section id="planes" class="scroll-mt-24 py-[var(--spacing-section)]">
@@ -45,7 +47,16 @@ const t = ui.packagesSection;
               </div>
 
               <div class="flex flex-col gap-1">
-                <span class:list={['font-display text-2xl font-semibold sm:text-3xl', featured ? 'text-gradient' : 'text-ink']}>
+                <span
+                  class:list={[
+                    'font-display font-semibold',
+                    // Longer labels ("Presupuesto en 24 h") step down so they keep to one line.
+                    p.price.length > 12
+                      ? 'whitespace-nowrap text-[clamp(1.25rem,1.9vw,1.6rem)] leading-[2.25rem]'
+                      : 'text-2xl sm:text-3xl',
+                    featured ? 'text-gradient' : 'text-ink',
+                  ]}
+                >
                   {p.price}
                 </span>
                 <span class:list={['text-sm', featured ? 'text-on-night-muted' : 'text-muted']}>
@@ -96,6 +107,18 @@ const t = ui.packagesSection;
           />
         ))
       }
+    </div>
+
+    <!-- Not sure which plan? The free audit is the low-commitment first step. -->
+    <div
+      data-reveal
+      class="mx-auto mt-10 flex max-w-3xl flex-col items-center gap-4 rounded-[var(--radius-xl2)] border border-border bg-surface px-6 py-5 text-center sm:flex-row sm:justify-between sm:text-left lg:mt-14"
+    >
+      <p class="flex items-start gap-3 text-sm leading-relaxed text-ink-soft">
+        <Icon name="spark" class="mt-0.5 hidden size-5 shrink-0 text-brand sm:block" />
+        <span>{t.auditHint}</span>
+      </p>
+      <Button href={auditHref} size="md" icon="arrow" class="shrink-0">{t.auditCta}</Button>
     </div>
   </div>
 </section>
