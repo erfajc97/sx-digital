@@ -154,7 +154,7 @@ export const work: WorkItem[] = [
     category: 'Travel · Custom website',
     blurb:
       'Website for a club of curated getaways and experiences near Madrid: destinations, memberships, members area, blog and an English version.',
-    image: '/work/escapadas-madrid.jpg',
+    image: '/work/escapadas-web-viajes.jpg',
     tags: ['Custom website', 'Memberships', 'ES / EN'],
     href: 'https://www.escapadasmadrid.com',
     result: 'Live site',
