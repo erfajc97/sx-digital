@@ -347,7 +347,7 @@ export const work: WorkItem[] = [
     category: 'Turismo · Web a medida',
     blurb:
       'Web para un club de escapadas y experiencias cerca de Madrid: destinos, membresías, área de socios, blog y versión en inglés.',
-    image: '/work/escapadas-madrid.jpg',
+    image: '/work/escapadas-web-viajes.jpg',
     tags: ['Web a medida', 'Membresías', 'ES / EN'],
     href: 'https://www.escapadasmadrid.com',
     result: 'Web en vivo',
