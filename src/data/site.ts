@@ -179,7 +179,7 @@ export const team: TeamMember[] = [
     ],
     linkedin: 'https://www.linkedin.com/in/erickjimenezcruz/',
     github: 'https://github.com/erfajc97',
-    avatar: '/avatar-solvyx-ej.png',
+    avatar: '/team/erick-jimenez-cruz.webp',
     knowsAbout: ['Automatización con IA', 'Desarrollo de software a medida', 'Fintech', 'Blockchain', 'React', 'Node.js', 'Rust'],
   },
 ];
