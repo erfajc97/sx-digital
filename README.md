@@ -19,6 +19,7 @@ hero en video, SEO/GEO completo y un único archivo de contenido.
 - [Editar el contenido](#editar-el-contenido)
 - [Imágenes y media](#imágenes-y-media)
 - [Captación de leads · Auditoría IA](#captación-de-leads--auditoría-ia)
+- [Solvy · chatbot de captación](#solvy--chatbot-de-captación)
 - [Medición y analítica](#medición-y-analítica)
 - [Deploy](#deploy)
 - [Estructura del proyecto](#estructura-del-proyecto)
@@ -189,6 +190,72 @@ equipo recibe un aviso para revisarlo a mano.
 En Supabase: tablas `leads` y `audits`, o la vista `hot_leads` (auditorías
 ordenadas por `lead_score`). Los avisos de Slack/email enlazan a la fila de la
 auditoría en Supabase Studio.
+
+## Solvy · chatbot de captación
+
+Botón flotante con la mascota (encima del de WhatsApp) en todas las páginas
+públicas. Convierte visitas en leads cualificados y demuestra en vivo lo que
+vendemos: audita la web del visitante, simula su propio bot y lo pasa a una
+llamada o a WhatsApp.
+
+```
+SolvyChat.astro (botón + reglas proactivas, ~2 KB)
+   └─ al abrir: import() de src/scripts/solvy/chat-ui.ts (+ CSS)  ← carga diferida
+        └─ POST /api/chat  (NDJSON en streaming)
+             ├─ zod · rate limit (30 msg/sesión · 100/día por IP) · 1.000 caracteres
+             ├─ filtro de inyección de prompt (respuesta fija, sin llamar al modelo)
+             ├─ Claude (CHAT_MODEL, por defecto claude-haiku-5-5) ⇄ herramientas:
+             │    run_audit · get_pricing_info · request_consent · save_lead
+             │    booking_link · whatsapp_handoff · start_demo
+             ├─ conversación anónima (sin emails ni teléfonos) → chat_sessions, 30 días
+             └─ si el modelo falla: mensaje amable + botones a WhatsApp y Cal.com
+```
+
+- **Prompt y conocimiento editables**: `src/lib/chat/system-prompt.md`
+  (personalidad, reglas, modo demo) y `src/lib/chat/knowledge.json` (servicios,
+  planes, caso Escapadas Madrid, FAQ). Solvy solo sabe lo que hay ahí; los
+  precios son los de la web (sin cifras: presupuesto cerrado en 24 h tras la
+  llamada). Si cambias planes o FAQ en `src/data/site.ts`, actualiza el JSON.
+- **Consentimiento**: antes de pedir el email Solvy muestra una casilla con
+  enlace a la política de privacidad. `save_lead` se niega en el servidor si la
+  casilla no está marcada o si el email no lo escribió el visitante.
+- **Leads**: misma tabla `leads` (`source = 'chat'`, cualificación en `meta`) y
+  vista `chat_leads`. Puntuación ≥ `LEAD_SCORE_ALERT` (70) → Slack/email. Si
+  auditó su web en el chat, recibe el informe completo por email.
+- **Estado firmado**: el turno de la demo (máx. 5), la auditoría y el lead viajan
+  en un token HMAC (`CHAT_STATE_SECRET`); el navegador no puede falsificarlo.
+- **Apertura proactiva** (`src/lib/chat/proactive.ts`): 40 s en `#planes`,
+  formulario de auditoría empezado y sin enviar en 60 s, o visita con
+  `utm_source` de anuncios (tras 8 s). Una vez por sesión y nunca tras cerrarlo.
+  En escritorio se abre el panel; en móvil sale una burbuja (no tapamos la
+  pantalla entera sin que el usuario lo pida).
+- **PostHog**: `chat_opened` (trigger: manual / proactive_pricing / form_abandon
+  / ads), `chat_quick_reply`, `chat_audit_run`, `chat_demo_started`,
+  `chat_lead_captured` (puntuacion), `chat_booking_click`, `chat_whatsapp_handoff`.
+
+### Probar Solvy en local
+
+```bash
+pnpm dev     # sin ANTHROPIC_API_KEY responde un mock con guion (marca los 4 flujos)
+pnpm test    # tests/chat.test.ts: proactivo, rate limit, consentimiento, WhatsApp, inyección y flujos
+```
+
+Abre http://localhost:4321 y pulsa la mascota. Flujos para probar:
+
+1. **Auditoría → email → lead**: "Audita mi web" → escribe un dominio → "sí" →
+   marca la casilla → "Me llamo Ana, ana@ejemplo.com". El lead y el email del
+   informe salen en la consola de `pnpm dev`.
+2. **Demo**: "Prueba tu propio bot" → "Tengo una inmobiliaria" → 5 mensajes como
+   cliente → Solvy sale del personaje y ofrece la llamada.
+3. **Precio**: "¿Cuánto cuesta?" → planes y "presupuesto en 24 h", sin cifras.
+4. **API caída**: pon `CHAT_SIMULATE_FAILURE=1` en `.env` y reinicia `pnpm dev`
+   → mensaje amable + botones a WhatsApp y Cal.com.
+
+Para probar la apertura proactiva abre `/?utm_source=google` (8 s) o quédate 40 s
+en la sección de planes. Se recuerda por sesión: usa una pestaña nueva o borra
+`solvy-shown` / `solvy-dismissed` de sessionStorage.
+
+En producción ejecuta además `supabase/migrations/20261108000000_solvy_chat.sql`.
 
 ## Medición y analítica
 

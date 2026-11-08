@@ -2,6 +2,7 @@
    (real + in-memory/console mocks for local development). */
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { internalEmail } from './email-templates';
+import type { AuditReport } from './report-schema';
 import type {
   AuditRecord,
   EmailMessage,
@@ -147,6 +148,17 @@ export class SupabaseLeadStore implements ILeadStore {
     return data.id as string;
   }
 
+  async getAudit(auditId: string) {
+    const { data, error } = await this.db.from('audits').select('url, report').eq('id', auditId).maybeSingle();
+    if (error) throw new Error(`supabase_audit_get: ${error.message}`);
+    return data ? { url: data.url as string, report: (data.report as AuditReport | null) ?? null } : null;
+  }
+
+  /** Raw client for sibling stores (chat transcripts) sharing the connection. */
+  get client() {
+    return this.db;
+  }
+
   auditLink(auditId: string) {
     if (!this.projectRef) return undefined;
     // Opens the audits table in Supabase Studio; filter by id there.
@@ -185,6 +197,10 @@ export class MemoryLeadStore implements ILeadStore {
     this.audits.push({ ...audit, id });
     console.info(`[mock-store] audit ${audit.status} ${audit.domain} → ${id}`);
     return id;
+  }
+  async getAudit(id: string) {
+    const a = this.audits.find((x) => x.id === id);
+    return a ? { url: a.url, report: a.report } : null;
   }
   auditLink(id: string) {
     return `http://localhost:4321/#audit-${id}`;

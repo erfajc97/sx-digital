@@ -1,0 +1,47 @@
+{
+  "_nota": "Única fuente de verdad de Solvy. Todo lo que no esté aquí, Solvy no lo sabe y ofrece la llamada. Mantener alineado con src/data/site.ts (planes, FAQ, casos).",
+  "empresa": {
+    "nombre": "SolvyX",
+    "que_hacemos": "Estudio de automatización con IA y desarrollo de software a medida. Más leads, menos trabajo manual y lanzamientos en días, no en meses.",
+    "oficinas": ["Madrid, España", "Guayaquil, Ecuador"],
+    "idiomas": ["es", "en"],
+    "equipo": [
+      { "nombre": "Miguel Ángel Brito", "rol": "Fundador y CEO", "perfil": "Ingeniero de Telecomunicación, más de 7 años en desarrollo de negocio y estrategia de producto." },
+      { "nombre": "Erick Jiménez Cruz", "rol": "CTO y arquitecto de software", "perfil": "Más de 5 años construyendo fintech y sistemas de alto rendimiento; creador de Eranpay." }
+    ]
+  },
+  "servicios": [
+    { "id": "automatizacion_ia", "nombre": "Automatización de negocio con IA", "descripcion": "Agentes y flujos que responden, venden y operan por ti. Conectamos tus herramientas y eliminamos el trabajo manual repetitivo.", "incluye": ["Agentes y copilotos", "Flujos 24/7", "Integración con tus apps", "Asistentes de WhatsApp y web como Solvy"] },
+    { "id": "marketing_ads", "nombre": "Marketing y ads con IA", "descripcion": "Conectamos Meta y Google Ads, generamos leads y los convertimos en clientes con campañas optimizadas por IA.", "incluye": ["Conexión de ads", "Generación de leads", "Nurturing automático"] },
+    { "id": "multimedia_ia", "nombre": "Multimedia con IA", "descripcion": "Vídeos e imágenes para redes con calidad profesional y en tiempo récord.", "incluye": ["Vídeo con IA", "Imágenes para redes"] },
+    { "id": "fintech", "nombre": "Fintech y blockchain", "descripcion": "Wallets tipo fintech, pagos y productos web3, seguros y listos para producción.", "incluye": ["Wallets fintech", "Web3 / smart contracts", "Pagos e integraciones"] },
+    { "id": "apps_moviles", "nombre": "Apps móviles a medida", "descripcion": "iOS y Android desde una sola base de código (React Native / Expo).", "incluye": ["Push y offline", "Publicación en stores"] },
+    { "id": "web_app", "nombre": "Software y plataformas web", "descripcion": "Webs que convierten, SaaS, dashboards y backends a medida (Next.js / Astro, cloud).", "incluye": ["Webs que convierten", "APIs escalables", "Cloud y DevOps"] }
+  ],
+  "planes": [
+    { "nombre": "Express IA", "precio": "Presupuesto cerrado en 24 h tras una llamada de 30 min", "plazo": "Entrega en días", "para_quien": "Una automatización, agente o pieza de contenido con IA.", "incluye": ["Automatización o contenido con IA", "Conexión con tus herramientas"] },
+    { "nombre": "Crecimiento", "precio": "A medida", "plazo": "Según alcance", "para_quien": "El más elegido: marketing con IA + automatización + producto.", "incluye": ["Marketing y ads con IA", "Automatizaciones de negocio", "Contenido para redes con IA", "Web o app a medida"] },
+    { "nombre": "Escala", "precio": "A medida", "plazo": "Partner continuo", "para_quien": "Empresas que necesitan ingeniería e IA constantes.", "incluye": ["Equipo dedicado", "Fintech / blockchain", "SLA y soporte 24/7"] }
+  ],
+  "politica_precios": "No damos cifras cerradas por chat. El precio depende del alcance (cuántas automatizaciones o pantallas, con qué herramientas hay que conectar y para cuándo). Tras una llamada de 30 minutos enviamos un presupuesto cerrado en 24 h, sin compromiso. Si no sabe qué necesita, la auditoría gratis de su web es el primer paso.",
+  "plazos": "Automatizaciones, campañas y contenido con IA en días. Un producto en alrededor de 2 semanas. Entregas continuas con demos en vivo.",
+  "casos_reales": [
+    { "cliente": "Escapadas Madrid", "url": "https://www.escapadasmadrid.com", "sector": "Turismo", "que_hicimos": "Web a medida para un club de escapadas y experiencias cerca de Madrid: destinos, membresías, área de socios, blog y versión en inglés.", "estado": "Web en vivo", "nota": "No hay métricas de resultados publicadas: no menciones cifras." }
+  ],
+  "conceptos": "En la web también hay proyectos de concepto (wallet fintech, panel de leads con IA, pagos blockchain). Son conceptos de diseño, no clientes reales.",
+  "faq": [
+    { "q": "¿Qué tan rápido entregan?", "a": "Automatizaciones, campañas y contenido con IA en días; un producto en alrededor de 2 semanas." },
+    { "q": "¿Cómo me consiguen más clientes con IA?", "a": "Conectamos tus anuncios de Meta y Google a flujos con IA que capturan, califican y nutren leads automáticamente, y generamos contenido para redes que alimenta esas campañas." },
+    { "q": "¿Hacen fintech y blockchain?", "a": "Sí: wallets tipo fintech, integraciones de pago y productos web3 con smart contracts auditados." },
+    { "q": "¿El contenido con IA se ve profesional?", "a": "Sí, vídeos e imágenes con calidad de marca, consistentes y en tiempo récord." },
+    { "q": "¿El código y las cuentas son míos?", "a": "Siempre. Entregamos el repositorio, la documentación y los accesos a tu nombre." },
+    { "q": "¿Cuánto tardan en responder?", "a": "El mismo día, por email o WhatsApp." }
+  ],
+  "contacto": {
+    "llamada": "Llamada de 30 min sin compromiso en Cal.com",
+    "whatsapp": "Respondemos el mismo día",
+    "email": "contact@solvyxdigital.com",
+    "auditoria_gratis": { "es": "/auditoria/", "en": "/en/audit/" },
+    "privacidad": { "es": "/privacidad/", "en": "/en/privacy/" }
+  }
+}

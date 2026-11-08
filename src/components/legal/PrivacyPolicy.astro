@@ -6,8 +6,8 @@ import { defaultLocale, type Locale } from '@/i18n';
    controller's legal name + tax ID (NIF) before relying on it. */
 const locale = (Astro.currentLocale ?? defaultLocale) as Locale;
 // Fecha de la última revisión (texto mostrado en cada idioma).
-const updatedEs = '5 de noviembre de 2026';
-const updatedEn = 'November 5, 2026';
+const updatedEs = '8 de noviembre de 2026';
+const updatedEn = 'November 8, 2026';
 
 type Section = { id?: string; h: string; p: string[] };
 
@@ -26,6 +26,7 @@ const es: { eyebrow: string; title: string; updated: string; sections: Section[]
         'Auditoría IA Gratis: URL de tu negocio, nombre, email, sector, el contenido público de tu web que analizamos y un identificador cifrado (hash) de tu IP para limitar abusos.',
         'Formulario de contacto: nombre, email, empresa, tipo de proyecto y mensaje.',
         'Reservas de llamada (Cal.com): nombre, email, fecha y notas de la reserva.',
+        'Chat con Solvy (asistente de IA): los mensajes que escribes. Solo si marcas la casilla de consentimiento guardamos tu nombre, email y los datos de tu consulta (empresa, sector, necesidad, urgencia y presupuesto aproximado). Sin esa casilla no guardamos ningún dato personal.',
       ],
     },
     {
@@ -39,7 +40,7 @@ const es: { eyebrow: string; title: string; updated: string; sections: Section[]
     {
       h: 'Proveedores (encargados del tratamiento)',
       p: [
-        'Netlify (alojamiento web), Supabase (base de datos, UE), Anthropic (análisis con IA del contenido público de tu web), Resend (envío de emails), Slack (avisos internos al equipo), Cal.com (reservas) y PostHog (analítica web, servidores en la UE). Algunos pueden tratar datos fuera del EEE con las garantías adecuadas (cláusulas contractuales tipo / Data Privacy Framework).',
+        'Netlify (alojamiento web), Supabase (base de datos, UE), Anthropic (análisis con IA del contenido público de tu web y respuestas del asistente Solvy), Resend (envío de emails), Slack (avisos internos al equipo), Cal.com (reservas) y PostHog (analítica web, servidores en la UE). Algunos pueden tratar datos fuera del EEE con las garantías adecuadas (cláusulas contractuales tipo / Data Privacy Framework).',
       ],
     },
     {
@@ -53,7 +54,10 @@ const es: { eyebrow: string; title: string; updated: string; sections: Section[]
     },
     {
       h: 'Cuánto tiempo los conservamos',
-      p: ['Mientras exista la relación comercial o hasta que retires tu consentimiento y, como máximo, 24 meses desde el último contacto. Los registros anti-abuso se borran a los 30 días.'],
+      p: [
+        'Mientras exista la relación comercial o hasta que retires tu consentimiento y, como máximo, 24 meses desde el último contacto. Los registros anti-abuso se borran a los 30 días.',
+        'Las conversaciones con Solvy se guardan de forma anónima (eliminamos emails y teléfonos antes de guardarlas) durante 30 días para mejorar el asistente, y después se borran.',
+      ],
     },
     {
       h: 'Tus derechos',
@@ -76,6 +80,7 @@ const en: typeof es = {
         'Free AI Audit: your business URL, name, email, industry, the public content of your website that we analyze, and a hashed identifier of your IP address to prevent abuse.',
         'Contact form: name, email, company, project type and message.',
         'Call bookings (Cal.com): name, email, booking time and notes.',
+        'Chat with Solvy (AI assistant): the messages you type. Only if you tick the consent box do we store your name, email and the details of your enquiry (company, sector, need, urgency and rough budget). Without that box we store no personal data.',
       ],
     },
     {
@@ -89,7 +94,7 @@ const en: typeof es = {
     {
       h: 'Service providers (processors)',
       p: [
-        'Netlify (hosting), Supabase (database, EU), Anthropic (AI analysis of your public website content), Resend (email delivery), Slack (internal team alerts), Cal.com (bookings) and PostHog (web analytics, EU servers). Some may process data outside the EEA under appropriate safeguards (Standard Contractual Clauses / Data Privacy Framework).',
+        'Netlify (hosting), Supabase (database, EU), Anthropic (AI analysis of your public website content and the Solvy assistant’s replies), Resend (email delivery), Slack (internal team alerts), Cal.com (bookings) and PostHog (web analytics, EU servers). Some may process data outside the EEA under appropriate safeguards (Standard Contractual Clauses / Data Privacy Framework).',
       ],
     },
     {
@@ -101,7 +106,13 @@ const en: typeof es = {
         'During your visit we also keep (sessionStorage, cleared when you close the tab) where you came from — campaign or referring site — and attach it to your requests. You can change your choice at any time from the "Cookies" link in the footer.',
       ],
     },
-    { h: 'Retention', p: ['For as long as the business relationship lasts or until you withdraw consent, and at most 24 months after our last contact. Anti-abuse records are deleted after 30 days.'] },
+    {
+      h: 'Retention',
+      p: [
+        'For as long as the business relationship lasts or until you withdraw consent, and at most 24 months after our last contact. Anti-abuse records are deleted after 30 days.',
+        'Conversations with Solvy are stored anonymously (we remove emails and phone numbers before saving them) for 30 days to improve the assistant, then deleted.',
+      ],
+    },
     {
       h: 'Your rights',
       p: [

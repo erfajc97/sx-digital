@@ -1,0 +1,335 @@
+---
+/* Solvy chat launcher. Only the button, the proactive rules and a tiny
+   loader ship with the page; the chat UI (src/scripts/solvy/chat-ui.ts +
+   its CSS) is a separate chunk downloaded on first open. */
+import { getDict, defaultLocale, type Locale } from '@/i18n';
+import { auditPaths } from '@/data/audit';
+import { buildWhatsAppLink } from '@/lib/chat/links';
+
+const locale = (Astro.currentLocale ?? defaultLocale) as Locale;
+const { brand } = getDict(locale);
+const en = locale === 'en';
+
+const number = import.meta.env.SOLVY_WHATSAPP_NUMBER || brand.whatsapp || brand.phone;
+const cfg = {
+  locale,
+  privacy: en ? '/en/privacy/' : '/privacidad/',
+  audit: auditPaths[locale].form,
+  booking: brand.bookingUrl,
+  calLink: brand.calLink,
+  whatsapp: buildWhatsAppLink(
+    number,
+    en ? 'Hi SolvyX! I was chatting with Solvy on your website and would like to talk.' : '¡Hola SolvyX! Estaba hablando con Solvy en vuestra web y me gustaría hablar.',
+  ),
+};
+const t = en
+  ? {
+      open: 'Chat with Solvy, SolvyX’s AI assistant',
+      teaser: {
+        proactive_pricing: 'Not sure which plan fits? I can tell you in 1 minute.',
+        form_abandon: 'Want me to run the audit right here? Just send me your website.',
+        ads: 'Hi! I’m Solvy, an AI. Want me to audit your website for free?',
+      },
+      teaserOpen: 'Open chat',
+      teaserClose: 'Dismiss',
+    }
+  : {
+      open: 'Habla con Solvy, el asistente IA de SolvyX',
+      teaser: {
+        proactive_pricing: '¿Dudas con los planes? Te digo cuál encaja en 1 minuto.',
+        form_abandon: '¿Te hago la auditoría aquí mismo? Solo pásame tu web.',
+        ads: '¡Hola! Soy Solvy, una IA. ¿Te audito la web gratis?',
+      },
+      teaserOpen: 'Abrir chat',
+      teaserClose: 'Cerrar aviso',
+    };
+---
+
+<div id="solvy" class="solvy" data-cfg={JSON.stringify(cfg)} data-teasers={JSON.stringify(t.teaser)}>
+  <div id="solvy-teaser" class="solvy-teaser" hidden>
+    <button type="button" class="solvy-teaser__body" data-solvy-teaser-open>
+      <span class="solvy-teaser__text"></span>
+      <span class="sr-only">{t.teaserOpen}</span>
+    </button>
+    <button type="button" class="solvy-teaser__close" data-solvy-teaser-close aria-label={t.teaserClose}>
+      <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
+    </button>
+  </div>
+  <button
+    id="solvy-fab"
+    type="button"
+    class="solvy-fab"
+    aria-label={t.open}
+    aria-haspopup="dialog"
+    aria-expanded="false"
+    aria-controls="solvy-panel"
+  >
+    <img src="/solvy/solvy-128.webp" srcset="/solvy/solvy-128.webp 1x, /solvy/solvy-256.webp 2x" alt="" width="64" height="64" decoding="async" loading="lazy" />
+    <span class="solvy-fab__dot" aria-hidden="true"></span>
+  </button>
+</div>
+
+<style>
+  .solvy {
+    position: fixed;
+    right: max(1rem, env(safe-area-inset-right));
+    /* Stacked above the WhatsApp button (52px phone / 56px desktop + gap). */
+    bottom: calc(max(1rem, calc(env(safe-area-inset-bottom) + 0.75rem)) + 3.25rem + 0.75rem);
+    z-index: 61;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.6rem;
+    transition:
+      opacity 0.25s ease,
+      transform 0.25s var(--ease-snappy, ease-out);
+  }
+  @media (min-width: 1024px) {
+    .solvy {
+      bottom: calc(max(1rem, calc(env(safe-area-inset-bottom) + 0.75rem)) + 3.5rem + 0.75rem);
+    }
+  }
+  .solvy-fab {
+    position: relative;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 999px;
+    padding: 0;
+    overflow: hidden;
+    border: 1.5px solid oklch(0.7 0.155 260 / 0.65);
+    background: var(--color-night);
+    box-shadow:
+      0 8px 22px -6px oklch(0.68 0.16 262 / 0.6),
+      0 2px 6px rgb(0 0 0 / 0.35);
+    cursor: pointer;
+    transition: transform 0.2s var(--ease-snappy, ease-out);
+  }
+  .solvy-fab img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1.18);
+  }
+  .solvy-fab:hover {
+    transform: translateY(-2px) scale(1.04);
+  }
+  .solvy-fab:active {
+    transform: scale(0.96);
+  }
+  .solvy-fab:focus-visible,
+  .solvy-teaser button:focus-visible {
+    outline: 3px solid var(--color-brand-ring);
+    outline-offset: 3px;
+  }
+  .solvy-fab__dot {
+    position: absolute;
+    right: 0.3rem;
+    top: 0.3rem;
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 999px;
+    background: var(--color-signal);
+    box-shadow: 0 0 0 2px var(--color-night);
+  }
+  .solvy-teaser {
+    position: relative;
+    max-width: min(17rem, calc(100vw - 2rem));
+    animation: solvy-pop 0.35s var(--ease-snappy, ease-out);
+  }
+  .solvy-teaser[hidden] {
+    display: none;
+  }
+  .solvy-teaser__body {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 0.75rem 2.25rem 0.75rem 0.95rem;
+    border-radius: 1rem 1rem 0.3rem 1rem;
+    background: var(--color-surface-2);
+    color: var(--color-ink);
+    border: 1px solid var(--color-border-strong);
+    box-shadow: var(--shadow-lift);
+    font: 500 0.9rem/1.4 var(--font-sans);
+    cursor: pointer;
+  }
+  .solvy-teaser__close {
+    position: absolute;
+    top: 0.3rem;
+    right: 0.3rem;
+    display: grid;
+    place-items: center;
+    width: 1.9rem;
+    height: 1.9rem;
+    border-radius: 999px;
+    color: var(--color-muted);
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+  }
+  .solvy-teaser__close svg {
+    width: 0.85rem;
+    height: 0.85rem;
+  }
+  @keyframes solvy-pop {
+    from {
+      opacity: 0;
+      transform: translateY(8px) scale(0.96);
+    }
+  }
+
+  /* Step aside for banners, the intro and while the chat is open. */
+  :global(body:has(#cookie-consent:not(.hidden))) .solvy,
+  :global(body:has(#lang-suggest:not([hidden]))) .solvy,
+  :global(body:has(.intro-gate:not(.is-done))) .solvy,
+  :global(html.solvy-open) .solvy {
+    opacity: 0;
+    transform: translateY(12px);
+    pointer-events: none;
+  }
+  /* While the chat is open the WhatsApp button would sit under the panel. */
+  :global(html.solvy-open #whatsapp) {
+    opacity: 0;
+    pointer-events: none;
+  }
+  /* The language hint would cover the composer; it can wait. */
+  :global(html.solvy-open #lang-suggest) {
+    display: none !important;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .solvy,
+    .solvy-fab,
+    .solvy-teaser {
+      transition: none;
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  import { decideProactive, type ProactiveInput, type ProactiveTrigger } from '@/lib/chat/proactive';
+
+  type Trigger = 'manual' | ProactiveTrigger;
+  type Ui = { open: (trigger: Trigger) => void };
+
+  const root = document.getElementById('solvy');
+  const fab = document.getElementById('solvy-fab') as HTMLButtonElement | null;
+  const teaser = document.getElementById('solvy-teaser');
+
+  const ss = {
+    get: (k: string) => {
+      try {
+        return sessionStorage.getItem(k);
+      } catch {
+        return null;
+      }
+    },
+    set: (k: string, v: string) => {
+      try {
+        sessionStorage.setItem(k, v);
+      } catch {
+        /* private mode */
+      }
+    },
+  };
+  const track = (name: string, props: Record<string, string | number | boolean> = {}) =>
+    window.dispatchEvent(new CustomEvent('sx:track', { detail: { name, props } }));
+
+  let ui: Ui | null = null;
+  let loading: Promise<Ui> | null = null;
+  const load = () =>
+    (loading ??= import('@/scripts/solvy/chat-ui').then(({ mountChat }) => {
+      ui = mountChat(JSON.parse(root!.dataset.cfg!), {
+        onClose: () => {
+          ss.set('solvy-dismissed', '1');
+          fab?.setAttribute('aria-expanded', 'false');
+          fab?.focus();
+        },
+      });
+      return ui;
+    }));
+
+  async function open(trigger: Trigger) {
+    ss.set('solvy-shown', '1');
+    if (teaser) teaser.hidden = true;
+    fab?.setAttribute('aria-expanded', 'true');
+    track('chat_opened', { trigger });
+    (ui ?? (await load())).open(trigger);
+  }
+
+  if (root && fab) {
+    // Warm the chunk on intent (hover / focus / touch) — still nothing at page load.
+    const warm = () => void load();
+    fab.addEventListener('pointerenter', warm, { once: true });
+    fab.addEventListener('focus', warm, { once: true });
+    fab.addEventListener('touchstart', warm, { once: true, passive: true });
+    fab.addEventListener('click', () => open('manual'));
+
+    /* ----------------------------- proactive ----------------------------- */
+    const teasers = JSON.parse(root.dataset.teasers ?? '{}') as Record<ProactiveTrigger, string>;
+    const landedAt = Date.now();
+    let pricingDwellMs = 0;
+    let pricingVisible = false;
+    let formStartedAt: number | null = null;
+    let formSubmitted = false;
+    let pendingTeaser: ProactiveTrigger | null = null;
+
+    const attribution = (() => {
+      try {
+        const stored = JSON.parse(sessionStorage.getItem('sx-attr') || 'null');
+        if (stored) return stored;
+      } catch {
+        /* ignore */
+      }
+      const p = new URLSearchParams(location.search);
+      return Object.fromEntries(['utm_source', 'utm_medium', 'gclid', 'fbclid', 'msclkid', 'ttclid'].flatMap((k) => (p.get(k) ? [[k, p.get(k)!]] : [])));
+    })() as ProactiveInput['attribution'];
+
+    const planes = document.getElementById('planes');
+    if (planes && 'IntersectionObserver' in window) {
+      new IntersectionObserver(([e]) => (pricingVisible = e.isIntersecting), { threshold: 0.35 }).observe(planes);
+    }
+    const form = document.getElementById('audit-form');
+    form?.addEventListener('focusin', () => (formStartedAt ??= Date.now()));
+    form?.addEventListener('submit', () => (formSubmitted = true));
+
+    const blocked = () =>
+      Boolean(
+        document.querySelector('.intro-gate:not(.is-done), #cookie-consent:not(.hidden), #lang-suggest:not([hidden]), dialog[open]'),
+      );
+
+    let last = Date.now();
+    const timer = window.setInterval(() => {
+      const now = Date.now();
+      if (pricingVisible && document.visibilityState === 'visible') pricingDwellMs += now - last;
+      last = now;
+      const trigger = decideProactive({
+        now,
+        shownThisSession: ss.get('solvy-shown') === '1',
+        dismissed: ss.get('solvy-dismissed') === '1',
+        blocked: blocked() || document.documentElement.classList.contains('solvy-open'),
+        pricingDwellMs,
+        formStartedAt,
+        formSubmitted,
+        landedAt,
+        attribution,
+      });
+      if (!trigger) return;
+      window.clearInterval(timer);
+      ss.set('solvy-shown', '1');
+      // Phones get a small bubble instead of a full-screen sheet popping up.
+      if (window.matchMedia('(min-width: 768px)').matches) void open(trigger);
+      else if (teaser) {
+        pendingTeaser = trigger;
+        teaser.querySelector('.solvy-teaser__text')!.textContent = teasers[trigger];
+        teaser.hidden = false;
+      }
+    }, 1000);
+    if (ss.get('solvy-shown') === '1' || ss.get('solvy-dismissed') === '1') window.clearInterval(timer);
+
+    teaser?.querySelector('[data-solvy-teaser-open]')?.addEventListener('click', () => void open(pendingTeaser ?? 'manual'));
+    teaser?.querySelector('[data-solvy-teaser-close]')?.addEventListener('click', () => {
+      teaser.hidden = true;
+      ss.set('solvy-dismissed', '1');
+    });
+  }
+</script>

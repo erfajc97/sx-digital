@@ -18,7 +18,14 @@ export type EventName =
   | 'service_selected'
   | 'lang_switch'
   | 'nav_click'
-  | 'scroll_depth';
+  | 'scroll_depth'
+  | 'chat_opened'
+  | 'chat_quick_reply'
+  | 'chat_audit_run'
+  | 'chat_demo_started'
+  | 'chat_lead_captured'
+  | 'chat_booking_click'
+  | 'chat_whatsapp_handoff';
 
 export interface ClickInfo {
   href?: string | null;

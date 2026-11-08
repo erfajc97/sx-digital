@@ -4,7 +4,7 @@
 import type { AuditReport } from './report-schema';
 import type { Signals } from './signals';
 
-export type LeadSource = 'audit' | 'contact' | 'calcom';
+export type LeadSource = 'audit' | 'contact' | 'calcom' | 'chat';
 export type Locale = 'es' | 'en';
 
 export interface LeadInput {
@@ -79,6 +79,8 @@ export interface ILeadStore {
   readonly name: string;
   saveLead(lead: LeadInput): Promise<string>;
   saveAudit(audit: AuditRecord): Promise<string>;
+  /** A stored audit (used by the chat to email the full report later). */
+  getAudit(auditId: string): Promise<{ url: string; report: AuditReport | null } | null>;
   /** Link for the sales team to open a stored audit (dashboard / row). */
   auditLink(auditId: string): string | undefined;
 }

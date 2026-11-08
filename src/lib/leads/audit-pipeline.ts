@@ -6,11 +6,11 @@ import { z } from 'zod';
 import { sanitizeAttribution } from '../analytics/attribution';
 import { config } from './env';
 import { auditReportEmail, bookingLink } from './email-templates';
-import { LlmError } from './llm';
-import { normalizeTargetUrl, UrlPolicyError } from './net/ip-policy';
-import { safeFetch, SafeFetchError, type SafeFetchOptions } from './net/safe-fetch';
+import { UrlPolicyError } from './net/ip-policy';
+import type { SafeFetchOptions } from './net/safe-fetch';
 import { publicView, type AuditReport } from './report-schema';
-import { extractSignals, summarizeText, type Signals } from './signals';
+import type { Signals } from './signals';
+import { analyzeSite, registrableDomain, resolveTarget } from './site-analysis';
 import type { AuditStatus, Locale, Services } from './types';
 
 export const SECTORES = [
@@ -79,9 +79,7 @@ export function hashIp(ip: string) {
   return createHash('sha256').update(`${config.ipHashSalt}:${ip}`).digest('hex').slice(0, 32);
 }
 
-export function registrableDomain(host: string) {
-  return host.toLowerCase().replace(/^www\./, '');
-}
+export { registrableDomain };
 
 export interface RunAuditDeps {
   services: Services;
@@ -110,13 +108,13 @@ export async function runAudit(rawInput: unknown, deps: RunAuditDeps): Promise<A
   if (input.company_site) return { status: 'partial', message: m.fetch, bookingUrl };
 
   let target: URL;
+  let domain: string;
   try {
-    target = normalizeTargetUrl(input.url, deps.fetchOptions);
+    ({ target, domain } = resolveTarget(input.url, deps.fetchOptions));
   } catch (e) {
     if (e instanceof UrlPolicyError) return { status: 'invalid', message: m.badUrl, field: 'url' };
     throw e;
   }
-  const domain = registrableDomain(target.hostname);
   const ipHash = hashIp(deps.ip);
 
   const ipHit = await services.limiter.hit(`audit:ip:${ipHash}`, LIMITS.perIp.limit, LIMITS.perIp.windowMs);
@@ -156,44 +154,23 @@ export async function runAudit(rawInput: unknown, deps: RunAuditDeps): Promise<A
     results.forEach((r) => r.status === 'rejected' && console.error('[audit] notify failed', r.reason));
   };
 
-  // 2) Fetch the target site.
-  let signals: Signals;
-  let text: string;
-  try {
-    const page = await safeFetch(target, { timeoutMs: 8_000, maxBytes: 2 * 1024 * 1024, maxRedirects: 3, ...deps.fetchOptions });
-    ({ signals, text } = extractSignals(page.body, {
-      url: page.url,
-      finalUrl: page.finalUrl,
-      status: page.status,
-      responseMs: page.responseMs,
-      truncated: page.truncated,
-    }));
-  } catch (e) {
-    const code = e instanceof SafeFetchError ? e.code : 'network';
-    await saveAudit('fetch_failed', null, null, code);
-    if (code === 'blocked' || code === 'invalid_url') return { status: 'invalid', message: m.badUrl, field: 'url' };
+  // 2+3) Fetch the site and run the AI analysis inside the time budget.
+  const analysis = await analyzeSite({ url: target, sector: input.sector, locale, deadline, now }, services, deps.fetchOptions);
+  if (!analysis.ok && analysis.code !== 'llm_failed') {
+    await saveAudit('fetch_failed', null, null, analysis.error);
+    if (analysis.code === 'bad_url') return { status: 'invalid', message: m.badUrl, field: 'url' };
     return { status: 'partial', message: m.fetch, bookingUrl };
   }
-
-  // 3) AI analysis inside the remaining time budget (keep ~3 s for storage + email).
-  let report: AuditReport;
-  try {
-    const timeoutMs = Math.max(5_000, deadline - now() - 3_000);
-    report = await services.llm.analyze(
-      { url: signals.finalUrl, sector: input.sector, locale, signals, visibleText: summarizeText(text) },
-      { timeoutMs },
-    );
-  } catch (e) {
-    const code = e instanceof LlmError ? e.code : 'llm_error';
-    console.error('[audit] llm failed', code, e instanceof Error ? e.message : e);
-    const auditId = await saveAudit('llm_failed', signals, null, code);
+  if (!analysis.ok) {
+    const auditId = await saveAudit('llm_failed', analysis.signals ?? null, null, analysis.error);
     await alertSales(
-      `Auditoría sin informe IA (${code}) — ${domain}`,
+      `Auditoría sin informe IA (${analysis.error}) — ${domain}`,
       [`${input.name} <${input.email}> · ${input.sector}`, `Web: ${target.toString()}`, 'Revisar a mano: el lead está guardado con las señales.'],
       auditId,
     );
     return { status: 'partial', message: m.llm, bookingUrl };
   }
+  const { signals, report } = analysis;
 
   // 4) Persist + deliver.
   const auditId = await saveAudit('completed', signals, report, null);
