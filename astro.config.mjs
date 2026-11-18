@@ -18,7 +18,14 @@ export default defineConfig({
       prefixDefaultLocale: false,
     },
   },
-  integrations: [sitemap({ filter: (page) => !page.includes('/resultado') && !page.includes('/result') })],
+  // Out of the sitemap: per-visitor result pages and time-limited campaign
+  // landings (reached from social videos, noindex, dead once the offer ends).
+  integrations: [
+    sitemap({
+      filter: (page) =>
+        !page.includes('/resultado') && !page.includes('/result') && !page.includes('/black-friday'),
+    }),
+  ],
   vite: {
     plugins: [tailwindcss()],
   },
