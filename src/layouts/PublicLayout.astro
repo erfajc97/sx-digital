@@ -16,9 +16,11 @@ interface Props {
   /** Solid navbar from the top — for pages without the dark hero. */
   solidNav?: boolean;
   noindex?: boolean;
+  /** Campaign bar above the nav (see src/components/BlackFridayBar.astro). */
+  promo?: boolean;
 }
 
-const { title, description, intro = true, solidNav = false, noindex = false } = Astro.props;
+const { title, description, intro = true, solidNav = false, noindex = false, promo = false } = Astro.props;
 const calLink = brand.calLink;
 const calNs = brand.calNamespace;
 ---
@@ -26,7 +28,7 @@ const calNs = brand.calNamespace;
 <BaseLayout title={title} description={description} noindex={noindex}>
   {intro && <IntroGate />}
   <span id="top"></span>
-  <Navbar solid={solidNav} />
+  <Navbar solid={solidNav} promo={promo} />
   <main id="contenido">
     <slot />
   </main>

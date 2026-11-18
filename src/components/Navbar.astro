@@ -1,14 +1,17 @@
 ---
 import Button from './ui/Button.astro';
 import Flag from './ui/Flag.astro';
+import BlackFridayBar from './BlackFridayBar.astro';
 import { getDict, altPathFor, defaultLocale, type Locale } from '@/i18n';
 
 interface Props {
   /** Solid bar from the very top — for pages without the dark hero
       (otherwise the top-state light links would be invisible on white). */
   solid?: boolean;
+  /** Show the campaign bar above the nav (Spanish homepage only). */
+  promo?: boolean;
 }
-const { solid = false } = Astro.props;
+const { solid = false, promo = false } = Astro.props;
 
 const locale = (Astro.currentLocale ?? defaultLocale) as Locale;
 const { brand, nav, ui } = getDict(locale);
@@ -33,6 +36,7 @@ const switchLabel = otherLocale.toUpperCase();
   data-scrolled="false"
   data-solid={solid ? 'true' : undefined}
 >
+  {promo && <BlackFridayBar />}
   <nav
     class="mx-auto flex max-w-[1240px] items-center justify-between gap-6 px-4 py-3 sm:px-6"
   >

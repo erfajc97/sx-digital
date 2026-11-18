@@ -1,0 +1,87 @@
+---
+import { blackFriday, bfSlotsLabel, bfClosedAtBuild } from '@/data/black-friday';
+
+/* Slim Black Friday bar at the top of the fixed header (Spanish homepage
+   only). Not rendered once the offer is closed at build time; hides itself
+   in the browser when the deadline passes after the last deploy. While it
+   is visible, the hero gets extra top padding so nothing sits under it. */
+---
+
+{
+  !bfClosedAtBuild && (
+    <div id="bf-bar" class="bf-bar">
+      <a href={blackFriday.href} class="bf-bar__link">
+        <span class="bf-bar__tag">Black Friday</span>
+        <span class="bf-bar__text">
+          <span class="sm:hidden whitespace-nowrap">−20 % en tu proyecto</span>
+          <span class="hidden sm:inline">
+            {blackFriday.headline} · {bfSlotsLabel}, hasta el {blackFriday.deadline}
+          </span>
+        </span>
+        <span class="bf-bar__cta" aria-hidden="true">
+          Ver oferta →
+        </span>
+      </a>
+    </div>
+  )
+}
+
+<script is:inline define:vars={{ endsAt: blackFriday.endsAt }}>
+  if (Date.now() >= Date.parse(endsAt)) document.getElementById('bf-bar')?.setAttribute('hidden', '');
+</script>
+
+<style>
+  .bf-bar {
+    background-image: var(--gradient-neon);
+    color: var(--color-on-brand);
+  }
+  .bf-bar[hidden] {
+    display: none;
+  }
+  .bf-bar__link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    min-height: 2.25rem;
+    padding: 0.35rem 1rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    line-height: 1.2;
+    text-align: center;
+  }
+  .bf-bar__tag {
+    border-radius: 999px;
+    background: var(--color-on-brand);
+    color: var(--color-ink);
+    padding: 0.15rem 0.55rem;
+    font-size: 0.6875rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .bf-bar__cta {
+    white-space: nowrap;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .bf-bar__link:hover .bf-bar__cta {
+    text-decoration-thickness: 2px;
+  }
+
+  /* Push the hero content down by the bar's height while it is visible
+     (mobile/tablet only; on desktop the hero content is vertically centred). */
+  :global(html:has(#bf-bar:not([hidden])) #hero > div) {
+    padding-top: calc(4rem + 2.25rem);
+  }
+  @media (min-width: 640px) {
+    :global(html:has(#bf-bar:not([hidden])) #hero > div) {
+      padding-top: calc(6rem + 2.25rem);
+    }
+  }
+  @media (min-width: 1024px) {
+    :global(html:has(#bf-bar:not([hidden])) #hero > div) {
+      padding-top: 0;
+    }
+  }
+</style>

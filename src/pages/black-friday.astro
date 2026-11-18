@@ -10,31 +10,11 @@ import { brand } from '@/data/site';
 
    Clicks on the WhatsApp buttons are tracked automatically as
    `whatsapp_click` by src/scripts/analytics.ts, with `section` set to the
-   section id below (bf-oferta = top button, bf-cierre = bottom button). */
+   section id below (bf-oferta = top button, bf-cierre = bottom button).
 
-/* The offer. Margin logic: the discount is paid for by what we get back —
-   a 50 % upfront payment (cash before the slow December), a commitment
-   by 30 Nov (closes the pipeline fast) and a capped number of slots
-   (the discount can't eat the whole quarter), plus a minimum project size
-   so small jobs don't go out at a loss. Edit here if anything changes. */
-const offer = {
-  headline: '−20 % en tu proyecto de IA o web a medida',
-  deadline: 'lunes 30 de noviembre',
-  conditions:
-    'Para proyectos desde 1.200 € (o $1,200 USD) confirmados con un 50 % por adelantado antes de esa fecha y que arranquen antes del 31 de enero. El anticipo se descuenta del total.',
-  // Real limit: after each signed project, raise `slotsTaken` and redeploy.
-  // At 10 the page switches to "offer closed" on its own.
-  slotsTotal: 10,
-  slotsTaken: 0,
-  // End of Monday 30 Nov, Madrid time. After this the page shows the closed
-  // state in the browser, even without a redeploy.
-  endsAt: '2026-12-01T00:00:00+01:00',
-};
+   The offer itself (discount, slots, deadline) lives in src/data/black-friday.ts. */
+import { blackFriday as offer, bfSlotsLeft as slotsLeft, bfSlotsLabel as slotsLabel, bfClosedAtBuild as closed } from '@/data/black-friday';
 
-const slotsLeft = Math.max(0, offer.slotsTotal - offer.slotsTaken);
-const slotsLabel =
-  offer.slotsTaken === 0 ? `Solo ${offer.slotsTotal} plazas` : `Quedan ${slotsLeft} de ${offer.slotsTotal} plazas`;
-const closed = slotsLeft === 0 || Date.now() >= Date.parse(offer.endsAt);
 const closedReason = slotsLeft === 0 ? 'Plazas agotadas' : 'Oferta terminada';
 
 const waClosedText = 'Hola, vengo del vídeo de Black Friday. Sé que la oferta ha terminado, pero me interesa un presupuesto';
